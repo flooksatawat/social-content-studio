@@ -84,17 +84,29 @@
             </form>
           </section>
 
-          <section class="panel output-panel" aria-labelledby="output-title">
+          <section class="panel output-panel output-summary-panel" aria-labelledby="output-title">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 2</p>
-              <h2 id="output-title">Content Output</h2>
+              <h2 id="output-title">Campaign Strategy</h2>
             </div>
             <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
           </div>
 
           <div class="snapshot-grid" id="strategySnapshot" aria-live="polite"></div>
-          <div class="tabs" id="channelTabs" role="tablist" aria-label="เลือกช่องทาง"></div>
+          </section>
+        </div>
+
+        <section class="panel output-panel output-middle-panel" aria-labelledby="content-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Content Output</p>
+              <h2 id="content-title">เลือกช่องทางและดูคอนเทนต์</h2>
+            </div>
+            <span class="ghost-button ghost-static">6 channels</span>
+          </div>
+
+          <div class="tabs tabs-center" id="channelTabs" role="tablist" aria-label="เลือกช่องทาง"></div>
 
           <div class="output-stack" id="contentOutput" aria-live="polite">
             <div class="empty-state">
@@ -102,8 +114,7 @@
               <p>กรอก brief ด้านซ้าย แล้วกดสร้าง ระบบจะทำ caption, hooks, script, SEO brief และ image prompt ให้ตามช่องทางที่เลือก</p>
             </div>
           </div>
-          </section>
-        </div>
+        </section>
 
         <div class="workspace-row workspace-row-bottom">
           <aside class="panel visual-panel" aria-labelledby="visual-title">

@@ -159,6 +159,11 @@ button {
   min-height: 580px;
 }
 
+.output-summary-panel,
+.output-middle-panel {
+  min-height: auto;
+}
+
 .output-panel {
   min-width: 0;
 }
@@ -269,6 +274,11 @@ textarea:focus {
   width: auto;
 }
 
+.ghost-static {
+  cursor: default;
+  pointer-events: none;
+}
+
 .button-row,
 .visual-actions {
   display: flex;
@@ -352,11 +362,25 @@ textarea:focus {
   padding-inline: 2px;
 }
 
+.tabs-center {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  overflow: visible;
+  padding-inline: 0;
+}
+
 .tab-button {
   flex: 0 0 auto;
   border-color: var(--line);
   background: #fff;
   color: var(--muted);
+}
+
+.tabs-center .tab-button {
+  flex: initial;
+  min-height: 56px;
+  justify-content: center;
 }
 
 .tab-button.active {
@@ -696,6 +720,10 @@ button:disabled {
     grid-template-columns: 1fr;
   }
 
+  .tabs-center {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .visual-panel,
   .video-panel {
     min-height: auto;
@@ -724,6 +752,10 @@ button:disabled {
   }
 
   .workspace-row {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs-center {
     grid-template-columns: 1fr;
   }
 
