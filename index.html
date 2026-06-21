@@ -179,6 +179,26 @@
           </form>
         </section>
 
+        <section class="panel output-panel" aria-labelledby="output-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Step 2</p>
+              <h2 id="output-title">Content Output</h2>
+            </div>
+            <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
+          </div>
+
+          <div class="snapshot-grid" id="strategySnapshot" aria-live="polite"></div>
+          <div class="tabs" id="channelTabs" role="tablist" aria-label="เลือกช่องทาง"></div>
+
+          <div class="output-stack" id="contentOutput" aria-live="polite">
+            <div class="empty-state">
+              <h3>พร้อมสร้างคอนเทนต์ชุดแรก</h3>
+              <p>กรอก brief ด้านซ้าย แล้วกดสร้าง ระบบจะทำ caption, hooks, script, SEO brief และ image prompt ให้ตามช่องทางที่เลือก</p>
+            </div>
+          </div>
+        </section>
+
         <aside class="panel visual-panel" aria-labelledby="visual-title">
           <div class="panel-heading">
             <div>
@@ -225,26 +245,6 @@
             <button class="secondary-button" id="copyPrompt" type="button">คัดลอก prompt</button>
           </div>
         </aside>
-
-        <section class="panel output-panel" aria-labelledby="output-title">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">Step 2</p>
-              <h2 id="output-title">Content Output</h2>
-            </div>
-            <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
-          </div>
-
-          <div class="snapshot-grid" id="strategySnapshot" aria-live="polite"></div>
-          <div class="tabs" id="channelTabs" role="tablist" aria-label="เลือกช่องทาง"></div>
-
-          <div class="output-stack" id="contentOutput" aria-live="polite">
-            <div class="empty-state">
-              <h3>พร้อมสร้างคอนเทนต์ชุดแรก</h3>
-              <p>กรอก brief ด้านซ้าย แล้วกดสร้าง ระบบจะทำ caption, hooks, script, SEO brief และ image prompt ให้ตามช่องทางที่เลือก</p>
-            </div>
-          </div>
-        </section>
       </main>
 
       <section class="history-section panel" aria-labelledby="history-title">
