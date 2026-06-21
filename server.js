@@ -6,6 +6,7 @@ const HOST = process.env.HOST || "127.0.0.1";
 const PORT = Number(process.env.PORT || 4173);
 const TEXT_MODEL = process.env.GEMINI_TEXT_MODEL || "gemini-3.5-flash";
 const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || "gemini-3.1-flash-image";
+const IMAGE_ENABLED = String(process.env.GEMINI_IMAGE_ENABLED || "true").toLowerCase() === "true";
 const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
 const ROOT = __dirname;
 const ENV_PATH = path.join(ROOT, ".env");
@@ -172,8 +173,8 @@ function contentPackSchema() {
       },
       hooks: {
         type: "array",
-        minItems: 4,
-        maxItems: 4,
+        minItems: 3,
+        maxItems: 3,
         items: { type: "string" },
       },
       imagePrompt: { type: "string" },
@@ -206,12 +207,14 @@ async function generateContent(brief) {
     systemInstruction: {
       parts: [{
         text: [
-          "You are a senior Thai content strategist, direct-response copywriter, SEO editor, and audience researcher.",
-          "Create useful, specific, ready-to-publish content. Avoid invented statistics, medical promises, guarantees, and unsupported claims.",
-          "Write in the language requested by the brief. Adapt length, hook, CTA, and formatting for each platform.",
-          "Facebook needs a strong caption and CTA. YouTube needs titles, script, and description. TikTok and LINE VOOM need concise mobile-first scripts.",
-          "Blog SEO needs title, meta description, outline, FAQ, and search intent. AI Search needs answer-first copy, entity facts, and concise FAQs.",
-          "The image prompt must be in English, highly visual, photorealistic when suitable, with composition and lighting details. Do not ask the image model to render long text.",
+          "You are a Thai content strategist for life insurance and professional financial advisory.",
+          "Create concise, practical, ready-to-publish content for life insurance, protection planning, retirement planning, family protection, and financial advisory.",
+          "Use a trustworthy, warm, professional tone. Avoid fearmongering, guaranteed returns, invented statistics, medical promises, legal advice, tax advice, and unsupported claims.",
+          "Include suitable compliance-friendly wording when needed, such as coverage and conditions depend on the selected policy and underwriting.",
+          "Keep each channel block short and useful. Prefer compact hooks and one clear CTA.",
+          "Facebook needs a strong caption and CTA. YouTube needs a short title, script, and description. TikTok and LINE VOOM need concise mobile-first scripts.",
+          "Blog SEO needs title, meta description, outline, FAQ, and search intent. AI Search needs answer-first copy and concise FAQs.",
+          "Keep the image prompt brief and visual with premium finance, advisor consultation, family protection, and planning cues. Do not ask the image model to render long text.",
         ].join(" "),
       }],
     },
@@ -329,6 +332,7 @@ async function handleApi(request, response, pathname) {
       connected: Boolean(runtimeApiKey),
       textModel: TEXT_MODEL,
       imageModel: IMAGE_MODEL,
+      imageEnabled: IMAGE_ENABLED,
     });
     return true;
   }
@@ -351,7 +355,12 @@ async function handleApi(request, response, pathname) {
       HOST,
       PORT,
     });
-    sendJson(response, 200, { connected: true, textModel: TEXT_MODEL, imageModel: IMAGE_MODEL });
+    sendJson(response, 200, {
+      connected: true,
+      textModel: TEXT_MODEL,
+      imageModel: IMAGE_MODEL,
+      imageEnabled: IMAGE_ENABLED,
+    });
     return true;
   }
 

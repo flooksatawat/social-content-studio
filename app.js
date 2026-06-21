@@ -1,21 +1,21 @@
-const platformMeta = {
+﻿const platformMeta = {
   facebook: {
     label: "Facebook",
     size: [1080, 1080],
     ratioLabel: "1:1",
-    note: "เหมาะกับโพสต์ให้ความรู้ + CTA เพื่อคอมเมนต์หรือทักแชต",
+    note: "เหมาะกับโพสต์ให้ความรู้ สร้างความน่าเชื่อถือ และชวนทักเพื่อประเมินแผน",
   },
   youtube: {
     label: "YouTube",
     size: [1280, 720],
     ratioLabel: "16:9",
-    note: "เหมาะกับชื่อคลิป, Shorts script, description และ chapter",
+    note: "เหมาะกับชื่อคลิป Shorts script และคำอธิบายเชิงให้ความรู้",
   },
   tiktok: {
     label: "TikTok",
     size: [1080, 1920],
     ratioLabel: "9:16",
-    note: "เหมาะกับ hook เร็ว, overlay text และ script เป็นช็อต",
+    note: "เหมาะกับ hook เร็ว overlay text และ script แบบสั้น",
   },
   linevoom: {
     label: "LINE VOOM",
@@ -77,15 +77,15 @@ const moodPalettes = {
 };
 
 const sampleBrief = {
-  brandName: "Bright Clinic",
-  businessType: "สุขภาพและความงาม",
+  brandName: "Premier Life Advisory",
+  businessType: "ประกันชีวิต",
   goal: "เก็บ Lead / นัดหมาย",
-  topic: "โปรแกรมปรับสมดุลผิวสำหรับคนวัยทำงานที่ผิวล้า แต่งหน้าไม่ติด และไม่มีเวลาดูแลตัวเอง",
-  audience: "ผู้หญิงวัยทำงานอายุ 28-42 ปี รายได้ปานกลางถึงสูง ต้องการดูดีขึ้นแบบธรรมชาติ แต่กลัวการขายคอร์สรุนแรง",
-  offer: "รับ Skin Check ฟรี พร้อมแผนดูแล 7 วัน",
+  topic: "แผนประกันชีวิตและการเงินที่ออกแบบให้เหมาะกับเป้าหมายของแต่ละครอบครัวอย่างมืออาชีพ",
+  audience: "คนทำงานและครอบครัววัยสร้างตัว อายุ 28-45 ปี ที่ต้องการวางแผนคุ้มครองชีวิต รายได้ และอนาคตอย่างรอบคอบ",
+  offer: "นัดปรึกษาแผนคุ้มครองฟรี 15 นาที",
   tone: "มืออาชีพ อบอุ่น",
   language: "ไทย",
-  keywords: "คลินิกผิว, ผิวล้า, หน้าใส, ดูแลผิว, skin check",
+  keywords: "ประกันชีวิต, ที่ปรึกษาทางการเงิน, วางแผนคุ้มครอง, วางแผนเกษียณ, ปกป้องครอบครัว",
 };
 
 const apiBaseUrl =
@@ -133,12 +133,12 @@ function getBrief() {
   const channels = $$("input[name='channels']:checked").map((input) => input.value);
 
   return {
-    brandName: clean(data.brandName) || "แบรนด์ของคุณ",
-    businessType: clean(data.businessType) || "ธุรกิจ",
-    goal: clean(data.goal) || "สร้างการรับรู้แบรนด์",
-    topic: clean(data.topic) || "หัวข้อคอนเทนต์ใหม่",
+    brandName: clean(data.brandName) || "ที่ปรึกษาของคุณ",
+    businessType: clean(data.businessType) || "ประกันชีวิต",
+    goal: clean(data.goal) || "เก็บ Lead / นัดหมาย",
+    topic: clean(data.topic) || "แผนคุ้มครองชีวิตและการเงิน",
     audience: clean(data.audience) || "กลุ่มเป้าหมายหลัก",
-    offer: clean(data.offer) || "ทักหาเราเพื่อรับคำแนะนำ",
+    offer: clean(data.offer) || "นัดปรึกษาแผนคุ้มครอง",
     tone: clean(data.tone) || "มืออาชีพ อบอุ่น",
     language: clean(data.language) || "ไทย",
     keywords: splitKeywords(data.keywords),
@@ -176,9 +176,9 @@ function buildStrategy(brief) {
   const topicShort = shortText(brief.topic, 92);
 
   return {
-    angle: `${brief.goal} ผ่านคอนเทนต์ที่เริ่มจาก pain point ของ ${audienceShort}`,
-    promise: `ช่วยให้กลุ่มเป้าหมายเข้าใจว่า ${topicShort} ทำได้ง่ายขึ้นและวัดผลได้`,
-    proof: `ใช้เช็กลิสต์, ตัวอย่างสถานการณ์จริง, FAQ และ keyword "${keywordLead}" เพื่อเพิ่มความน่าเชื่อถือ`,
+    angle: `${brief.goal} ผ่านคอนเทนต์ที่เริ่มจากความกังวลจริงของ ${audienceShort}`,
+    promise: `ช่วยให้กลุ่มเป้าหมายเข้าใจว่า ${topicShort} ควรเริ่มจากการประเมินความเสี่ยง เป้าหมายชีวิต และงบประมาณอย่างเป็นระบบ`,
+    proof: `ใช้เช็กลิสต์คำถามจริง ตัวอย่างสถานการณ์ครอบครัว FAQ และ keyword "${keywordLead}" เพื่อสร้างความน่าเชื่อถือโดยไม่ขายเกินจริง`,
     cta: brief.offer,
   };
 }
@@ -186,22 +186,22 @@ function buildStrategy(brief) {
 function buildHooks(brief) {
   const keyword = brief.keywords[0] || brief.businessType;
   return [
-    `ถ้า${shortText(brief.audience, 42)} นี่คือวิธีเริ่มต้นแบบไม่ต้องเดาเอง`,
-    `${keyword}: 3 จุดที่หลายคนมองข้าม แต่ส่งผลต่อผลลัพธ์จริง`,
-    `ก่อนตัดสินใจเรื่อง${keyword} ลองเช็ก 5 ข้อนี้ก่อน`,
-    `อยากได้ผลลัพธ์ดีขึ้นจาก${keyword}? เริ่มจากแผนที่เหมาะกับตัวเอง`,
+    `ถ้าวันนี้รายได้หลักหยุดลง ครอบครัวของคุณมีแผนสำรองพอหรือยัง`,
+    `${keyword}: 3 จุดที่ควรเช็กก่อนเลือกแผนคุ้มครอง`,
+    `ประกันชีวิตไม่ใช่แค่ค่าเบี้ย แต่คือแผนรับมือความเสี่ยงของครอบครัว`,
+    `อยากวางแผนอนาคตให้มั่นใจกว่าเดิม เริ่มจากเช็กภาระและเป้าหมายชีวิตก่อน`,
   ];
 }
 
 function buildImagePrompt(brief) {
   const keyword = brief.keywords[0] || brief.businessType;
   return [
-    `Create a clean, premium social media image for ${brief.brandName}.`,
+    `Create a clean, premium social media image for life insurance and financial advisory brand ${brief.brandName}.`,
     `Subject: ${brief.topic}.`,
     `Audience: ${brief.audience}.`,
-    `Visual style: modern Thai digital marketing creative, trustworthy, human-centered, bright natural lighting, realistic scene, clear focal point, space for Thai headline text.`,
-    `Include subtle cues related to ${keyword}.`,
-    `Avoid clutter, avoid tiny text, avoid exaggerated claims.`,
+    `Visual style: modern premium finance aesthetic, trustworthy, human-centered, bright natural lighting, realistic Thai professional scene, clear focal point, space for Thai headline text.`,
+    `Include subtle cues related to ${keyword}, family protection, financial planning, documents, and calm advisor consultation.`,
+    `Avoid clutter, avoid tiny text, avoid fear-based imagery, avoid exaggerated claims.`,
     `Aspect ratio should match the selected platform.`,
   ].join(" ");
 }
@@ -209,7 +209,8 @@ function buildImagePrompt(brief) {
 function buildPlatformContent(brief) {
   const hooks = buildHooks(brief);
   const hashtags = buildHashtags(brief);
-  const blogTitle = `${brief.keywords[0] || brief.businessType}: วิธีเลือกให้เหมาะกับ${shortText(brief.audience, 24)}`;
+  const keyword = brief.keywords[0] || brief.businessType;
+  const blogTitle = `${keyword}: วิธีวางแผนคุ้มครองให้เหมาะกับ${shortText(brief.audience, 24)}`;
   const slug = slugifyThai(blogTitle);
 
   return {
@@ -220,51 +221,40 @@ function buildPlatformContent(brief) {
         [
           hooks[0],
           "",
-          `หลายคนสนใจเรื่อง "${brief.topic}" แต่ติดตรงที่ไม่แน่ใจว่าควรเริ่มจากตรงไหน และแบบไหนถึงเหมาะกับตัวเองจริง ๆ`,
+          `หลายคนเริ่มสนใจเรื่อง \"${brief.topic}\" ตอนที่มีภาระมากขึ้น มีครอบครัว มีหนี้สิน หรือเริ่มคิดถึงอนาคตระยะยาว`,
           "",
-          "ลองเริ่มจาก 3 ข้อนี้:",
-          `1. เช็กปัญหาหลักของตัวเองก่อน ไม่เริ่มจากแพ็กเกจหรือราคา`,
-          `2. เลือกแนวทางที่เข้ากับชีวิตประจำวันของ ${shortText(brief.audience, 52)}`,
-          "3. วัดผลเป็นช่วง ๆ เพื่อรู้ว่าควรปรับอะไรต่อ",
+          "ก่อนเลือกแผน ลองเช็ก 3 เรื่องนี้ก่อน:",
+          "1. ถ้ารายได้หยุดลง คนที่เราดูแลจะมีเงินพอใช้กี่เดือน",
+          "2. ภาระหนี้ ค่าใช้จ่ายลูก และเป้าหมายเกษียณอยู่ตรงไหน",
+          "3. งบประมาณต่อเดือนควรสอดคล้องกับชีวิตจริง ไม่ทำให้แผนสะดุดกลางทาง",
           "",
-          `${brief.brandName} ช่วยวางแผนให้เข้าใจง่ายขึ้นแบบไม่กดดัน`,
+          `${brief.brandName} ช่วยวิเคราะห์ภาพรวมและแนะนำแนวทางคุ้มครองแบบเข้าใจง่าย ไม่ขายเกินความจำเป็น`,
           `CTA: ${brief.offer}`,
           "",
           hashtags,
         ].join("\n")
       ),
-      block("Creative Note", "ภาพควรใช้ headline สั้น 6-10 คำ เห็น pain point ชัด และมี CTA อยู่มุมล่าง"),
+      block("Creative Note", "ภาพควรดูสะอาด น่าเชื่อถือ มีที่ปรึกษาคุยกับครอบครัวหรือคนทำงาน พร้อม headline สั้นที่เน้นความมั่นคงและการวางแผน"),
     ],
     youtube: [
       block(
         "Title Options",
         [
-          `1. ${brief.keywords[0] || brief.businessType} สำหรับคนไม่มีเวลา: เริ่มยังไงให้เห็นผล`,
-          `2. 5 ข้อที่ควรรู้ก่อนเลือก${brief.keywords[0] || brief.businessType}`,
-          `3. วิธีดูแลตัวเองแบบไม่ยุ่งยากสำหรับ${shortText(brief.audience, 30)}`,
+          `1. ${keyword} เริ่มยังไงให้เหมาะกับครอบครัวและงบประมาณ`,
+          `2. 5 ข้อที่ควรรู้ก่อนเลือก${keyword}`,
+          `3. วางแผนคุ้มครองรายได้และอนาคตครอบครัวแบบเข้าใจง่าย`,
         ].join("\n")
       ),
       block(
         "Shorts Script",
         [
-          "0-2s: เปิดด้วยปัญหาที่เจ็บจริง",
-          `"${hooks[1]}"`,
-          "3-8s: เล่า misconception ที่คนมักเข้าใจผิด",
-          `9-18s: ให้ 3 เช็กลิสต์จากหัวข้อ "${shortText(brief.topic, 54)}"`,
-          `19-25s: ปิดด้วย CTA "${brief.offer}"`,
+          `0-2s: เปิดด้วยคำถาม: \"ถ้ารายได้หลักหยุดลง ครอบครัวมีแผนสำรองหรือยัง\"`,
+          "3-8s: อธิบายว่าแผนประกันที่ดีควรเริ่มจากภาระ รายได้ และเป้าหมาย ไม่ใช่เริ่มจากเบี้ย",
+          "9-18s: ให้เช็กลิสต์ 3 ข้อ: คนที่ต้องดูแล, หนี้สิน, งบประมาณที่จ่ายได้ต่อเนื่อง",
+          `19-25s: ปิดด้วย CTA: ${brief.offer}`,
         ].join("\n")
       ),
-      block(
-        "Description",
-        [
-          `${brief.topic}`,
-          "",
-          `คลิปนี้เหมาะสำหรับ ${brief.audience}`,
-          `สนใจเริ่มต้นกับ ${brief.brandName}: ${brief.offer}`,
-          "",
-          hashtags,
-        ].join("\n")
-      ),
+      block("Description", [`${brief.topic}`, "", `เหมาะสำหรับ ${brief.audience}`, `เริ่มวางแผนกับ ${brief.brandName}: ${brief.offer}`, "", hashtags].join("\n")),
     ],
     tiktok: [
       block(
@@ -272,80 +262,66 @@ function buildPlatformContent(brief) {
         [
           `Hook: ${hooks[2]}`,
           "",
-          "Scene 1: ถ่ายหน้าคนพูด + overlay ปัญหาหลัก",
-          `Text: "${brief.keywords[0] || brief.businessType} เริ่มยังไงให้ไม่เสียเวลา"`,
+          "Scene 1: ที่ปรึกษาพูดกับกล้องพร้อม overlay: ค่าเบี้ยไม่ใช่คำถามแรก",
+          `Text: "ก่อนเลือก${keyword} เช็ก 3 อย่างนี้ก่อน"`,
           "",
-          "Scene 2: โชว์ 3 ข้อแบบเร็ว",
-          "1. รู้เป้าหมายก่อน",
-          "2. เลือกวิธีที่ทำตามได้จริง",
-          "3. วัดผลและปรับแผน",
+          "Scene 2: โชว์เช็กลิสต์เร็ว ๆ",
+          "1. ใครต้องพึ่งพารายได้เรา",
+          "2. มีหนี้หรือภาระกี่บาท",
+          "3. งบที่จ่ายต่อเดือนได้ต่อเนื่องคือเท่าไร",
           "",
           `Scene 3: CTA: ${brief.offer}`,
         ].join("\n")
       ),
-      block(
-        "Caption",
-        [
-          `${hooks[3]}`,
-          `ใครกำลังสนใจเรื่อง ${brief.keywords[0] || brief.businessType} ลองเริ่มจากเช็กลิสต์นี้ก่อน`,
-          `${brief.offer}`,
-          hashtags,
-        ].join("\n")
-      ),
-      block("Editing Direction", "ตัดเร็ว 1-2 วินาทีต่อช็อต ใช้ subtitle ใหญ่ อ่านได้บนมือถือ และเปิดด้วยภาพที่เห็นสถานการณ์จริง"),
+      block("Caption", [`${hooks[3]}`, `ใครกำลังสนใจเรื่อง ${keyword} ลองเริ่มจากเช็กลิสต์นี้ก่อน`, `${brief.offer}`, hashtags].join("\n")),
+      block("Editing Direction", "ตัดกระชับ อ่านง่าย ใช้ subtitle ใหญ่บนมือถือ โทนภาพมืออาชีพ สะอาด และไม่ใช้ความกลัวเกินจริง"),
     ],
     linevoom: [
       block(
         "Post Copy",
         [
-          `${hooks[0]}`,
+          hooks[0],
           "",
-          `สำหรับใครที่กำลังมองหา${brief.keywords[0] || brief.businessType} แต่ไม่อยากเริ่มแบบเดาสุ่ม`,
-          `${brief.brandName} แนะนำให้เริ่มจากการประเมินความต้องการของตัวเองก่อน แล้วค่อยเลือกแผนที่เหมาะกับชีวิตประจำวัน`,
+          `สำหรับใครที่กำลังมองหา${keyword} แนะนำให้เริ่มจากการประเมินความต้องการจริงก่อน ไม่ใช่เริ่มจากการถามว่าแผนไหนถูกที่สุด`,
+          `${brief.brandName} ช่วยดูภาพรวมรายได้ ภาระ ครอบครัว และเป้าหมาย เพื่อวางแนวทางคุ้มครองที่เหมาะกับคุณมากขึ้น`,
           "",
-          `สนใจเริ่มง่าย ๆ: ${brief.offer}`,
+          `เริ่มง่าย ๆ: ${brief.offer}`,
         ].join("\n")
       ),
-      block("LINE VOOM Note", "ใช้ข้อความสั้นกว่า Facebook และชวนเพิ่มเพื่อนหรือทักแชตเพื่อปิด lead"),
+      block("LINE VOOM Note", "ใช้ข้อความสั้นกว่า Facebook เน้นความเข้าใจง่าย ความน่าเชื่อถือ และชวนทักเพื่อประเมินเบื้องต้น"),
     ],
     blog: [
       block("SEO Title", blogTitle),
-      block(
-        "Meta Description",
-        `คู่มือ${brief.keywords[0] || brief.businessType}สำหรับ${shortText(brief.audience, 44)} พร้อมเช็กลิสต์ วิธีเลือก และคำถามที่ควรรู้ก่อนตัดสินใจ`
-      ),
-      block("URL Slug", slug || "seo-content-brief"),
+      block("Meta Description", `คู่มือ${keyword}สำหรับ${shortText(brief.audience, 44)} พร้อมเช็กลิสต์ วางแผนคุ้มครอง รายได้ ครอบครัว และคำถามที่ควรรู้ก่อนตัดสินใจ`),
+      block("URL Slug", slug || "life-insurance-planning"),
       block(
         "Outline",
         [
           `H1: ${blogTitle}`,
-          `H2: ${brief.keywords[0] || brief.businessType} คืออะไร และเหมาะกับใคร`,
-          `H2: ปัญหาหลักของ ${shortText(brief.audience, 48)}`,
-          "H2: วิธีเลือกแนวทางที่เหมาะกับตัวเอง",
-          "H2: เช็กลิสต์ก่อนตัดสินใจ",
-          `H2: ทำไม ${brief.brandName} ถึงช่วยให้เริ่มง่ายขึ้น`,
+          `H2: ${keyword} คืออะไร และเหมาะกับใคร`,
+          `H2: ทำไม ${shortText(brief.audience, 48)} ควรวางแผนคุ้มครอง`,
+          "H2: เช็กลิสต์ก่อนเลือกแผนประกันชีวิต",
+          "H2: วิธีประเมินวงเงินคุ้มครองและงบประมาณต่อเดือน",
+          `H2: ทำไม ${brief.brandName} ถึงช่วยให้ตัดสินใจง่ายขึ้น`,
           "H2: คำถามที่พบบ่อย",
         ].join("\n")
       ),
       block(
         "FAQ",
         [
-          `Q: ${brief.keywords[0] || brief.businessType} เหมาะกับใคร?`,
+          `Q: ${keyword} เหมาะกับใคร?`,
           `A: เหมาะกับ ${brief.audience}`,
           "",
           "Q: ควรเริ่มจากอะไร?",
-          "A: เริ่มจากการประเมินปัญหา เป้าหมาย และข้อจำกัดในชีวิตประจำวันก่อน",
+          "A: เริ่มจากการดูรายได้ ภาระ คนที่ต้องดูแล เป้าหมาย และงบประมาณที่จ่ายได้ต่อเนื่อง",
           "",
-          "Q: ต้องใช้เวลานานไหม?",
-          "A: ขึ้นอยู่กับเป้าหมายและความสม่ำเสมอ ควรวัดผลเป็นระยะ",
+          "Q: ต้องซื้อแผนแพงที่สุดไหม?",
+          "A: ไม่จำเป็น แผนที่ดีควรเหมาะกับความเสี่ยง เป้าหมาย และกำลังจ่ายจริงของแต่ละคน",
         ].join("\n")
       ),
     ],
     aiSearch: [
-      block(
-        "Answer-First Summary",
-        `${brief.keywords[0] || brief.businessType} ที่เหมาะกับ ${shortText(brief.audience, 58)} ควรเริ่มจากการประเมินปัญหา เป้าหมาย และข้อจำกัดจริง ก่อนเลือกวิธีหรือแพ็กเกจ เพื่อให้แผนทำตามได้ต่อเนื่องและวัดผลได้`
-      ),
+      block("Answer-First Summary", `${keyword} ที่เหมาะกับ ${shortText(brief.audience, 58)} ควรเริ่มจากการประเมินรายได้ ภาระ ครอบครัว เป้าหมายชีวิต และงบประมาณ ก่อนเลือกแผน เพื่อให้การคุ้มครองสอดคล้องกับชีวิตจริงและดูแลคนสำคัญได้ต่อเนื่อง`),
       block(
         "Entity Facts",
         [
@@ -361,16 +337,15 @@ function buildPlatformContent(brief) {
         "AI Search Optimization Checklist",
         [
           "ตอบคำถามหลักตั้งแต่ย่อหน้าแรก",
-          "ใช้หัวข้อแบบ question-based เช่น เหมาะกับใคร ราคาเท่าไร เริ่มอย่างไร",
-          "ใส่ FAQ ที่ตอบแบบตรงและสั้น",
-          "ระบุ entity ให้ชัด: แบรนด์, บริการ, กลุ่มเป้าหมาย, พื้นที่ให้บริการ",
-          "เพิ่ม author bio หรือ expert review ถ้าเป็นหมวดสุขภาพ การเงิน หรือกฎหมาย",
+          "ใช้หัวข้อแบบ question-based เช่น เหมาะกับใคร เริ่มยังไง ต้องใช้เงินเท่าไร",
+          "หลีกเลี่ยงคำสัญญาเกินจริง และใส่หมายเหตุว่าเงื่อนไขขึ้นอยู่กับแบบประกันและการพิจารณา",
+          "ระบุ entity ให้ชัด: แบรนด์ บริการ กลุ่มเป้าหมาย เป้าหมายการเงิน และ CTA",
+          "เพิ่ม FAQ และ author bio เพื่อความน่าเชื่อถือในหมวดการเงิน",
         ].join("\n")
       ),
     ],
   };
 }
-
 function block(title, text) {
   return { title, text };
 }
@@ -586,10 +561,10 @@ function drawCanvas(result = state.latest) {
 function buildCanvasHeadline(brief) {
   const keyword = brief.keywords[0] || brief.businessType;
   const goalMap = {
-    "เพิ่มยอดขาย": `เปลี่ยนความสนใจเรื่อง${keyword} ให้กลายเป็นยอดขาย`,
-    "สร้างการรับรู้แบรนด์": `ทำให้คนจำ${brief.brandName} ได้จากปัญหาที่ใช่`,
-    "เก็บ Lead / นัดหมาย": `เริ่มต้น${keyword} ด้วยการประเมินที่เหมาะกับคุณ`,
-    "เพิ่มผู้ติดตาม": `คอนเทนต์${keyword} ที่คนอยากกดติดตาม`,
+    "เก็บ Lead / นัดหมาย": `เริ่มต้น${keyword} ด้วยการประเมินที่เหมาะกับชีวิตจริง`,
+    "สร้างการรับรู้แบรนด์": `ทำให้คนจำ${brief.brandName} ได้จากคำแนะนำที่น่าเชื่อถือ`,
+    "เพิ่มยอดขาย": `เปลี่ยนความสนใจเรื่อง${keyword} ให้เป็นการวางแผนที่ชัดเจน`,
+    "เพิ่มผู้ติดตาม": `คอนเทนต์${keyword} ที่คนอยากติดตามต่อ`,
     "ให้ความรู้เพื่อ SEO": `${keyword} แบบเข้าใจง่ายในโพสต์เดียว`,
   };
 
@@ -770,16 +745,28 @@ function setButtonLoading(button, loading, loadingText) {
   button.classList.remove("button-loading");
 }
 
+function setImageGenerationEnabled(enabled) {
+  const renderButton = els.renderButton;
+  renderButton.disabled = false;
+  renderButton.title = enabled
+    ? "สร้างภาพด้วย Gemini"
+    : "สร้างภาพด้วย Gemini";
+  renderButton.textContent = "ให้ Gemini สร้างภาพ";
+  renderButton.classList.remove("is-muted");
+}
+
 async function checkAiStatus() {
   setAiStatus("loading", "กำลังตรวจสอบ AI");
   try {
     const status = await apiRequest("/api/status");
     state.apiAvailable = true;
     state.aiConnected = Boolean(status.connected);
+    setImageGenerationEnabled(Boolean(status.imageEnabled));
     setAiStatus(state.aiConnected ? "" : "offline", state.aiConnected ? "Gemini พร้อมใช้งาน" : "เชื่อม Gemini");
   } catch {
     state.apiAvailable = false;
     state.aiConnected = false;
+    setImageGenerationEnabled(false);
     setAiStatus("offline", "เปิดผ่าน Local Gemini");
   }
 }
@@ -858,6 +845,14 @@ function resetGeneratedImage() {
   els.canvas.hidden = false;
 }
 
+function showFallbackImage(message) {
+  state.generatedImage = els.canvas.toDataURL("image/png");
+  els.generatedImage.src = state.generatedImage;
+  els.generatedImage.hidden = false;
+  els.canvas.hidden = true;
+  showToast(message);
+}
+
 async function generateAiImage() {
   if (!requireAiConnection()) return;
 
@@ -878,9 +873,14 @@ async function generateAiImage() {
     els.canvas.hidden = true;
     showToast("AI สร้างภาพเสร็จแล้ว");
   } catch (error) {
-    if ([400, 401, 403].includes(error.status)) {
+    const quotaLike =
+      error?.status === 429 ||
+      /quota|billing|limit|exceeded|free_tier/i.test(String(error.message || ""));
+    if ([400, 401, 403].includes(error.status) || quotaLike) {
+      showFallbackImage("Gemini ภาพเต็มโควตา ใช้ภาพสำรองในเครื่องแทน");
       state.aiConnected = false;
       setAiStatus("error", "API key ใช้งานไม่ได้");
+      return;
     }
     showToast(error.message);
   } finally {
@@ -998,3 +998,6 @@ bindEvents();
 loadHistory();
 drawCanvas();
 checkAiStatus();
+
+
+

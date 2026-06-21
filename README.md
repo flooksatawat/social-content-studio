@@ -1,10 +1,10 @@
-# Social Content Studio MVP
+# Life Plan Content Studio
 
-เว็บสำหรับสร้างกลยุทธ์ คอนเทนต์ SEO brief และภาพด้วย Gemini API
+เว็บสำหรับสร้างคอนเทนต์ประกันชีวิตและที่ปรึกษาทางการเงินมืออาชีพ รองรับ Facebook, YouTube, TikTok, LINE VOOM, Blog SEO และ AI Search
 
-## เปิดใช้งาน
+## ใช้งานบนเครื่อง
 
-ต้องใช้ Node.js 20 ขึ้นไป จากนั้นเปิดผ่าน local server:
+ต้องใช้ Node.js 20 ขึ้นไป แล้วเปิด local backend:
 
 ```powershell
 npm start
@@ -16,43 +16,36 @@ npm start
 http://127.0.0.1:4173/
 ```
 
-คลิกสถานะ `เชื่อม Gemini` ที่มุมขวาบน แล้วใส่ Gemini API key จาก Google AI Studio ระบบจะตรวจสอบคีย์และเก็บไว้ในหน่วยความจำของ server เท่านั้น คีย์จะไม่ถูกบันทึกลงไฟล์หรือ GitHub
+คลิกสถานะ `เชื่อม Gemini` ที่มุมขวาบน แล้วใส่ Gemini API key จาก Google AI Studio ระบบจะตรวจสอบคีย์และเก็บไว้ในไฟล์ `.env` บนเครื่องนี้เท่านั้น
 
-อีกวิธีคือกำหนด environment variable ก่อนเปิด server:
+## ทดสอบเว็บจริงกับ backend ในเครื่อง
 
-```powershell
-$env:GEMINI_API_KEY="AIza..."
-npm start
-```
-
-Gemini รุ่นข้อความมี Free Tier ตามโควตาของ Google แต่ Gemini Image API อาจต้องเปิด Billing แยกต่างหาก โปรดตรวจหน้า Pricing ของ Gemini API ก่อนใช้งานจริง
-
-## สิ่งที่ทำได้ใน MVP นี้
-
-- วิเคราะห์ campaign brief และกลุ่มเป้าหมายด้วย AI
-- รองรับ Facebook, YouTube, TikTok, LINE VOOM, Blog SEO และ AI Search
-- สร้าง hook, caption, video script, SEO title, meta description, outline, FAQ และ entity facts
-- สร้าง AI image prompt และภาพจริงด้วย Gemini Image
-- เลือกสัดส่วนภาพตามแพลตฟอร์มและปรับ mood ภาพ
-- มี canvas preview สำรองก่อนสร้างภาพจริง
-- เก็บประวัติชุดคอนเทนต์ล่าสุดใน localStorage
-- ใช้งาน responsive บนมือถือ, tablet และ desktop
-
-## ขั้นถัดไปที่ควรทำ
-
-1. เพิ่มระบบ login และ workspace แยกตามแบรนด์
-2. เพิ่ม database สำหรับเก็บ brand voice, campaign, media และ content calendar
-3. ต่อ social OAuth ทีละแพลตฟอร์ม
-4. ทำ scheduler + queue สำหรับโพสต์อัตโนมัติ
-5. เพิ่ม analytics ingestion และ dashboard วิเคราะห์กลุ่มเป้าหมาย
-## Public web testing with local backend
-
-You can keep the backend on your own machine and still test through a public URL by passing the API base URL in the query string.
+สามารถเปิด frontend บน GitHub Pages แล้วให้เรียก backend ในเครื่องผ่าน tunnel ได้ด้วย query string:
 
 ```text
-https://your-frontend.example/?api=https://your-tunnel-domain.example
+https://flooksatawat.github.io/social-content-studio/?api=https://your-tunnel-domain.example
 ```
 
-The frontend will send `/api/*` requests to the public backend URL instead of the current origin.
+frontend จะส่งคำขอ `/api/*` ไปยัง backend URL ที่ใส่ใน `api=...`
 
-When you connect Gemini in the app, the backend saves the API key into the local `.env` file in this project folder so it survives restarts on this machine.
+## ฟีเจอร์ปัจจุบัน
+
+- สร้าง campaign brief สำหรับประกันชีวิตและที่ปรึกษาทางการเงิน
+- ให้ AI ช่วยคิดกลยุทธ์ hooks, caption, script, Blog SEO และ AI Search brief
+- สร้าง image prompt สำหรับงานสายการเงินที่ดูน่าเชื่อถือ
+- รองรับ canvas preview และดาวน์โหลด PNG
+- ถ้า Gemini Image ติด quota ระบบจะใช้ภาพสำรองจาก canvas แทน
+- เก็บประวัติชุดคอนเทนต์ล่าสุดใน browser
+- ใช้งาน responsive บนมือถือ, iPad/tablet และคอมพิวเตอร์
+
+## หมายเหตุเรื่อง Gemini
+
+Gemini text model อาจใช้งานได้ตาม free tier/โควตาของ Google แต่ Gemini image model อาจต้องมี billing หรือ quota แยกตาม project/API key ถ้าภาพติด quota เว็บจะยังไม่ล้ม และจะใช้ภาพ preview สำรองแทน
+
+## ขั้นถัดไป
+
+1. เพิ่มระบบ workspace แยกตามแบรนด์หรือตัวแทน
+2. เพิ่ม content calendar และ scheduler
+3. เชื่อม social OAuth สำหรับโพสต์จริง
+4. เพิ่ม analytics dashboard สำหรับวิเคราะห์กลุ่มเป้าหมาย
+5. เพิ่ม compliance checklist สำหรับคอนเทนต์ประกันชีวิตและการเงิน
