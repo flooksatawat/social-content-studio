@@ -54,3 +54,5 @@ https://your-frontend.example/?api=https://your-tunnel-domain.example
 ```
 
 The frontend will send `/api/*` requests to the public backend URL instead of the current origin.
+
+When you connect Gemini in the app, the backend saves the API key into the local `.env` file in this project folder so it survives restarts on this machine.

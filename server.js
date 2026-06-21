@@ -8,8 +8,56 @@ const TEXT_MODEL = process.env.GEMINI_TEXT_MODEL || "gemini-3.5-flash";
 const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || "gemini-3.1-flash-image";
 const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
 const ROOT = __dirname;
+const ENV_PATH = path.join(ROOT, ".env");
 
-let runtimeApiKey = process.env.GEMINI_API_KEY || "";
+function parseEnvFile(text) {
+  return String(text || "")
+    .split(/\r?\n/)
+    .reduce((acc, line) => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith("#")) return acc;
+      const separatorIndex = trimmed.indexOf("=");
+      if (separatorIndex < 0) return acc;
+      const key = trimmed.slice(0, separatorIndex).trim();
+      let value = trimmed.slice(separatorIndex + 1).trim();
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      acc[key] = value;
+      return acc;
+    }, {});
+}
+
+function readLocalEnv() {
+  try {
+    if (!fs.existsSync(ENV_PATH)) return {};
+    return parseEnvFile(fs.readFileSync(ENV_PATH, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
+function writeLocalEnv(values) {
+  const merged = { ...readLocalEnv(), ...values };
+  const lines = [
+    `GEMINI_API_KEY=${merged.GEMINI_API_KEY || ""}`,
+    `GEMINI_TEXT_MODEL=${merged.GEMINI_TEXT_MODEL || TEXT_MODEL}`,
+    `GEMINI_IMAGE_MODEL=${merged.GEMINI_IMAGE_MODEL || IMAGE_MODEL}`,
+    `HOST=${merged.HOST || HOST}`,
+    `PORT=${merged.PORT || PORT}`,
+  ];
+  fs.writeFileSync(ENV_PATH, `${lines.join("\n")}\n`, "utf8");
+}
+
+function clearLocalEnvKey() {
+  const merged = readLocalEnv();
+  delete merged.GEMINI_API_KEY;
+  writeLocalEnv(merged);
+}
+
+const localEnv = readLocalEnv();
+let runtimeApiKey =
+  process.env.GEMINI_API_KEY || localEnv.GEMINI_API_KEY || "";
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -295,12 +343,21 @@ async function handleApi(request, response, pathname) {
 
     await geminiRequest("/models", undefined, candidate, "GET");
     runtimeApiKey = candidate;
+    writeLocalEnv({
+      ...localEnv,
+      GEMINI_API_KEY: candidate,
+      GEMINI_TEXT_MODEL: TEXT_MODEL,
+      GEMINI_IMAGE_MODEL: IMAGE_MODEL,
+      HOST,
+      PORT,
+    });
     sendJson(response, 200, { connected: true, textModel: TEXT_MODEL, imageModel: IMAGE_MODEL });
     return true;
   }
 
   if (request.method === "DELETE" && pathname === "/api/config") {
     runtimeApiKey = "";
+    clearLocalEnvKey();
     sendJson(response, 200, { connected: false });
     return true;
   }
