@@ -47,17 +47,17 @@ button {
 }
 
 .app-shell {
-  width: min(1780px, calc(100% - 24px));
+  width: min(1600px, calc(100vw - 24px));
   margin: 0 auto;
-  padding: 20px 0 36px;
+  padding: 14px 0 24px;
 }
 
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding: 12px 2px 18px;
+  gap: 12px;
+  padding: 8px 2px 12px;
 }
 
 .brand-lockup {
@@ -88,7 +88,7 @@ button {
 }
 
 .topbar h1 {
-  font-size: clamp(32px, 4vw, 54px);
+  font-size: clamp(28px, 3.2vw, 42px);
   line-height: 0.98;
 }
 
@@ -145,7 +145,7 @@ button {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(320px, 380px) minmax(320px, 392px) minmax(420px, 1fr);
+  grid-template-columns: minmax(300px, 360px) minmax(330px, 430px) minmax(360px, 1fr);
   gap: 14px;
   align-items: start;
 }
@@ -166,10 +166,10 @@ button {
 
 .hero-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1.3fr) minmax(220px, 300px);
-  gap: 22px;
-  margin: 6px 0 14px;
-  padding: 28px;
+  grid-template-columns: minmax(0, 1.25fr) minmax(210px, 270px);
+  gap: 18px;
+  margin: 4px 0 12px;
+  padding: 20px 24px;
   border-radius: 22px;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.94), rgba(248, 253, 255, 0.76)),
@@ -178,7 +178,7 @@ button {
 }
 
 .hero-copy h2 {
-  font-size: clamp(26px, 2.8vw, 42px);
+  font-size: clamp(24px, 2.4vw, 34px);
   line-height: 1.05;
   margin-bottom: 12px;
 }
@@ -192,7 +192,7 @@ button {
 .hero-visual {
   display: grid;
   place-items: center;
-  min-height: 220px;
+  min-height: 180px;
   perspective: 900px;
 }
 
@@ -200,7 +200,7 @@ button {
   position: relative;
   display: grid;
   place-items: center;
-  width: min(260px, 100%);
+  width: min(220px, 100%);
   aspect-ratio: 1;
   border-radius: 28px;
   background:
@@ -329,7 +329,11 @@ button {
 .brief-panel,
 .output-panel,
 .visual-panel {
-  min-height: 640px;
+  min-height: 580px;
+}
+
+.output-panel {
+  min-width: 0;
 }
 
 .panel-heading {
@@ -390,7 +394,7 @@ textarea:focus {
 
 .split-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 
