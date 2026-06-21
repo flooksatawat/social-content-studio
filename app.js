@@ -77,7 +77,6 @@ const moodPalettes = {
 };
 
 const sampleBrief = {
-  brandName: "Premier Life Advisory",
   audiencePreset: "young-family",
   audience: "คนทำงานวัยสร้างตัวและครอบครัวเริ่มต้น",
   tone: "มืออาชีพ อบอุ่น",
@@ -176,7 +175,7 @@ function getBrief() {
   const audienceText = data.audiencePreset === "custom" ? clean(data.audience) : preset.label;
 
   return {
-    brandName: clean(data.brandName) || "ที่ปรึกษาของคุณ",
+    brandName: "ที่ปรึกษาของคุณ",
     audiencePreset: clean(data.audiencePreset) || "young-family",
     audience: audienceText || "กลุ่มเป้าหมายหลัก",
     tone: clean(data.tone) || "มืออาชีพ อบอุ่น",
@@ -240,7 +239,7 @@ function buildHooks(brief) {
 function buildImagePrompt(brief) {
   const keyword = brief.keywords[0] || "ประกันชีวิต";
   return [
-    `Create a clean, premium social media image for life insurance and financial advisory brand ${brief.brandName}.`,
+    `Create a clean, premium social media image for a life insurance and financial advisory brand.`,
     `Subject: AI analyzed content for ${brief.audience}.`,
     `Audience: ${brief.audience}.`,
     `Visual style: modern premium finance aesthetic with intelligent AI overlay, trustworthy, human-centered, bright natural lighting, realistic Thai professional scene, clear focal point, space for Thai headline text.`,
