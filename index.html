@@ -25,8 +25,9 @@
       </header>
 
       <main class="workspace">
-        <section class="panel brief-panel" aria-labelledby="brief-title">
-          <form id="briefForm" class="brief-form">
+        <div class="workspace-row workspace-row-top">
+          <section class="panel brief-panel" aria-labelledby="brief-title">
+            <form id="briefForm" class="brief-form">
             <div class="step-strip" aria-label="ขั้นตอนบรีฟ">
               <span>1. เลือกกลุ่มเป้าหมาย</span>
               <span>2. เลือกโทนเสียง</span>
@@ -80,10 +81,10 @@
               <button class="primary-button" id="generateContent" type="submit">ให้ AI วิเคราะห์และสร้างชุดคอนเทนต์</button>
               <button class="secondary-button" id="resetForm" type="reset">รีเซ็ต</button>
             </div>
-          </form>
-        </section>
+            </form>
+          </section>
 
-        <section class="panel output-panel" aria-labelledby="output-title">
+          <section class="panel output-panel" aria-labelledby="output-title">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 2</p>
@@ -101,9 +102,11 @@
               <p>กรอก brief ด้านซ้าย แล้วกดสร้าง ระบบจะทำ caption, hooks, script, SEO brief และ image prompt ให้ตามช่องทางที่เลือก</p>
             </div>
           </div>
-        </section>
+          </section>
+        </div>
 
-        <aside class="panel visual-panel" aria-labelledby="visual-title">
+        <div class="workspace-row workspace-row-bottom">
+          <aside class="panel visual-panel" aria-labelledby="visual-title">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 3</p>
@@ -148,9 +151,9 @@
             <button class="primary-button" id="renderImage" type="button">ให้ Gemini สร้างภาพ</button>
             <button class="secondary-button" id="copyPrompt" type="button">คัดลอก prompt</button>
           </div>
-        </aside>
+          </aside>
 
-        <section class="panel video-panel" aria-labelledby="video-title">
+          <section class="panel video-panel" aria-labelledby="video-title">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 4</p>
@@ -165,7 +168,8 @@
               <p>กดสร้างคอนเทนต์ก่อน แล้วระบบจะสรุปสคริปต์วิดีโอสั้นให้ต่อได้ทันที</p>
             </div>
           </div>
-        </section>
+          </section>
+        </div>
       </main>
     </div>
 
