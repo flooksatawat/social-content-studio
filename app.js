@@ -81,9 +81,6 @@ const sampleBrief = {
   audience: "คนทำงานวัยสร้างตัวและครอบครัวเริ่มต้น",
   tone: "มืออาชีพ อบอุ่น",
   painPoint: "ยังไม่รู้ว่าจะเริ่มวางแผนคุ้มครองชีวิตและการเงินอย่างไรให้เหมาะกับครอบครัวจริง",
-  campaignGoal: "สร้างความเข้าใจ สร้างความน่าเชื่อถือ และปิดการนัดหมายเพื่อประเมินแผน",
-  offer: "นัดปรึกษาแผนคุ้มครองฟรี 15 นาที",
-  keywords: "ประกันชีวิต, ที่ปรึกษาทางการเงิน, วางแผนคุ้มครอง, วางแผนเกษียณ, ปกป้องครอบครัว",
 };
 
 const audiencePresets = {
@@ -180,9 +177,9 @@ function getBrief() {
     audience: audienceText || "กลุ่มเป้าหมายหลัก",
     tone: clean(data.tone) || "มืออาชีพ อบอุ่น",
     painPoint: clean(data.painPoint) || preset.problem,
-    campaignGoal: clean(data.campaignGoal) || "สร้างความเข้าใจและปิดการนัดหมาย",
-    offer: clean(data.offer) || "นัดปรึกษาแผนคุ้มครอง",
-    keywords: splitKeywords(data.keywords),
+    campaignGoal: preset.funnel,
+    offer: preset.cta,
+    keywords: ["ประกันชีวิต", "ที่ปรึกษาทางการเงิน", "วางแผนคุ้มครอง"],
     channels: channels.length ? channels : ["facebook"],
   };
 }
@@ -219,9 +216,9 @@ function buildStrategy(brief) {
 
   return {
     angle: `AI วิเคราะห์กลุ่ม ${audienceShort} ที่มี pain point "${painShort}"`,
-    promise: `แปลงข้อมูลเป็นคอนเทนต์ที่ตอบโจทย์ตามโทน "${brief.tone}" และเป้าหมาย "${brief.campaignGoal}"`,
+    promise: `แปลงข้อมูลเป็นคอนเทนต์ที่ตอบโจทย์ตามโทน "${brief.tone}" และ funnel "${preset.funnel}"`,
     proof: `อ้างอิง funnel "${preset.funnel}" พร้อม keyword "${keywordLead}" เพื่อวางคอนเทนต์ที่พาคนจากสนใจไปสู่การทัก`,
-    cta: brief.offer,
+    cta: preset.cta,
   };
 }
 
@@ -274,7 +271,7 @@ function buildPlatformContent(brief) {
           "3. งบประมาณที่จ่ายต่อเนื่องได้จริงอยู่ระดับไหน",
           "",
           `${brief.brandName} ช่วยวิเคราะห์ภาพรวมและแนะนำแนวทางคุ้มครองให้สอดคล้องกับ funnel "${preset.funnel}"`,
-          `CTA: ${brief.offer}`,
+          `CTA: ${preset.cta}`,
           "",
           hashtags,
         ].join("\n")
@@ -296,10 +293,10 @@ function buildPlatformContent(brief) {
           `0-2s: เปิดด้วยคำถาม: \"ถ้ารายได้หลักหยุดลง ครอบครัวมีแผนสำรองหรือยัง\"`,
           "3-8s: อธิบายว่าแผนประกันที่ดีควรเริ่มจากภาระ รายได้ และเป้าหมาย ไม่ใช่เริ่มจากเบี้ย",
           "9-18s: ให้เช็กลิสต์ 3 ข้อ: คนที่ต้องดูแล, หนี้สิน, งบประมาณที่จ่ายได้ต่อเนื่อง",
-          `19-25s: ปิดด้วย CTA: ${brief.offer}`,
+          `19-25s: ปิดด้วย CTA: ${preset.cta}`,
         ].join("\n")
       ),
-      block("Description", [`${brief.painPoint}`, "", `เหมาะสำหรับ ${brief.audience}`, `เริ่มวางแผนกับ ${brief.brandName}: ${brief.offer}`, "", hashtags].join("\n")),
+      block("Description", [`${brief.painPoint}`, "", `เหมาะสำหรับ ${brief.audience}`, `เริ่มวางแผนกับ ${brief.brandName}: ${preset.cta}`, "", hashtags].join("\n")),
     ],
     tiktok: [
       block(
@@ -315,10 +312,10 @@ function buildPlatformContent(brief) {
           "2. มีหนี้หรือภาระกี่บาท",
           "3. งบที่จ่ายต่อเดือนได้ต่อเนื่องคือเท่าไร",
           "",
-          `Scene 3: CTA: ${brief.offer}`,
+          `Scene 3: CTA: ${preset.cta}`,
         ].join("\n")
       ),
-      block("Caption", [`${hooks[3]}`, `ใครกำลังสนใจเรื่อง ${keyword} ลองเริ่มจากเช็กลิสต์นี้ก่อน`, `${brief.offer}`, hashtags].join("\n")),
+      block("Caption", [`${hooks[3]}`, `ใครกำลังสนใจเรื่อง ${keyword} ลองเริ่มจากเช็กลิสต์นี้ก่อน`, `${preset.cta}`, hashtags].join("\n")),
       block("Editing Direction", "ตัดกระชับ อ่านง่าย ใช้ subtitle ใหญ่บนมือถือ โทนภาพมืออาชีพ สะอาด และไม่ใช้ความกลัวเกินจริง"),
     ],
     linevoom: [
@@ -330,7 +327,7 @@ function buildPlatformContent(brief) {
           `สำหรับใครที่กำลังมองหา${keyword} แนะนำให้เริ่มจากการประเมินความต้องการจริงก่อน ไม่ใช่เริ่มจากการถามว่าแผนไหนถูกที่สุด`,
           `${brief.brandName} ช่วยดูภาพรวมรายได้ ภาระ ครอบครัว และเป้าหมาย เพื่อวางแนวทางคุ้มครองที่เหมาะกับคุณมากขึ้น`,
           "",
-          `เริ่มง่าย ๆ: ${brief.offer}`,
+          `เริ่มง่าย ๆ: ${preset.cta}`,
         ].join("\n")
       ),
       block("LINE VOOM Note", "ใช้ข้อความสั้นกว่า Facebook เน้นความเข้าใจง่าย ความน่าเชื่อถือ และชวนทักเพื่อประเมินเบื้องต้น"),
@@ -374,7 +371,7 @@ function buildPlatformContent(brief) {
           `Target audience: ${brief.audience}`,
           `Tone: ${brief.tone}`,
           `Primary pain point: ${brief.painPoint}`,
-          `Offer: ${brief.offer}`,
+          `Offer: ${preset.cta}`,
           `Keywords: ${brief.keywords.join(", ") || "ประกันชีวิต"}`,
         ].join("\n")
       ),
@@ -855,6 +852,8 @@ function renderGenerationResult(result) {
   state.latest = result;
   state.activeChannel = Object.keys(result.content)[0] || "facebook";
 
+  syncAnalysisToForm(result);
+
   renderSnapshot(result.strategy);
   renderTabs(result);
   renderOutput(result);
@@ -863,6 +862,30 @@ function renderGenerationResult(result) {
     : result.brief.channels.find((channel) => platformMeta[channel]?.size) || "facebook";
   drawCanvas(result);
   saveHistory(result);
+}
+
+function syncAnalysisToForm(result) {
+  const brief = result?.brief || {};
+  const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
+  const hook = result?.hooks?.[0] || preset.hook;
+  const analysisSummary = result?.strategy?.angle || `AI วิเคราะห์กลุ่ม ${brief.audience || preset.label}`;
+  const needSummary = result?.strategy?.promise || preset.need;
+  const funnelSummary = result?.strategy?.proof || preset.funnel;
+
+  const audienceField = document.querySelector('[name="audience"]');
+  if (audienceField) {
+    audienceField.value = brief.audience || preset.label;
+  }
+
+  const toneField = document.querySelector('[name="tone"]');
+  if (toneField) {
+    toneField.value = brief.tone || "มืออาชีพ อบอุ่น";
+  }
+
+  const painField = document.querySelector('[name="painPoint"]');
+  if (painField) {
+    painField.value = [analysisSummary, needSummary, hook].filter(Boolean).join("\n");
+  }
 }
 
 function resetGeneratedImage() {
