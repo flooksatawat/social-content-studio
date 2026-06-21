@@ -145,7 +145,7 @@ button {
 
 .workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: minmax(320px, 380px) minmax(320px, 392px) minmax(420px, 1fr);
   gap: 14px;
   align-items: start;
 }
@@ -329,7 +329,7 @@ button {
 .brief-panel,
 .output-panel,
 .visual-panel {
-  min-height: 0;
+  min-height: 640px;
 }
 
 .panel-heading {
