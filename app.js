@@ -92,6 +92,9 @@ const state = {
   latest: null,
   activeChannel: "facebook",
   history: [],
+  aiConnected: false,
+  apiAvailable: false,
+  generatedImage: "",
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -103,11 +106,20 @@ const els = {
   tabs: $("#channelTabs"),
   output: $("#contentOutput"),
   canvas: $("#postCanvas"),
+  generatedImage: $("#generatedImage"),
   prompt: $("#imagePrompt"),
   imageFormat: $("#imageFormat"),
   visualMood: $("#visualMood"),
   toast: $("#toast"),
   history: $("#historyList"),
+  aiStatusButton: $("#aiStatusButton"),
+  aiStatusText: $("#aiStatusText"),
+  aiDialog: $("#aiDialog"),
+  aiConnectForm: $("#aiConnectForm"),
+  apiKeyInput: $("#apiKeyInput"),
+  aiDialogMessage: $("#aiDialogMessage"),
+  generateButton: $("#generateContent"),
+  renderButton: $("#renderImage"),
 };
 
 function getBrief() {
@@ -504,6 +516,7 @@ function loadHistory() {
 }
 
 function drawCanvas(result = state.latest) {
+  resetGeneratedImage();
   const brief = result?.brief || getBrief();
   const format = els.imageFormat.value;
   const mood = els.visualMood.value;
@@ -687,17 +700,129 @@ function showToast(message) {
   showToast.timeout = window.setTimeout(() => els.toast.classList.remove("show"), 1800);
 }
 
-function applySampleBrief() {
-  Object.entries(sampleBrief).forEach(([key, value]) => {
-    const input = document.querySelector(`[name="${key}"]`);
-    if (input) input.value = value;
+async function apiRequest(path, options = {}) {
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
   });
-  showToast("เติมตัวอย่างแล้ว");
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const error = new Error(payload.error || `Request failed (${response.status})`);
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
 }
 
-function runGeneration(event) {
-  event?.preventDefault();
-  const result = generateContent(getBrief());
+function setAiStatus(mode, text) {
+  els.aiStatusButton.classList.remove("is-offline", "is-error", "is-loading");
+  if (mode) els.aiStatusButton.classList.add(`is-${mode}`);
+  els.aiStatusText.textContent = text;
+}
+
+function setDialogMessage(message = "", isError = false) {
+  els.aiDialogMessage.textContent = message;
+  els.aiDialogMessage.classList.toggle("is-error", isError);
+}
+
+function openAiDialog(message = "") {
+  setDialogMessage(message);
+  if (!els.aiDialog.open) els.aiDialog.showModal();
+  window.setTimeout(() => els.apiKeyInput.focus(), 50);
+}
+
+function closeAiDialog() {
+  els.aiDialog.close();
+  setDialogMessage("");
+}
+
+function setButtonLoading(button, loading, loadingText) {
+  if (!button) return;
+  if (loading) {
+    button.dataset.originalText = button.textContent;
+    button.textContent = loadingText;
+    button.disabled = true;
+    button.classList.add("button-loading");
+    return;
+  }
+
+  button.textContent = button.dataset.originalText || button.textContent;
+  button.disabled = false;
+  button.classList.remove("button-loading");
+}
+
+async function checkAiStatus() {
+  setAiStatus("loading", "กำลังตรวจสอบ AI");
+  try {
+    const status = await apiRequest("/api/status");
+    state.apiAvailable = true;
+    state.aiConnected = Boolean(status.connected);
+    setAiStatus(state.aiConnected ? "" : "offline", state.aiConnected ? "AI พร้อมใช้งาน" : "เชื่อม AI");
+  } catch {
+    state.apiAvailable = false;
+    state.aiConnected = false;
+    setAiStatus("offline", "เปิดผ่าน Local AI");
+  }
+}
+
+async function connectAi(event) {
+  event.preventDefault();
+  const apiKey = els.apiKeyInput.value.trim();
+  if (!apiKey) {
+    setDialogMessage("กรุณากรอก OpenAI API key", true);
+    return;
+  }
+
+  setButtonLoading($("#connectAi"), true, "กำลังตรวจสอบ...");
+  setDialogMessage("กำลังตรวจสอบ API key กับ OpenAI");
+  try {
+    await apiRequest("/api/config", {
+      method: "POST",
+      body: JSON.stringify({ apiKey }),
+    });
+    state.apiAvailable = true;
+    state.aiConnected = true;
+    els.apiKeyInput.value = "";
+    setAiStatus("", "AI พร้อมใช้งาน");
+    closeAiDialog();
+    showToast("เชื่อม OpenAI สำเร็จ");
+  } catch (error) {
+    state.aiConnected = false;
+    setAiStatus("error", "เชื่อม AI ไม่สำเร็จ");
+    setDialogMessage(error.message, true);
+  } finally {
+    setButtonLoading($("#connectAi"), false);
+  }
+}
+
+async function disconnectAi() {
+  try {
+    if (state.apiAvailable) await apiRequest("/api/config", { method: "DELETE" });
+  } catch {
+    // The local server may already be stopped.
+  }
+  state.aiConnected = false;
+  els.apiKeyInput.value = "";
+  setAiStatus("offline", "เชื่อม AI");
+  closeAiDialog();
+  showToast("ยกเลิกการเชื่อม AI แล้ว");
+}
+
+function requireAiConnection() {
+  if (state.aiConnected) return true;
+  openAiDialog(
+    state.apiAvailable
+      ? "เชื่อม OpenAI API key เพื่อเริ่มสร้างคอนเทนต์และภาพจริง"
+      : "กรุณาเปิดระบบผ่าน http://127.0.0.1:4173 เพื่อใช้ AI"
+  );
+  return false;
+}
+
+function renderGenerationResult(result) {
   state.latest = result;
   state.activeChannel = Object.keys(result.content)[0] || "facebook";
 
@@ -709,25 +834,108 @@ function runGeneration(event) {
     : result.brief.channels.find((channel) => platformMeta[channel]?.size) || "facebook";
   drawCanvas(result);
   saveHistory(result);
-  showToast("สร้างชุดคอนเทนต์แล้ว");
+}
+
+function resetGeneratedImage() {
+  state.generatedImage = "";
+  els.generatedImage.removeAttribute("src");
+  els.generatedImage.hidden = true;
+  els.canvas.hidden = false;
+}
+
+async function generateAiImage() {
+  if (!requireAiConnection()) return;
+
+  const prompt = els.prompt.value.trim() || buildImagePrompt(getBrief());
+  setButtonLoading(els.renderButton, true, "AI กำลังสร้างภาพ...");
+  try {
+    const image = await apiRequest("/api/generate-image", {
+      method: "POST",
+      body: JSON.stringify({
+        prompt,
+        format: els.imageFormat.value,
+        mood: els.visualMood.value,
+      }),
+    });
+    state.generatedImage = image.dataUrl;
+    els.generatedImage.src = image.dataUrl;
+    els.generatedImage.hidden = false;
+    els.canvas.hidden = true;
+    showToast("AI สร้างภาพเสร็จแล้ว");
+  } catch (error) {
+    if (error.status === 401) {
+      state.aiConnected = false;
+      setAiStatus("error", "API key ใช้งานไม่ได้");
+    }
+    showToast(error.message);
+  } finally {
+    setButtonLoading(els.renderButton, false);
+  }
+}
+
+function applySampleBrief() {
+  Object.entries(sampleBrief).forEach(([key, value]) => {
+    const input = document.querySelector(`[name="${key}"]`);
+    if (input) input.value = value;
+  });
+  showToast("เติมตัวอย่างแล้ว");
+}
+
+async function runGeneration(event) {
+  event?.preventDefault();
+  if (!requireAiConnection()) return;
+
+  const brief = getBrief();
+  setButtonLoading(els.generateButton, true, "AI กำลังคิด...");
+  els.output.innerHTML = `
+    <div class="empty-state">
+      <h3>AI กำลังวิเคราะห์กลุ่มเป้าหมาย</h3>
+      <p>กำลังสร้างกลยุทธ์ hooks คอนเทนต์รายช่องทาง SEO brief และ prompt สำหรับภาพ</p>
+    </div>
+  `;
+
+  try {
+    const generated = await apiRequest("/api/generate-content", {
+      method: "POST",
+      body: JSON.stringify({ brief }),
+    });
+    const result = {
+      ...generated,
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      createdAt: new Date().toISOString(),
+      brief,
+    };
+    renderGenerationResult(result);
+    showToast("AI สร้างชุดคอนเทนต์แล้ว");
+  } catch (error) {
+    if (error.status === 401) {
+      state.aiConnected = false;
+      setAiStatus("error", "API key ใช้งานไม่ได้");
+    }
+    els.output.innerHTML = `
+      <div class="empty-state">
+        <h3>สร้างคอนเทนต์ไม่สำเร็จ</h3>
+        <p>${escapeHtml(error.message)}</p>
+      </div>
+    `;
+    showToast(error.message);
+  } finally {
+    setButtonLoading(els.generateButton, false);
+  }
 }
 
 function downloadCanvas() {
-  drawCanvas();
   const link = document.createElement("a");
   const brief = state.latest?.brief || getBrief();
   link.download = `${slugifyThai(brief.brandName) || "social-post"}-${els.imageFormat.value}.png`;
-  link.href = els.canvas.toDataURL("image/png");
+  link.href = state.generatedImage || els.canvas.toDataURL("image/png");
   link.click();
 }
 
 function bindEvents() {
   els.form.addEventListener("submit", runGeneration);
   $("#sampleBrief").addEventListener("click", applySampleBrief);
-  $("#renderImage").addEventListener("click", () => {
-    drawCanvas();
-    showToast("สร้างภาพตัวอย่างใหม่แล้ว");
-  });
+  els.renderButton.addEventListener("click", generateAiImage);
   $("#downloadImage").addEventListener("click", downloadCanvas);
   $("#copyPrompt").addEventListener("click", () => copyText(els.prompt.value));
   $("#copyAll").addEventListener("click", () => {
@@ -761,8 +969,17 @@ function bindEvents() {
   [els.imageFormat, els.visualMood].forEach((control) => {
     control.addEventListener("change", () => drawCanvas());
   });
+
+  els.aiStatusButton.addEventListener("click", () => openAiDialog());
+  els.aiConnectForm.addEventListener("submit", connectAi);
+  $("#closeAiDialog").addEventListener("click", closeAiDialog);
+  $("#disconnectAi").addEventListener("click", disconnectAi);
+  els.aiDialog.addEventListener("click", (event) => {
+    if (event.target === els.aiDialog) closeAiDialog();
+  });
 }
 
 bindEvents();
 loadHistory();
 drawCanvas();
+checkAiStatus();

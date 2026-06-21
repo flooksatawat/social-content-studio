@@ -8,7 +8,7 @@
       name="description"
       content="เครื่องมือสร้างคอนเทนต์ รูปภาพตัวอย่าง และ SEO brief สำหรับ Facebook, YouTube, TikTok, LINE VOOM และ Blog"
     />
-    <link rel="stylesheet" href="./styles.css?v=0ef77d1" />
+    <link rel="stylesheet" href="./styles.css?v=ai-live-2" />
   </head>
   <body>
     <div class="app-shell">
@@ -20,10 +20,10 @@
             <h1>Social Content Studio</h1>
           </div>
         </div>
-        <div class="status-cluster" aria-label="สถานะระบบ">
+        <button class="status-cluster" id="aiStatusButton" type="button" aria-label="สถานะ AI">
           <span class="status-dot"></span>
-          <span>Local prototype</span>
-        </div>
+          <span id="aiStatusText">กำลังตรวจสอบ AI</span>
+        </button>
       </header>
 
       <section class="hero-panel panel" aria-label="ภาพรวมระบบ">
@@ -229,15 +229,16 @@
 
           <div class="canvas-wrap">
             <canvas id="postCanvas" width="1080" height="1080" aria-label="ตัวอย่างภาพโพสต์"></canvas>
+            <img id="generatedImage" class="generated-image" alt="ภาพที่สร้างโดย AI" hidden />
           </div>
 
           <label class="image-prompt-label">
             AI Image Prompt
-            <textarea id="imagePrompt" rows="7" readonly></textarea>
+            <textarea id="imagePrompt" rows="7"></textarea>
           </label>
 
           <div class="visual-actions">
-            <button class="secondary-button" id="renderImage" type="button">สร้างภาพตัวอย่างใหม่</button>
+            <button class="primary-button" id="renderImage" type="button">ให้ AI สร้างภาพ</button>
             <button class="secondary-button" id="copyPrompt" type="button">คัดลอก prompt</button>
           </div>
         </aside>
@@ -276,7 +277,32 @@
       </section>
     </div>
 
+    <dialog class="ai-dialog" id="aiDialog">
+      <form class="ai-dialog-form" id="aiConnectForm" method="dialog">
+        <div class="ai-dialog-heading">
+          <div>
+            <p class="eyebrow">Secure local connection</p>
+            <h2>เชื่อม OpenAI API</h2>
+          </div>
+          <button class="dialog-close" id="closeAiDialog" type="button" aria-label="ปิด">×</button>
+        </div>
+        <p class="dialog-copy">
+          API key จะถูกส่งไปยัง backend ที่เครื่องนี้และเก็บในหน่วยความจำเท่านั้น
+          ไม่ถูกบันทึกลงไฟล์หรือส่งขึ้น GitHub
+        </p>
+        <label>
+          OpenAI API key
+          <input id="apiKeyInput" type="password" autocomplete="off" placeholder="sk-..." required />
+        </label>
+        <p class="dialog-message" id="aiDialogMessage"></p>
+        <div class="dialog-actions">
+          <button class="secondary-button" id="disconnectAi" type="button">ตัดการเชื่อมต่อ</button>
+          <button class="primary-button" id="connectAi" type="submit">เชื่อม AI</button>
+        </div>
+      </form>
+    </dialog>
+
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./app.js"></script>
+    <script src="./app.js?v=ai-live-2"></script>
   </body>
 </html>

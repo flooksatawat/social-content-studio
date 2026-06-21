@@ -1,0 +1,13 @@
+{
+  "name": "social-content-studio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI content and image generation studio for social media, SEO, and AI search.",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js && node --check app.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
