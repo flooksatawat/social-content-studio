@@ -206,7 +206,8 @@ async function generateImage({ prompt, format, mood }) {
     premium: "premium calm aesthetic, elegant lighting, refined neutral palette",
   }[mood] || "clean modern commercial aesthetic";
 
-  const response = await geminiRequest(`/models/${IMAGE_MODEL}:generateContent`, {
+  const aspectRatio = imageAspectRatioFor(format);
+  const requestBody = {
     contents: [{
       role: "user",
       parts: [{
@@ -217,12 +218,47 @@ async function generateImage({ prompt, format, mood }) {
       responseModalities: ["TEXT", "IMAGE"],
       responseFormat: {
         image: {
-          aspectRatio: imageAspectRatioFor(format),
+          aspectRatio,
           imageSize: "1K",
         },
       },
     },
-  });
+  };
+
+  let response;
+  const attempts = [
+    requestBody,
+    {
+      ...requestBody,
+      generationConfig: {
+        ...requestBody.generationConfig,
+        responseFormat: {
+          image: {
+            aspectRatio,
+          },
+        },
+      },
+    },
+    {
+      ...requestBody,
+      generationConfig: {
+        responseModalities: ["TEXT", "IMAGE"],
+      },
+    },
+  ];
+
+  let lastError;
+  for (const body of attempts) {
+    try {
+      response = await geminiRequest(`/models/${IMAGE_MODEL}:generateContent`, body);
+      lastError = null;
+      break;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (!response) throw lastError || new Error("Gemini image generation failed");
 
   const parts = response.candidates?.[0]?.content?.parts || [];
   const image = parts.find((part) => part.inlineData?.data);
