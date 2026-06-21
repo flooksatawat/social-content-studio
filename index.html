@@ -55,14 +55,20 @@
       <main class="workspace">
         <section class="panel brief-panel" aria-labelledby="brief-title">
           <div class="panel-heading">
-            <div>
+          <div>
               <p class="eyebrow">Step 1</p>
-              <h2 id="brief-title">Campaign Brief for Life Insurance</h2>
+              <h2 id="brief-title">Audience Brief & AI Analysis</h2>
             </div>
             <button class="ghost-button" id="sampleBrief" type="button">เติมตัวอย่างสายประกัน</button>
           </div>
 
           <form id="briefForm" class="brief-form">
+            <div class="step-strip" aria-label="ขั้นตอนบรีฟ">
+              <span>1. เลือกกลุ่มเป้าหมาย</span>
+              <span>2. เลือกโทนเสียง</span>
+              <span>3. ให้ AI วิเคราะห์</span>
+            </div>
+
             <label>
               ชื่อแบรนด์
               <input
@@ -70,52 +76,60 @@
                 name="brandName"
                 type="text"
                 value="Premier Life Advisory"
-                placeholder="เช่น บริษัทประกันชีวิต, ที่ปรึกษาทางการเงิน, ตัวแทนมืออาชีพ"
+                placeholder="เช่น Premier Life Advisory"
               />
             </label>
 
             <label>
-              ประเภทธุรกิจ
-              <select id="businessType" name="businessType">
-                <option>ประกันชีวิต</option>
-                <option>ที่ปรึกษาทางการเงิน</option>
-                <option>ประกันสุขภาพ</option>
-                <option>การวางแผนมรดก</option>
-                <option>วางแผนเกษียณ</option>
-                <option>การคุ้มครองครอบครัว</option>
-                <option>การเงินส่วนบุคคล</option>
+              เลือกกลุ่มเป้าหมาย
+              <select id="audiencePreset" name="audiencePreset">
+                <option value="young-family">คนทำงานวัยสร้างตัวและครอบครัวเริ่มต้น</option>
+                <option value="business-owner">เจ้าของกิจการและผู้มีรายได้หลายทาง</option>
+                <option value="parent">พ่อแม่ที่ต้องการคุ้มครองอนาคตลูก</option>
+                <option value="planning">คนที่เริ่มสนใจวางแผนชีวิตและเกษียณ</option>
+                <option value="custom">กำหนดเอง</option>
               </select>
             </label>
 
             <label>
-              เป้าหมายแคมเปญ
-              <select id="goal" name="goal">
-                <option>เก็บ Lead / นัดหมาย</option>
-                <option>สร้างการรับรู้แบรนด์</option>
-                <option>เพิ่มยอดขาย</option>
-                <option>เพิ่มผู้ติดตาม</option>
-                <option>ให้ความรู้เพื่อ SEO</option>
-              </select>
-            </label>
-
-            <label>
-              หัวข้อหลัก / Big Idea
-              <textarea
-                id="topic"
-                name="topic"
-                rows="3"
-                placeholder="เช่น แผนประกันชีวิตสำหรับครอบครัววัยทำงาน"
-              >แผนประกันชีวิตและการเงินที่ออกแบบให้เหมาะกับเป้าหมายของแต่ละครอบครัวอย่างมืออาชีพ</textarea>
-            </label>
-
-            <label>
-              กลุ่มเป้าหมาย
+              รายละเอียดกลุ่มเป้าหมายเพิ่มเติม
               <textarea
                 id="audience"
                 name="audience"
                 rows="3"
-                placeholder="เช่น พนักงานอายุ 30-45 ปี, ครอบครัว, เจ้าของกิจการ"
-              >คนทำงานและครอบครัววัยสร้างตัว อายุ 28-45 ปี ที่ต้องการวางแผนคุ้มครองชีวิต รายได้ และอนาคตอย่างรอบคอบ</textarea>
+                placeholder="เช่น ช่วงอายุ อาชีพ รายได้ ภาระ หรือพฤติกรรมการตัดสินใจ"
+              >คนทำงานวัยสร้างตัวและครอบครัวเริ่มต้น ที่ต้องการวางแผนคุ้มครองชีวิต รายได้ และอนาคตอย่างรอบคอบ</textarea>
+            </label>
+
+            <label>
+              โทนเสียง
+              <select id="tone" name="tone">
+                <option value="มืออาชีพ อบอุ่น">มืออาชีพ อบอุ่น</option>
+                <option value="อธิบายง่าย จริงใจ">อธิบายง่าย จริงใจ</option>
+                <option value="ผู้เชี่ยวชาญ ให้ความรู้">ผู้เชี่ยวชาญ ให้ความรู้</option>
+                <option value="หรูหรา น่าเชื่อถือ">หรูหรา น่าเชื่อถือ</option>
+                <option value="ขายตรง ชัดเจน">ขายตรง ชัดเจน</option>
+              </select>
+            </label>
+
+            <label>
+              ปัญหาที่อยากสื่อ
+              <textarea
+                id="painPoint"
+                name="painPoint"
+                rows="3"
+                placeholder="เช่น ยังไม่แน่ใจว่าควรเริ่มวางแผนคุ้มครองจากตรงไหน"
+              >ยังไม่รู้ว่าจะเริ่มวางแผนคุ้มครองชีวิตและการเงินอย่างไรให้เหมาะกับครอบครัวจริง</textarea>
+            </label>
+
+            <label>
+              เป้าหมายของคอนเทนต์
+              <textarea
+                id="campaignGoal"
+                name="campaignGoal"
+                rows="3"
+                placeholder="เช่น สร้างความเข้าใจ, เก็บ lead, นัดหมาย"
+              >สร้างความเข้าใจ สร้างความน่าเชื่อถือ และปิดการนัดหมายเพื่อประเมินแผน</textarea>
             </label>
 
             <label>
@@ -128,19 +142,6 @@
                 placeholder="เช่น นัดปรึกษา, ขอใบเสนอแผน, ดาวน์โหลดคู่มือ"
               />
             </label>
-
-            <div class="split-row">
-              <label>
-                โทนเสียง
-                <select id="tone" name="tone">
-                  <option>มืออาชีพ อบอุ่น</option>
-                  <option>หรูหรา น่าเชื่อถือ</option>
-                  <option>ผู้เชี่ยวชาญ ให้ความรู้</option>
-                  <option>อธิบายง่าย จริงใจ</option>
-                  <option>ขายตรง ชัดเจน</option>
-                </select>
-              </label>
-            </div>
 
             <label>
               Keywords สำหรับ SEO / AI Search
@@ -164,7 +165,7 @@
             </fieldset>
 
             <div class="button-row">
-              <button class="primary-button" id="generateContent" type="submit">สร้างคอนเทนต์ประกันชีวิต</button>
+              <button class="primary-button" id="generateContent" type="submit">ให้ AI วิเคราะห์และสร้างชุดคอนเทนต์</button>
               <button class="secondary-button" id="resetForm" type="reset">รีเซ็ต</button>
             </div>
           </form>

@@ -78,14 +78,56 @@ const moodPalettes = {
 
 const sampleBrief = {
   brandName: "Premier Life Advisory",
-  businessType: "ประกันชีวิต",
-  goal: "เก็บ Lead / นัดหมาย",
-  topic: "แผนประกันชีวิตและการเงินที่ออกแบบให้เหมาะกับเป้าหมายของแต่ละครอบครัวอย่างมืออาชีพ",
-  audience: "คนทำงานและครอบครัววัยสร้างตัว อายุ 28-45 ปี ที่ต้องการวางแผนคุ้มครองชีวิต รายได้ และอนาคตอย่างรอบคอบ",
-  offer: "นัดปรึกษาแผนคุ้มครองฟรี 15 นาที",
+  audiencePreset: "young-family",
+  audience: "คนทำงานวัยสร้างตัวและครอบครัวเริ่มต้น",
   tone: "มืออาชีพ อบอุ่น",
-  language: "ไทย",
+  painPoint: "ยังไม่รู้ว่าจะเริ่มวางแผนคุ้มครองชีวิตและการเงินอย่างไรให้เหมาะกับครอบครัวจริง",
+  campaignGoal: "สร้างความเข้าใจ สร้างความน่าเชื่อถือ และปิดการนัดหมายเพื่อประเมินแผน",
+  offer: "นัดปรึกษาแผนคุ้มครองฟรี 15 นาที",
   keywords: "ประกันชีวิต, ที่ปรึกษาทางการเงิน, วางแผนคุ้มครอง, วางแผนเกษียณ, ปกป้องครอบครัว",
+};
+
+const audiencePresets = {
+  "young-family": {
+    label: "คนทำงานวัยสร้างตัวและครอบครัวเริ่มต้น",
+    problem: "อยากดูแลคนในบ้าน แต่ยังไม่แน่ใจว่าควรเริ่มคุ้มครองจากวงเงินหรือแผนแบบไหน",
+    need: "ต้องการภาพรวมที่เข้าใจง่าย เห็นความเสี่ยง รายได้ และงบต่อเดือนก่อนตัดสินใจ",
+    funnel: "Awareness -> Consideration -> Lead",
+    hook: "ถ้ารายได้หยุดพรุ่งนี้ ครอบครัวคุณจะมีแผนรับมือพอไหม",
+    cta: "ทักเพื่อประเมินแผนคุ้มครองเบื้องต้น",
+  },
+  "business-owner": {
+    label: "เจ้าของกิจการและผู้มีรายได้หลายทาง",
+    problem: "รายได้ผันผวนและมีภาระธุรกิจ ทำให้การวางคุ้มครองต้องละเอียดกว่าปกติ",
+    need: "ต้องการแผนที่สมดุลระหว่างความเสี่ยงส่วนตัว ธุรกิจ และสภาพคล่อง",
+    funnel: "Problem Awareness -> Solution Match -> Consultation",
+    hook: "ธุรกิจเดินต่อได้ แต่ครอบครัวคุณพร้อมรับมือความเสี่ยงแล้วหรือยัง",
+    cta: "ขอวิเคราะห์โครงสร้างคุ้มครอง",
+  },
+  parent: {
+    label: "พ่อแม่ที่ต้องการคุ้มครองอนาคตลูก",
+    problem: "อยากให้ลูกมีอนาคตมั่นคง แต่ยังไม่แน่ใจเรื่องงบและความคุ้มครองที่จำเป็น",
+    need: "ต้องการแผนที่โฟกัสความมั่นคง การศึกษา และการดูแลครอบครัวในระยะยาว",
+    funnel: "Awareness -> Education -> Trust",
+    hook: "สิ่งสำคัญไม่ใช่แค่มีประกัน แต่ต้องมีแผนที่ดูแลลูกได้จริง",
+    cta: "นัดคุยเพื่อวางแผนครอบครัว",
+  },
+  planning: {
+    label: "คนที่เริ่มสนใจวางแผนชีวิตและเกษียณ",
+    problem: "รู้ว่าควรวางแผน แต่ยังไม่รู้ว่าเริ่มจากประกันชีวิตหรือเงินออมก่อน",
+    need: "ต้องการ framework ที่เชื่อมคุ้มครอง รายได้ และเป้าหมายอนาคตเข้าด้วยกัน",
+    funnel: "Education -> Consideration -> Action",
+    hook: "ถ้าอยากเกษียณแบบไม่กังวล เรื่องคุ้มครองต้องอยู่ในแผนตั้งแต่ต้น",
+    cta: "รับคำแนะนำเริ่มต้นฟรี",
+  },
+  custom: {
+    label: "กำหนดเอง",
+    problem: "ต้องการแผนที่ออกแบบให้เข้ากับสถานการณ์ของตัวเอง",
+    need: "ต้องการข้อมูลเฉพาะจุดเพื่อแปลงเป็นคอนเทนต์และแผนคุยลูกค้า",
+    funnel: "Discover -> Diagnose -> Convert",
+    hook: "แผนที่ดีต้องเริ่มจากความจริงของชีวิต ไม่ใช่จากแพ็กเกจสำเร็จรูป",
+    cta: "เริ่มประเมินจากบริบทจริง",
+  },
 };
 
 const apiBaseUrl =
@@ -130,16 +172,17 @@ const els = {
 function getBrief() {
   const data = Object.fromEntries(new FormData(els.form).entries());
   const channels = $$("input[name='channels']:checked").map((input) => input.value);
+  const preset = audiencePresets[data.audiencePreset] || audiencePresets["young-family"];
+  const audienceText = data.audiencePreset === "custom" ? clean(data.audience) : preset.label;
 
   return {
     brandName: clean(data.brandName) || "ที่ปรึกษาของคุณ",
-    businessType: clean(data.businessType) || "ประกันชีวิต",
-    goal: clean(data.goal) || "เก็บ Lead / นัดหมาย",
-    topic: clean(data.topic) || "แผนคุ้มครองชีวิตและการเงิน",
-    audience: clean(data.audience) || "กลุ่มเป้าหมายหลัก",
-    offer: clean(data.offer) || "นัดปรึกษาแผนคุ้มครอง",
+    audiencePreset: clean(data.audiencePreset) || "young-family",
+    audience: audienceText || "กลุ่มเป้าหมายหลัก",
     tone: clean(data.tone) || "มืออาชีพ อบอุ่น",
-    language: clean(data.language) || "ไทย",
+    painPoint: clean(data.painPoint) || preset.problem,
+    campaignGoal: clean(data.campaignGoal) || "สร้างความเข้าใจและปิดการนัดหมาย",
+    offer: clean(data.offer) || "นัดปรึกษาแผนคุ้มครอง",
     keywords: splitKeywords(data.keywords),
     channels: channels.length ? channels : ["facebook"],
   };
@@ -170,36 +213,38 @@ function slugifyThai(text) {
 }
 
 function buildStrategy(brief) {
-  const keywordLead = brief.keywords[0] || brief.businessType;
+  const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
+  const keywordLead = brief.keywords[0] || "ประกันชีวิต";
   const audienceShort = shortText(brief.audience, 76);
-  const topicShort = shortText(brief.topic, 92);
+  const painShort = shortText(brief.painPoint, 92);
 
   return {
-    angle: `${brief.goal} ผ่านคอนเทนต์ที่เริ่มจากความกังวลจริงของ ${audienceShort}`,
-    promise: `ช่วยให้กลุ่มเป้าหมายเข้าใจว่า ${topicShort} ควรเริ่มจากการประเมินความเสี่ยง เป้าหมายชีวิต และงบประมาณอย่างเป็นระบบ`,
-    proof: `ใช้เช็กลิสต์คำถามจริง ตัวอย่างสถานการณ์ครอบครัว FAQ และ keyword "${keywordLead}" เพื่อสร้างความน่าเชื่อถือโดยไม่ขายเกินจริง`,
+    angle: `AI วิเคราะห์กลุ่ม ${audienceShort} ที่มี pain point "${painShort}"`,
+    promise: `แปลงข้อมูลเป็นคอนเทนต์ที่ตอบโจทย์ตามโทน "${brief.tone}" และเป้าหมาย "${brief.campaignGoal}"`,
+    proof: `อ้างอิง funnel "${preset.funnel}" พร้อม keyword "${keywordLead}" เพื่อวางคอนเทนต์ที่พาคนจากสนใจไปสู่การทัก`,
     cta: brief.offer,
   };
 }
 
 function buildHooks(brief) {
-  const keyword = brief.keywords[0] || brief.businessType;
+  const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
+  const keyword = brief.keywords[0] || "ประกันชีวิต";
   return [
-    `ถ้าวันนี้รายได้หลักหยุดลง ครอบครัวของคุณมีแผนสำรองพอหรือยัง`,
-    `${keyword}: 3 จุดที่ควรเช็กก่อนเลือกแผนคุ้มครอง`,
-    `ประกันชีวิตไม่ใช่แค่ค่าเบี้ย แต่คือแผนรับมือความเสี่ยงของครอบครัว`,
-    `อยากวางแผนอนาคตให้มั่นใจกว่าเดิม เริ่มจากเช็กภาระและเป้าหมายชีวิตก่อน`,
+    preset.hook,
+    `${keyword}: 3 จุดที่ควรเช็กก่อนตัดสินใจ`,
+    `โทน "${brief.tone}" ช่วยให้คนอ่านรู้สึกสบายใจและเชื่อถือได้มากขึ้น`,
+    `เริ่มจากปัญหา แล้วค่อยพาไปสู่การคุ้มครองที่เหมาะกับชีวิตจริง`,
   ];
 }
 
 function buildImagePrompt(brief) {
-  const keyword = brief.keywords[0] || brief.businessType;
+  const keyword = brief.keywords[0] || "ประกันชีวิต";
   return [
     `Create a clean, premium social media image for life insurance and financial advisory brand ${brief.brandName}.`,
-    `Subject: ${brief.topic}.`,
+    `Subject: AI analyzed content for ${brief.audience}.`,
     `Audience: ${brief.audience}.`,
-    `Visual style: modern premium finance aesthetic, trustworthy, human-centered, bright natural lighting, realistic Thai professional scene, clear focal point, space for Thai headline text.`,
-    `Include subtle cues related to ${keyword}, family protection, financial planning, documents, and calm advisor consultation.`,
+    `Visual style: modern premium finance aesthetic with intelligent AI overlay, trustworthy, human-centered, bright natural lighting, realistic Thai professional scene, clear focal point, space for Thai headline text.`,
+    `Include subtle cues related to ${keyword}, family protection, financial planning, insights, funnel map, and calm advisor consultation.`,
     `Avoid clutter, avoid tiny text, avoid fear-based imagery, avoid exaggerated claims.`,
     `Aspect ratio should match the selected platform.`,
   ].join(" ");
@@ -208,26 +253,28 @@ function buildImagePrompt(brief) {
 function buildPlatformContent(brief) {
   const hooks = buildHooks(brief);
   const hashtags = buildHashtags(brief);
-  const keyword = brief.keywords[0] || brief.businessType;
+  const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
+  const keyword = brief.keywords[0] || "ประกันชีวิต";
   const blogTitle = `${keyword}: วิธีวางแผนคุ้มครองให้เหมาะกับ${shortText(brief.audience, 24)}`;
   const slug = slugifyThai(blogTitle);
 
   return {
     facebook: [
-      block("Hook Options", hooks.slice(0, 3).map((hook, index) => `${index + 1}. ${hook}`).join("\n")),
+      block("Hook Options", hooks.slice(0, 4).map((hook, index) => `${index + 1}. ${hook}`).join("\n")),
       block(
         "Caption",
         [
           hooks[0],
           "",
-          `หลายคนเริ่มสนใจเรื่อง \"${brief.topic}\" ตอนที่มีภาระมากขึ้น มีครอบครัว มีหนี้สิน หรือเริ่มคิดถึงอนาคตระยะยาว`,
+          `AI วิเคราะห์แล้วว่ากลุ่มเป้าหมายมีปัญหาหลักคือ: ${shortText(brief.painPoint, 96)}`,
+          `ความต้องการหลักคือ: ${preset.need}`,
           "",
           "ก่อนเลือกแผน ลองเช็ก 3 เรื่องนี้ก่อน:",
-          "1. ถ้ารายได้หยุดลง คนที่เราดูแลจะมีเงินพอใช้กี่เดือน",
-          "2. ภาระหนี้ ค่าใช้จ่ายลูก และเป้าหมายเกษียณอยู่ตรงไหน",
-          "3. งบประมาณต่อเดือนควรสอดคล้องกับชีวิตจริง ไม่ทำให้แผนสะดุดกลางทาง",
+          "1. ใครคือคนที่เราต้องดูแล",
+          "2. ความเสี่ยงหรือภาระที่ต้องรับมือคืออะไร",
+          "3. งบประมาณที่จ่ายต่อเนื่องได้จริงอยู่ระดับไหน",
           "",
-          `${brief.brandName} ช่วยวิเคราะห์ภาพรวมและแนะนำแนวทางคุ้มครองแบบเข้าใจง่าย ไม่ขายเกินความจำเป็น`,
+          `${brief.brandName} ช่วยวิเคราะห์ภาพรวมและแนะนำแนวทางคุ้มครองให้สอดคล้องกับ funnel "${preset.funnel}"`,
           `CTA: ${brief.offer}`,
           "",
           hashtags,
@@ -239,9 +286,9 @@ function buildPlatformContent(brief) {
       block(
         "Title Options",
         [
-          `1. ${keyword} เริ่มยังไงให้เหมาะกับครอบครัวและงบประมาณ`,
+          `1. ${keyword} เริ่มยังไงให้เหมาะกับ${shortText(brief.audience, 18)}`,
           `2. 5 ข้อที่ควรรู้ก่อนเลือก${keyword}`,
-          `3. วางแผนคุ้มครองรายได้และอนาคตครอบครัวแบบเข้าใจง่าย`,
+          `3. AI วิเคราะห์ปัญหาและวิธีวางแผนคุ้มครองที่ใช่`,
         ].join("\n")
       ),
       block(
@@ -253,7 +300,7 @@ function buildPlatformContent(brief) {
           `19-25s: ปิดด้วย CTA: ${brief.offer}`,
         ].join("\n")
       ),
-      block("Description", [`${brief.topic}`, "", `เหมาะสำหรับ ${brief.audience}`, `เริ่มวางแผนกับ ${brief.brandName}: ${brief.offer}`, "", hashtags].join("\n")),
+      block("Description", [`${brief.painPoint}`, "", `เหมาะสำหรับ ${brief.audience}`, `เริ่มวางแผนกับ ${brief.brandName}: ${brief.offer}`, "", hashtags].join("\n")),
     ],
     tiktok: [
       block(
@@ -291,7 +338,7 @@ function buildPlatformContent(brief) {
     ],
     blog: [
       block("SEO Title", blogTitle),
-      block("Meta Description", `คู่มือ${keyword}สำหรับ${shortText(brief.audience, 44)} พร้อมเช็กลิสต์ วางแผนคุ้มครอง รายได้ ครอบครัว และคำถามที่ควรรู้ก่อนตัดสินใจ`),
+      block("Meta Description", `คู่มือ${keyword}สำหรับ${shortText(brief.audience, 44)} พร้อม AI วิเคราะห์ปัญหา ความต้องการ Hook CTA และแผนคอนเทนต์ตาม funnel เพื่อใช้จริงบน SEO และ AI Search`),
       block("URL Slug", slug || "life-insurance-planning"),
       block(
         "Outline",
@@ -320,16 +367,16 @@ function buildPlatformContent(brief) {
       ),
     ],
     aiSearch: [
-      block("Answer-First Summary", `${keyword} ที่เหมาะกับ ${shortText(brief.audience, 58)} ควรเริ่มจากการประเมินรายได้ ภาระ ครอบครัว เป้าหมายชีวิต และงบประมาณ ก่อนเลือกแผน เพื่อให้การคุ้มครองสอดคล้องกับชีวิตจริงและดูแลคนสำคัญได้ต่อเนื่อง`),
+      block("Answer-First Summary", `${keyword} ที่เหมาะกับ ${shortText(brief.audience, 58)} ควรเริ่มจากการประเมินปัญหา ความต้องการ โทนสื่อสาร และ funnel ของคอนเทนต์ ก่อนเลือกแผน เพื่อให้การคุ้มครองสอดคล้องกับชีวิตจริงและปิดการคุยต่อได้ง่ายขึ้น`),
       block(
         "Entity Facts",
         [
           `Brand: ${brief.brandName}`,
-          `Category: ${brief.businessType}`,
           `Target audience: ${brief.audience}`,
-          `Primary topic: ${brief.topic}`,
+          `Tone: ${brief.tone}`,
+          `Primary pain point: ${brief.painPoint}`,
           `Offer: ${brief.offer}`,
-          `Keywords: ${brief.keywords.join(", ") || brief.businessType}`,
+          `Keywords: ${brief.keywords.join(", ") || "ประกันชีวิต"}`,
         ].join("\n")
       ),
       block(
@@ -350,7 +397,7 @@ function block(title, text) {
 }
 
 function buildHashtags(brief) {
-  const base = brief.keywords.length ? brief.keywords : [brief.businessType, "contentmarketing"];
+  const base = brief.keywords.length ? brief.keywords : ["ประกันชีวิต", "contentmarketing"];
   return base
     .slice(0, 6)
     .map((tag) => `#${tag.replace(/\s+/g, "")}`)
@@ -378,9 +425,11 @@ function generateContent(brief) {
 
 function renderSnapshot(strategy) {
   const cards = [
-    ["Angle", strategy.angle],
-    ["Promise", strategy.promise],
-    ["Proof", strategy.proof],
+    ["AI วิเคราะห์ปัญหา", strategy.angle],
+    ["AI เข้าใจความต้องการ", strategy.promise],
+    ["Hook แนะนำ", strategy.proof],
+    ["Keyword", (state.latest?.brief.keywords || []).join(", ") || "ประกันชีวิต"],
+    ["Sell Funnel", strategy.promise.includes("funnel") ? strategy.promise : "Awareness -> Consideration -> Lead"],
     ["CTA", strategy.cta],
   ];
 
@@ -525,7 +574,7 @@ function drawCanvas(result = state.latest) {
   ctx.textBaseline = "top";
   wrapText(ctx, headline, margin, margin + labelFont * 3.4, contentWidth, titleFont * 1.12, 4);
 
-  const subline = `${shortText(brief.topic, isVertical ? 86 : 106)}\n${brief.offer}`;
+  const subline = `${shortText(brief.painPoint, isVertical ? 86 : 106)}\n${brief.offer}`;
   ctx.fillStyle = palette.muted;
   ctx.font = `700 ${bodyFont}px Segoe UI, Arial`;
   wrapText(ctx, subline, margin, height - margin - bodyFont * 5.2, contentWidth * 0.92, bodyFont * 1.35, 3);
@@ -546,16 +595,8 @@ function drawCanvas(result = state.latest) {
 }
 
 function buildCanvasHeadline(brief) {
-  const keyword = brief.keywords[0] || brief.businessType;
-  const goalMap = {
-    "เก็บ Lead / นัดหมาย": `เริ่มต้น${keyword} ด้วยการประเมินที่เหมาะกับชีวิตจริง`,
-    "สร้างการรับรู้แบรนด์": `ทำให้คนจำ${brief.brandName} ได้จากคำแนะนำที่น่าเชื่อถือ`,
-    "เพิ่มยอดขาย": `เปลี่ยนความสนใจเรื่อง${keyword} ให้เป็นการวางแผนที่ชัดเจน`,
-    "เพิ่มผู้ติดตาม": `คอนเทนต์${keyword} ที่คนอยากติดตามต่อ`,
-    "ให้ความรู้เพื่อ SEO": `${keyword} แบบเข้าใจง่ายในโพสต์เดียว`,
-  };
-
-  return goalMap[brief.goal] || shortText(brief.topic, 52);
+  const keyword = brief.keywords[0] || "ประกันชีวิต";
+  return `AI วิเคราะห์ ${keyword} ให้ตรงปัญหาและเป้าหมายจริง`;
 }
 
 function drawPattern(ctx, width, height, palette) {
