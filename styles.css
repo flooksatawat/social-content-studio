@@ -66,21 +66,6 @@ button {
   gap: 14px;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 18px;
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.22), transparent 40%),
-    linear-gradient(135deg, #0f766e 0%, #14b8a6 52%, #38bdf8 100%);
-  color: #fff;
-  font-size: 20px;
-  font-weight: 900;
-  box-shadow: 0 18px 34px rgba(20, 184, 166, 0.22);
-}
-
 .topbar h1,
 .panel h2 {
   margin: 0;
@@ -94,15 +79,6 @@ button {
 
 .panel h2 {
   font-size: 19px;
-}
-
-.eyebrow {
-  margin: 0 0 6px;
-  color: var(--accent-strong);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
 .status-cluster {
