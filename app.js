@@ -132,6 +132,8 @@ const apiBaseUrl =
   window.__SOCIAL_CONTENT_API_BASE__ ||
   "";
 
+const apiKeyStorageKey = "socialContentStudioGeminiApiKey";
+
 const state = {
   latest: null,
   activeChannel: "facebook",
@@ -762,6 +764,27 @@ function setApiBaseUrl(url) {
   }
 }
 
+function getStoredApiKey() {
+  try {
+    return localStorage.getItem(apiKeyStorageKey) || "";
+  } catch {
+    return "";
+  }
+}
+
+function setStoredApiKey(apiKey) {
+  try {
+    const next = String(apiKey || "").trim();
+    if (next) {
+      localStorage.setItem(apiKeyStorageKey, next);
+    } else {
+      localStorage.removeItem(apiKeyStorageKey);
+    }
+  } catch {
+    // Ignore storage failures so the app still works in restricted browsers.
+  }
+}
+
 function setAiStatus(mode, text) {
   els.aiStatusButton.classList.remove("is-offline", "is-error", "is-loading");
   if (mode) els.aiStatusButton.classList.add(`is-${mode}`);
@@ -775,6 +798,9 @@ function setDialogMessage(message = "", isError = false) {
 
 function openAiDialog(message = "") {
   setDialogMessage(message);
+  if (!els.apiKeyInput.value) {
+    els.apiKeyInput.value = getStoredApiKey();
+  }
   if (!els.aiDialog.open) els.aiDialog.showModal();
   window.setTimeout(() => els.apiKeyInput.focus(), 50);
 }
@@ -815,6 +841,9 @@ async function checkAiStatus() {
     const status = await apiRequest("/api/status");
     state.apiAvailable = true;
     state.aiConnected = Boolean(status.connected);
+    if (state.aiConnected && !els.apiKeyInput.value) {
+      els.apiKeyInput.value = getStoredApiKey();
+    }
     setImageGenerationEnabled(Boolean(status.imageEnabled));
     setAiStatus(state.aiConnected ? "" : "offline", state.aiConnected ? "Gemini พร้อมใช้งาน" : "เชื่อม Gemini");
   } catch {
@@ -842,7 +871,8 @@ async function connectAi(event) {
     });
     state.apiAvailable = true;
     state.aiConnected = true;
-    els.apiKeyInput.value = "";
+    setStoredApiKey(apiKey);
+    els.apiKeyInput.value = apiKey;
     setAiStatus("", "Gemini พร้อมใช้งาน");
     closeAiDialog();
     showToast("เชื่อม Gemini สำเร็จ");
@@ -863,6 +893,7 @@ async function disconnectAi() {
   }
   state.aiConnected = false;
   els.apiKeyInput.value = "";
+  setStoredApiKey("");
   setAiStatus("offline", "เชื่อม Gemini");
   closeAiDialog();
   showToast("ยกเลิกการเชื่อม AI แล้ว");
@@ -1106,6 +1137,7 @@ function bindEvents() {
 
 bindEvents();
 loadHistory();
+if (els.apiKeyInput) els.apiKeyInput.value = getStoredApiKey();
 drawCanvas();
 checkAiStatus();
 
