@@ -1,6 +1,6 @@
 # Social Content Studio MVP
 
-เว็บสำหรับสร้างกลยุทธ์ คอนเทนต์ SEO brief และภาพด้วย OpenAI API
+เว็บสำหรับสร้างกลยุทธ์ คอนเทนต์ SEO brief และภาพด้วย Gemini API
 
 ## เปิดใช้งาน
 
@@ -16,21 +16,23 @@ npm start
 http://127.0.0.1:4173/
 ```
 
-คลิกสถานะ `เชื่อม AI` ที่มุมขวาบน แล้วใส่ OpenAI API key ระบบจะตรวจสอบคีย์และเก็บไว้ในหน่วยความจำของ server เท่านั้น คีย์จะไม่ถูกบันทึกลงไฟล์หรือ GitHub
+คลิกสถานะ `เชื่อม Gemini` ที่มุมขวาบน แล้วใส่ Gemini API key จาก Google AI Studio ระบบจะตรวจสอบคีย์และเก็บไว้ในหน่วยความจำของ server เท่านั้น คีย์จะไม่ถูกบันทึกลงไฟล์หรือ GitHub
 
 อีกวิธีคือกำหนด environment variable ก่อนเปิด server:
 
 ```powershell
-$env:OPENAI_API_KEY="sk-..."
+$env:GEMINI_API_KEY="AIza..."
 npm start
 ```
+
+Gemini รุ่นข้อความมี Free Tier ตามโควตาของ Google แต่ Gemini Image API อาจต้องเปิด Billing แยกต่างหาก โปรดตรวจหน้า Pricing ของ Gemini API ก่อนใช้งานจริง
 
 ## สิ่งที่ทำได้ใน MVP นี้
 
 - วิเคราะห์ campaign brief และกลุ่มเป้าหมายด้วย AI
 - รองรับ Facebook, YouTube, TikTok, LINE VOOM, Blog SEO และ AI Search
 - สร้าง hook, caption, video script, SEO title, meta description, outline, FAQ และ entity facts
-- สร้าง AI image prompt และภาพ PNG จริงด้วย GPT Image
+- สร้าง AI image prompt และภาพจริงด้วย Gemini Image
 - เลือกสัดส่วนภาพตามแพลตฟอร์มและปรับ mood ภาพ
 - มี canvas preview สำรองก่อนสร้างภาพจริง
 - เก็บประวัติชุดคอนเทนต์ล่าสุดใน localStorage

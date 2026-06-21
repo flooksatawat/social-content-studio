@@ -761,11 +761,11 @@ async function checkAiStatus() {
     const status = await apiRequest("/api/status");
     state.apiAvailable = true;
     state.aiConnected = Boolean(status.connected);
-    setAiStatus(state.aiConnected ? "" : "offline", state.aiConnected ? "AI พร้อมใช้งาน" : "เชื่อม AI");
+    setAiStatus(state.aiConnected ? "" : "offline", state.aiConnected ? "Gemini พร้อมใช้งาน" : "เชื่อม Gemini");
   } catch {
     state.apiAvailable = false;
     state.aiConnected = false;
-    setAiStatus("offline", "เปิดผ่าน Local AI");
+    setAiStatus("offline", "เปิดผ่าน Local Gemini");
   }
 }
 
@@ -773,12 +773,12 @@ async function connectAi(event) {
   event.preventDefault();
   const apiKey = els.apiKeyInput.value.trim();
   if (!apiKey) {
-    setDialogMessage("กรุณากรอก OpenAI API key", true);
+    setDialogMessage("กรุณากรอก Gemini API key", true);
     return;
   }
 
   setButtonLoading($("#connectAi"), true, "กำลังตรวจสอบ...");
-  setDialogMessage("กำลังตรวจสอบ API key กับ OpenAI");
+  setDialogMessage("กำลังตรวจสอบ API key กับ Google Gemini");
   try {
     await apiRequest("/api/config", {
       method: "POST",
@@ -787,12 +787,12 @@ async function connectAi(event) {
     state.apiAvailable = true;
     state.aiConnected = true;
     els.apiKeyInput.value = "";
-    setAiStatus("", "AI พร้อมใช้งาน");
+    setAiStatus("", "Gemini พร้อมใช้งาน");
     closeAiDialog();
-    showToast("เชื่อม OpenAI สำเร็จ");
+    showToast("เชื่อม Gemini สำเร็จ");
   } catch (error) {
     state.aiConnected = false;
-    setAiStatus("error", "เชื่อม AI ไม่สำเร็จ");
+    setAiStatus("error", "เชื่อม Gemini ไม่สำเร็จ");
     setDialogMessage(error.message, true);
   } finally {
     setButtonLoading($("#connectAi"), false);
@@ -807,7 +807,7 @@ async function disconnectAi() {
   }
   state.aiConnected = false;
   els.apiKeyInput.value = "";
-  setAiStatus("offline", "เชื่อม AI");
+  setAiStatus("offline", "เชื่อม Gemini");
   closeAiDialog();
   showToast("ยกเลิกการเชื่อม AI แล้ว");
 }
@@ -816,8 +816,8 @@ function requireAiConnection() {
   if (state.aiConnected) return true;
   openAiDialog(
     state.apiAvailable
-      ? "เชื่อม OpenAI API key เพื่อเริ่มสร้างคอนเทนต์และภาพจริง"
-      : "กรุณาเปิดระบบผ่าน http://127.0.0.1:4173 เพื่อใช้ AI"
+      ? "เชื่อม Gemini API key เพื่อเริ่มสร้างคอนเทนต์และภาพจริง"
+      : "กรุณาเปิดระบบผ่าน http://127.0.0.1:4173 เพื่อใช้ Gemini"
   );
   return false;
 }
@@ -863,7 +863,7 @@ async function generateAiImage() {
     els.canvas.hidden = true;
     showToast("AI สร้างภาพเสร็จแล้ว");
   } catch (error) {
-    if (error.status === 401) {
+    if ([400, 401, 403].includes(error.status)) {
       state.aiConnected = false;
       setAiStatus("error", "API key ใช้งานไม่ได้");
     }
@@ -908,7 +908,7 @@ async function runGeneration(event) {
     renderGenerationResult(result);
     showToast("AI สร้างชุดคอนเทนต์แล้ว");
   } catch (error) {
-    if (error.status === 401) {
+    if ([400, 401, 403].includes(error.status)) {
       state.aiConnected = false;
       setAiStatus("error", "API key ใช้งานไม่ได้");
     }

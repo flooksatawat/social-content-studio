@@ -8,7 +8,7 @@
       name="description"
       content="เครื่องมือสร้างคอนเทนต์ รูปภาพตัวอย่าง และ SEO brief สำหรับ Facebook, YouTube, TikTok, LINE VOOM และ Blog"
     />
-    <link rel="stylesheet" href="./styles.css?v=ai-live-2" />
+    <link rel="stylesheet" href="./styles.css?v=gemini-live-1" />
   </head>
   <body>
     <div class="app-shell">
@@ -20,9 +20,9 @@
             <h1>Social Content Studio</h1>
           </div>
         </div>
-        <button class="status-cluster" id="aiStatusButton" type="button" aria-label="สถานะ AI">
+        <button class="status-cluster" id="aiStatusButton" type="button" aria-label="สถานะ Gemini">
           <span class="status-dot"></span>
-          <span id="aiStatusText">กำลังตรวจสอบ AI</span>
+          <span id="aiStatusText">กำลังตรวจสอบ Gemini</span>
         </button>
       </header>
 
@@ -238,7 +238,7 @@
           </label>
 
           <div class="visual-actions">
-            <button class="primary-button" id="renderImage" type="button">ให้ AI สร้างภาพ</button>
+            <button class="primary-button" id="renderImage" type="button">ให้ Gemini สร้างภาพ</button>
             <button class="secondary-button" id="copyPrompt" type="button">คัดลอก prompt</button>
           </div>
         </aside>
@@ -282,27 +282,28 @@
         <div class="ai-dialog-heading">
           <div>
             <p class="eyebrow">Secure local connection</p>
-            <h2>เชื่อม OpenAI API</h2>
+            <h2>เชื่อม Gemini API</h2>
           </div>
           <button class="dialog-close" id="closeAiDialog" type="button" aria-label="ปิด">×</button>
         </div>
         <p class="dialog-copy">
           API key จะถูกส่งไปยัง backend ที่เครื่องนี้และเก็บในหน่วยความจำเท่านั้น
-          ไม่ถูกบันทึกลงไฟล์หรือส่งขึ้น GitHub
+          ไม่ถูกบันทึกลงไฟล์หรือส่งขึ้น GitHub คอนเทนต์ใช้ Free Tier ได้ตามโควตา
+          ส่วนการสร้างภาพขึ้นอยู่กับ Billing ของ Gemini API
         </p>
         <label>
-          OpenAI API key
-          <input id="apiKeyInput" type="password" autocomplete="off" placeholder="sk-..." required />
+          Gemini API key
+          <input id="apiKeyInput" type="password" autocomplete="off" placeholder="AIza..." required />
         </label>
         <p class="dialog-message" id="aiDialogMessage"></p>
         <div class="dialog-actions">
           <button class="secondary-button" id="disconnectAi" type="button">ตัดการเชื่อมต่อ</button>
-          <button class="primary-button" id="connectAi" type="submit">เชื่อม AI</button>
+          <button class="primary-button" id="connectAi" type="submit">เชื่อม Gemini</button>
         </div>
       </form>
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./app.js?v=ai-live-2"></script>
+    <script src="./app.js?v=gemini-live-1"></script>
   </body>
 </html>

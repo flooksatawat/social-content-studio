@@ -4,12 +4,12 @@ const path = require("node:path");
 
 const HOST = process.env.HOST || "127.0.0.1";
 const PORT = Number(process.env.PORT || 4173);
-const TEXT_MODEL = process.env.OPENAI_TEXT_MODEL || "gpt-5.5";
-const IMAGE_MODEL = process.env.OPENAI_IMAGE_MODEL || "gpt-image-2";
-const OPENAI_BASE_URL = "https://api.openai.com/v1";
+const TEXT_MODEL = process.env.GEMINI_TEXT_MODEL || "gemini-3.5-flash";
+const IMAGE_MODEL = process.env.GEMINI_IMAGE_MODEL || "gemini-3.1-flash-image";
+const GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
 const ROOT = __dirname;
 
-let runtimeApiKey = process.env.OPENAI_API_KEY || "";
+let runtimeApiKey = process.env.GEMINI_API_KEY || "";
 
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",
@@ -55,17 +55,17 @@ function readJson(request) {
   });
 }
 
-async function openAiRequest(endpoint, body, apiKey = runtimeApiKey, method = "POST") {
+async function geminiRequest(endpoint, body, apiKey = runtimeApiKey, method = "POST") {
   if (!apiKey) {
-    const error = new Error("ยังไม่ได้เชื่อม OpenAI API key");
+    const error = new Error("ยังไม่ได้เชื่อม Gemini API key");
     error.status = 503;
     throw error;
   }
 
-  const result = await fetch(`${OPENAI_BASE_URL}${endpoint}`, {
+  const result = await fetch(`${GEMINI_BASE_URL}${endpoint}`, {
     method,
     headers: {
-      Authorization: `Bearer ${apiKey}`,
+      "x-goog-api-key": apiKey,
       "Content-Type": "application/json",
     },
     body: body === undefined ? undefined : JSON.stringify(body),
@@ -73,7 +73,7 @@ async function openAiRequest(endpoint, body, apiKey = runtimeApiKey, method = "P
 
   const payload = await result.json().catch(() => ({}));
   if (!result.ok) {
-    const error = new Error(payload.error?.message || "OpenAI API request failed");
+    const error = new Error(payload.error?.message || "Gemini API request failed");
     error.status = result.status;
     throw error;
   }
@@ -141,41 +141,40 @@ function contentPackSchema() {
 }
 
 function extractOutputText(response) {
-  for (const item of response.output || []) {
-    if (item.type !== "message") continue;
-    for (const content of item.content || []) {
-      if (content.type === "output_text" && content.text) return content.text;
-    }
-  }
-  return response.output_text || "";
+  return (response.candidates?.[0]?.content?.parts || [])
+    .map((part) => part.text || "")
+    .join("")
+    .trim();
 }
 
 async function generateContent(brief) {
-  const response = await openAiRequest("/responses", {
-    model: TEXT_MODEL,
-    reasoning: { effort: "low" },
-    max_output_tokens: 7000,
-    instructions: [
-      "You are a senior Thai content strategist, direct-response copywriter, SEO editor, and audience researcher.",
-      "Create useful, specific, ready-to-publish content. Avoid invented statistics, medical promises, guarantees, and unsupported claims.",
-      "Write in the language requested by the brief. Adapt length, hook, CTA, and formatting for each platform.",
-      "Facebook needs a strong caption and CTA. YouTube needs titles, script, and description. TikTok and LINE VOOM need concise mobile-first scripts.",
-      "Blog SEO needs title, meta description, outline, FAQ, and search intent. AI Search needs answer-first copy, entity facts, and concise FAQs.",
-      "The image prompt must be in English, highly visual, photorealistic when suitable, with composition and lighting details. Do not ask the image model to render long text.",
-    ].join(" "),
-    input: `Campaign brief:\n${JSON.stringify(brief, null, 2)}`,
-    text: {
-      format: {
-        type: "json_schema",
-        name: "social_content_pack",
-        strict: true,
-        schema: contentPackSchema(),
-      },
+  const response = await geminiRequest(`/models/${TEXT_MODEL}:generateContent`, {
+    systemInstruction: {
+      parts: [{
+        text: [
+          "You are a senior Thai content strategist, direct-response copywriter, SEO editor, and audience researcher.",
+          "Create useful, specific, ready-to-publish content. Avoid invented statistics, medical promises, guarantees, and unsupported claims.",
+          "Write in the language requested by the brief. Adapt length, hook, CTA, and formatting for each platform.",
+          "Facebook needs a strong caption and CTA. YouTube needs titles, script, and description. TikTok and LINE VOOM need concise mobile-first scripts.",
+          "Blog SEO needs title, meta description, outline, FAQ, and search intent. AI Search needs answer-first copy, entity facts, and concise FAQs.",
+          "The image prompt must be in English, highly visual, photorealistic when suitable, with composition and lighting details. Do not ask the image model to render long text.",
+        ].join(" "),
+      }],
+    },
+    contents: [{
+      role: "user",
+      parts: [{ text: `Campaign brief:\n${JSON.stringify(brief, null, 2)}` }],
+    }],
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseJsonSchema: contentPackSchema(),
+      maxOutputTokens: 7000,
+      temperature: 0.8,
     },
   });
 
   const outputText = extractOutputText(response);
-  if (!outputText) throw new Error("AI did not return content");
+  if (!outputText) throw new Error("Gemini ไม่ได้ส่งคอนเทนต์กลับมา");
 
   const generated = JSON.parse(outputText);
   const selectedChannels = Array.isArray(brief.channels) ? brief.channels : ["facebook"];
@@ -187,10 +186,10 @@ async function generateContent(brief) {
   return generated;
 }
 
-function imageSizeFor(format) {
-  if (format === "tiktok" || format === "linevoom") return "1024x1536";
-  if (format === "youtube" || format === "blog") return "1536x1024";
-  return "1024x1024";
+function imageAspectRatioFor(format) {
+  if (format === "tiktok" || format === "linevoom") return "9:16";
+  if (format === "youtube" || format === "blog") return "16:9";
+  return "1:1";
 }
 
 async function generateImage({ prompt, format, mood }) {
@@ -207,19 +206,30 @@ async function generateImage({ prompt, format, mood }) {
     premium: "premium calm aesthetic, elegant lighting, refined neutral palette",
   }[mood] || "clean modern commercial aesthetic";
 
-  const response = await openAiRequest("/images/generations", {
-    model: IMAGE_MODEL,
-    prompt: `${prompt}\nSelected art direction: ${moodText}. No logos, no watermarks, no long or unreadable text.`,
-    size: imageSizeFor(format),
-    quality: "medium",
-    output_format: "png",
+  const response = await geminiRequest(`/models/${IMAGE_MODEL}:generateContent`, {
+    contents: [{
+      role: "user",
+      parts: [{
+        text: `${prompt}\nSelected art direction: ${moodText}. No logos, no watermarks, no long or unreadable text.`,
+      }],
+    }],
+    generationConfig: {
+      responseModalities: ["TEXT", "IMAGE"],
+      responseFormat: {
+        image: {
+          aspectRatio: imageAspectRatioFor(format),
+          imageSize: "1K",
+        },
+      },
+    },
   });
 
-  const image = response.data?.[0];
-  if (!image?.b64_json) throw new Error("AI did not return an image");
+  const parts = response.candidates?.[0]?.content?.parts || [];
+  const image = parts.find((part) => part.inlineData?.data);
+  if (!image) throw new Error("Gemini ไม่ได้ส่งภาพกลับมา");
   return {
-    dataUrl: `data:image/png;base64,${image.b64_json}`,
-    revisedPrompt: image.revised_prompt || "",
+    dataUrl: `data:${image.inlineData.mimeType || "image/png"};base64,${image.inlineData.data}`,
+    revisedPrompt: parts.map((part) => part.text || "").join("").trim(),
   };
 }
 
@@ -237,11 +247,11 @@ async function handleApi(request, response, pathname) {
     const { apiKey } = await readJson(request);
     const candidate = String(apiKey || "").trim();
     if (!candidate) {
-      sendJson(response, 400, { error: "กรุณากรอก OpenAI API key" });
+      sendJson(response, 400, { error: "กรุณากรอก Gemini API key" });
       return true;
     }
 
-    await openAiRequest("/models", undefined, candidate, "GET");
+    await geminiRequest("/models", undefined, candidate, "GET");
     runtimeApiKey = candidate;
     sendJson(response, 200, { connected: true, textModel: TEXT_MODEL, imageModel: IMAGE_MODEL });
     return true;
@@ -314,5 +324,5 @@ const server = http.createServer(async (request, response) => {
 
 server.listen(PORT, HOST, () => {
   console.log(`Social Content Studio running at http://${HOST}:${PORT}`);
-  console.log(runtimeApiKey ? "OpenAI connection: ready" : "OpenAI connection: waiting for API key");
+  console.log(runtimeApiKey ? "Gemini connection: ready" : "Gemini connection: waiting for API key");
 });
