@@ -149,6 +149,7 @@ const els = {
   snapshot: $("#strategySnapshot"),
   tabs: $("#channelTabs"),
   output: $("#contentOutput"),
+  videoOutput: $("#videoOutput"),
   canvas: $("#postCanvas"),
   generatedImage: $("#generatedImage"),
   prompt: $("#imagePrompt"),
@@ -163,6 +164,7 @@ const els = {
   aiDialogMessage: $("#aiDialogMessage"),
   generateButton: $("#generateContent"),
   renderButton: $("#renderImage"),
+  copyVideoScript: $("#copyVideoScript"),
 };
 
 function getBrief() {
@@ -417,6 +419,34 @@ function generateContent(brief) {
     imagePrompt,
     content: selectedContent,
   };
+}
+
+function buildVideoContent(brief) {
+  const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
+  const keyword = brief.keywords[0] || "ประกันชีวิต";
+  return [
+    block(
+      "Video Hook",
+      preset.hook
+    ),
+    block(
+      "Short Script",
+      [
+        `0-3s: เปิดคำถาม "${preset.hook}"`,
+        `4-10s: พูดถึง ${keyword} แบบเข้าใจง่าย`,
+        "11-18s: ย้ำปัญหาที่ลูกค้ากำลังเจอ และทางออกที่เหมาะกับชีวิตจริง",
+        `19-25s: ปิดด้วย CTA: ${preset.cta}`,
+      ].join("\n")
+    ),
+    block(
+      "On-screen Text",
+      [
+        `1. ${keyword}`,
+        "2. เข้าใจปัญหาก่อนเลือกแผน",
+        "3. นัดคุยเพื่อประเมินเบื้องต้น",
+      ].join("\n")
+    ),
+  ];
 }
 
 function renderSnapshot(strategy) {
@@ -857,11 +887,40 @@ function renderGenerationResult(result) {
   renderSnapshot(result.strategy);
   renderTabs(result);
   renderOutput(result);
+  renderVideoOutput(result);
   els.imageFormat.value = Object.keys(result.content).includes(els.imageFormat.value)
     ? els.imageFormat.value
     : result.brief.channels.find((channel) => platformMeta[channel]?.size) || "facebook";
   drawCanvas(result);
   saveHistory(result);
+}
+
+function renderVideoOutput(result) {
+  if (!els.videoOutput) return;
+  const brief = result?.brief || getBrief();
+  const blocks = buildVideoContent(brief);
+  els.videoOutput.innerHTML = `
+    <article class="content-card">
+      <div class="content-card-header">
+        <div>
+          <h3>Video Script Pack</h3>
+          <p class="eyebrow">สคริปต์สั้นพร้อมใช้</p>
+        </div>
+      </div>
+      <div class="content-card-body">
+        ${blocks
+          .map(
+            (item) => `
+              <section class="output-block">
+                <h4>${escapeHtml(item.title)}</h4>
+                <pre class="output-text">${escapeHtml(item.text)}</pre>
+              </section>
+            `
+          )
+          .join("")}
+      </div>
+    </article>
+  `;
 }
 
 function syncAnalysisToForm(result) {
@@ -1004,6 +1063,15 @@ function bindEvents() {
         return;
       }
       copyText(formatAllContent(state.latest));
+    });
+  }
+  if (els.copyVideoScript) {
+    els.copyVideoScript.addEventListener("click", () => {
+      if (!state.latest) {
+        showToast("ยังไม่มีสคริปต์วิดีโอให้คัดลอก");
+        return;
+      }
+      copyText(buildVideoContent(state.latest.brief).map((item) => `${item.title}\n${item.text}`).join("\n\n"));
     });
   }
 

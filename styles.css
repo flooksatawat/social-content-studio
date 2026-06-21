@@ -146,6 +146,11 @@ button {
   min-height: 580px;
 }
 
+.video-panel {
+  grid-column: 1 / -1;
+  min-height: auto;
+}
+
 .output-panel {
   min-width: 0;
 }
