@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Social Content Studio MVP</title>
+    <meta
+      name="description"
+      content="เครื่องมือสร้างคอนเทนต์ รูปภาพตัวอย่าง และ SEO brief สำหรับ Facebook, YouTube, TikTok, LINE VOOM และ Blog"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">MVP สำหรับทดสอบ Content + Image Generation</p>
+          <h1>Social Content Studio</h1>
+        </div>
+        <div class="status-cluster" aria-label="สถานะระบบ">
+          <span class="status-dot"></span>
+          <span>Local prototype</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section class="panel brief-panel" aria-labelledby="brief-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Step 1</p>
+              <h2 id="brief-title">Campaign Brief</h2>
+            </div>
+            <button class="ghost-button" id="sampleBrief" type="button">เติมตัวอย่าง</button>
+          </div>
+
+          <form id="briefForm" class="brief-form">
+            <label>
+              แบรนด์ / สินค้า / บริการ
+              <input
+                id="brandName"
+                name="brandName"
+                type="text"
+                value="Wellness Hub"
+                placeholder="เช่น คลินิกสุขภาพ, ร้านอาหาร, คอร์สออนไลน์"
+              />
+            </label>
+
+            <label>
+              ประเภทธุรกิจ
+              <select id="businessType" name="businessType">
+                <option>สุขภาพและความงาม</option>
+                <option>การศึกษา / คอร์สออนไลน์</option>
+                <option>อสังหาริมทรัพย์</option>
+                <option>อาหารและเครื่องดื่ม</option>
+                <option>บริการ B2B</option>
+                <option>สินค้าอีคอมเมิร์ซ</option>
+                <option>ท่องเที่ยว / โรงแรม</option>
+              </select>
+            </label>
+
+            <label>
+              เป้าหมายแคมเปญ
+              <select id="goal" name="goal">
+                <option>เพิ่มยอดขาย</option>
+                <option>สร้างการรับรู้แบรนด์</option>
+                <option>เก็บ Lead / นัดหมาย</option>
+                <option>เพิ่มผู้ติดตาม</option>
+                <option>ให้ความรู้เพื่อ SEO</option>
+              </select>
+            </label>
+
+            <label>
+              หัวข้อหลัก / Big Idea
+              <textarea
+                id="topic"
+                name="topic"
+                rows="3"
+                placeholder="บอกหัวข้อที่อยากทำ เช่น วิธีเลือกโปรแกรมดูแลสุขภาพสำหรับคนทำงาน"
+              >โปรแกรมดูแลสุขภาพแบบเฉพาะบุคคลสำหรับคนทำงานที่อยากเริ่มดูแลตัวเองแบบไม่ยุ่งยาก</textarea>
+            </label>
+
+            <label>
+              กลุ่มเป้าหมาย
+              <textarea
+                id="audience"
+                name="audience"
+                rows="3"
+                placeholder="เช่น เจ้าของธุรกิจอายุ 30-45, แม่บ้าน, นักศึกษา, HR"
+              >คนทำงานอายุ 28-45 ปีที่เครียดง่าย นอนน้อย และอยากมีแผนดูแลสุขภาพที่ทำตามได้จริง</textarea>
+            </label>
+
+            <label>
+              ข้อเสนอ / CTA
+              <input
+                id="offer"
+                name="offer"
+                type="text"
+                value="จองประเมินสุขภาพฟรี 15 นาที"
+                placeholder="เช่น สมัครทดลอง, ดาวน์โหลดคู่มือ, จองคิว"
+              />
+            </label>
+
+            <div class="split-row">
+              <label>
+                โทนเสียง
+                <select id="tone" name="tone">
+                  <option>มืออาชีพ อบอุ่น</option>
+                  <option>สนุก กระชับ</option>
+                  <option>หรูหรา น่าเชื่อถือ</option>
+                  <option>ผู้เชี่ยวชาญ ให้ความรู้</option>
+                  <option>ขายตรง ชัดเจน</option>
+                </select>
+              </label>
+
+              <label>
+                ภาษา
+                <select id="language" name="language">
+                  <option>ไทย</option>
+                  <option>ไทย + อังกฤษบางคำ</option>
+                  <option>อังกฤษ</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Keywords สำหรับ SEO / AI Search
+              <input
+                id="keywords"
+                name="keywords"
+                type="text"
+                value="ดูแลสุขภาพ, สุขภาพคนทำงาน, ตรวจสุขภาพ, wellness"
+                placeholder="คั่นด้วย comma"
+              />
+            </label>
+
+            <fieldset class="channel-fieldset">
+              <legend>ช่องทางที่ต้องการ</legend>
+              <label><input type="checkbox" name="channels" value="facebook" checked /> Facebook</label>
+              <label><input type="checkbox" name="channels" value="youtube" checked /> YouTube</label>
+              <label><input type="checkbox" name="channels" value="tiktok" checked /> TikTok</label>
+              <label><input type="checkbox" name="channels" value="linevoom" checked /> LINE VOOM</label>
+              <label><input type="checkbox" name="channels" value="blog" checked /> Blog SEO</label>
+              <label><input type="checkbox" name="channels" value="aiSearch" checked /> AI Search</label>
+            </fieldset>
+
+            <div class="button-row">
+              <button class="primary-button" id="generateContent" type="submit">สร้างชุดคอนเทนต์</button>
+              <button class="secondary-button" id="resetForm" type="reset">รีเซ็ต</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel output-panel" aria-labelledby="output-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Step 2</p>
+              <h2 id="output-title">Content Output</h2>
+            </div>
+            <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
+          </div>
+
+          <div class="snapshot-grid" id="strategySnapshot" aria-live="polite"></div>
+
+          <div class="tabs" id="channelTabs" role="tablist" aria-label="เลือกช่องทาง"></div>
+
+          <div class="output-stack" id="contentOutput" aria-live="polite">
+            <div class="empty-state">
+              <h3>พร้อมสร้างคอนเทนต์ชุดแรก</h3>
+              <p>กรอก brief ด้านซ้าย แล้วกดสร้าง ระบบจะทำ caption, hooks, script, SEO brief และ image prompt ให้ตามช่องทางที่เลือก</p>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel visual-panel" aria-labelledby="visual-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Step 3</p>
+              <h2 id="visual-title">Image Preview</h2>
+            </div>
+            <button class="ghost-button" id="downloadImage" type="button">ดาวน์โหลด PNG</button>
+          </div>
+
+          <div class="visual-controls">
+            <label>
+              ขนาดภาพ
+              <select id="imageFormat">
+                <option value="facebook">Facebook 1:1</option>
+                <option value="youtube">YouTube 16:9</option>
+                <option value="tiktok">TikTok 9:16</option>
+                <option value="linevoom">LINE VOOM 9:16</option>
+                <option value="blog">Blog OG 1.91:1</option>
+              </select>
+            </label>
+            <label>
+              Mood ภาพ
+              <select id="visualMood">
+                <option value="clean">Clean Expert</option>
+                <option value="bold">Bold Promo</option>
+                <option value="educational">Educational</option>
+                <option value="premium">Premium Calm</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="canvas-wrap">
+            <canvas id="postCanvas" width="1080" height="1080" aria-label="ตัวอย่างภาพโพสต์"></canvas>
+          </div>
+
+          <label class="image-prompt-label">
+            AI Image Prompt
+            <textarea id="imagePrompt" rows="7" readonly></textarea>
+          </label>
+
+          <div class="visual-actions">
+            <button class="secondary-button" id="renderImage" type="button">สร้างภาพตัวอย่างใหม่</button>
+            <button class="secondary-button" id="copyPrompt" type="button">คัดลอก prompt</button>
+          </div>
+        </aside>
+      </main>
+
+      <section class="history-section panel" aria-labelledby="history-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Testing Log</p>
+            <h2 id="history-title">ประวัติชุดคอนเทนต์</h2>
+          </div>
+          <button class="ghost-button" id="clearHistory" type="button">ล้างประวัติ</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="./app.js"></script>
+  </body>
+</html>
