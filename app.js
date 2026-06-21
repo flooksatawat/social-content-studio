@@ -938,14 +938,6 @@ async function generateAiImage() {
   }
 }
 
-function applySampleBrief() {
-  Object.entries(sampleBrief).forEach(([key, value]) => {
-    const input = document.querySelector(`[name="${key}"]`);
-    if (input) input.value = value;
-  });
-  showToast("เติมตัวอย่างแล้ว");
-}
-
 async function runGeneration(event) {
   event?.preventDefault();
   if (!requireAiConnection()) return;
@@ -999,17 +991,21 @@ function downloadCanvas() {
 
 function bindEvents() {
   els.form.addEventListener("submit", runGeneration);
-  $("#sampleBrief").addEventListener("click", applySampleBrief);
-  els.renderButton.addEventListener("click", generateAiImage);
-  $("#downloadImage").addEventListener("click", downloadCanvas);
-  $("#copyPrompt").addEventListener("click", () => copyText(els.prompt.value));
-  $("#copyAll").addEventListener("click", () => {
-    if (!state.latest) {
-      showToast("ยังไม่มีคอนเทนต์ให้คัดลอก");
-      return;
-    }
-    copyText(formatAllContent(state.latest));
-  });
+  if (els.renderButton) els.renderButton.addEventListener("click", generateAiImage);
+  const downloadImageButton = $("#downloadImage");
+  if (downloadImageButton) downloadImageButton.addEventListener("click", downloadCanvas);
+  const copyPromptButton = $("#copyPrompt");
+  if (copyPromptButton) copyPromptButton.addEventListener("click", () => copyText(els.prompt.value));
+  const copyAllButton = $("#copyAll");
+  if (copyAllButton) {
+    copyAllButton.addEventListener("click", () => {
+      if (!state.latest) {
+        showToast("ยังไม่มีคอนเทนต์ให้คัดลอก");
+        return;
+      }
+      copyText(formatAllContent(state.latest));
+    });
+  }
 
   els.tabs.addEventListener("click", (event) => {
     const button = event.target.closest("[data-tab]");
@@ -1031,9 +1027,11 @@ function bindEvents() {
 
   els.aiStatusButton.addEventListener("click", () => openAiDialog());
   els.aiConnectForm.addEventListener("submit", connectAi);
-  $("#closeAiDialog").addEventListener("click", closeAiDialog);
-  $("#disconnectAi").addEventListener("click", disconnectAi);
-  els.aiDialog.addEventListener("click", (event) => {
+  const closeAiDialogButton = $("#closeAiDialog");
+  if (closeAiDialogButton) closeAiDialogButton.addEventListener("click", closeAiDialog);
+  const disconnectAiButton = $("#disconnectAi");
+  if (disconnectAiButton) disconnectAiButton.addEventListener("click", disconnectAi);
+  if (els.aiDialog) els.aiDialog.addEventListener("click", (event) => {
     if (event.target === els.aiDialog) closeAiDialog();
   });
 }
