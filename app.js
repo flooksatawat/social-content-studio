@@ -517,6 +517,11 @@ function drawCanvas(result = state.latest) {
 
   drawPattern(ctx, width, height, palette);
 
+  if (!result) {
+    els.prompt.value = buildImagePrompt(brief);
+    return;
+  }
+
   const margin = Math.round(Math.min(width, height) * 0.08);
   const contentWidth = width - margin * 2;
   const isVertical = height > width;
