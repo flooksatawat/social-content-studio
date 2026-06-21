@@ -117,7 +117,6 @@ const els = {
   imageFormat: $("#imageFormat"),
   visualMood: $("#visualMood"),
   toast: $("#toast"),
-  history: $("#historyList"),
   aiStatusButton: $("#aiStatusButton"),
   aiStatusText: $("#aiStatusText"),
   aiDialog: $("#aiDialog"),
@@ -461,24 +460,7 @@ function formatAllContent(result) {
 }
 
 function renderHistory() {
-  if (!state.history.length) {
-    els.history.innerHTML = `<div class="empty-state"><h3>ยังไม่มีประวัติ</h3><p>เมื่อสร้างคอนเทนต์แล้ว ระบบจะเก็บรายการล่าสุดไว้ในเบราว์เซอร์นี้</p></div>`;
-    return;
-  }
-
-  els.history.innerHTML = state.history
-    .slice(0, 6)
-    .map((item) => {
-      const channels = item.brief.channels.map((channel) => platformMeta[channel]?.label || channel);
-      return `
-        <article class="history-item">
-          <h3>${escapeHtml(item.brief.brandName)}</h3>
-          <p>${new Date(item.createdAt).toLocaleString("th-TH")} · ${escapeHtml(shortText(item.brief.topic, 95))}</p>
-          <div class="history-tags">${channels.map((name) => `<span class="tag">${escapeHtml(name)}</span>`).join("")}</div>
-        </article>
-      `;
-    })
-    .join("");
+  return;
 }
 
 function saveHistory(result) {
@@ -964,12 +946,6 @@ function bindEvents() {
       return;
     }
     copyText(formatAllContent(state.latest));
-  });
-  $("#clearHistory").addEventListener("click", () => {
-    state.history = [];
-    localStorage.removeItem("socialContentStudioHistory");
-    renderHistory();
-    showToast("ล้างประวัติแล้ว");
   });
 
   els.tabs.addEventListener("click", (event) => {
