@@ -32,6 +32,12 @@ function sendJson(response, status, payload) {
   response.end(JSON.stringify(payload));
 }
 
+function setCorsHeaders(response, origin = "*") {
+  response.setHeader("Access-Control-Allow-Origin", origin);
+  response.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
+  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+}
+
 function readJson(request) {
   return new Promise((resolve, reject) => {
     let body = "";
@@ -343,6 +349,13 @@ const server = http.createServer(async (request, response) => {
   const url = new URL(request.url, `http://${request.headers.host || `${HOST}:${PORT}`}`);
 
   try {
+    setCorsHeaders(response, request.headers.origin || "*");
+    if (request.method === "OPTIONS") {
+      response.writeHead(204);
+      response.end();
+      return;
+    }
+
     if (url.pathname.startsWith("/api/")) {
       const handled = await handleApi(request, response, url.pathname);
       if (!handled) sendJson(response, 404, { error: "API route not found" });

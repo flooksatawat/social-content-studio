@@ -88,6 +88,12 @@ const sampleBrief = {
   keywords: "คลินิกผิว, ผิวล้า, หน้าใส, ดูแลผิว, skin check",
 };
 
+const apiBaseUrl =
+  new URLSearchParams(window.location.search).get("api") ||
+  localStorage.getItem("socialContentStudioApiBase") ||
+  window.__SOCIAL_CONTENT_API_BASE__ ||
+  "";
+
 const state = {
   latest: null,
   activeChannel: "facebook",
@@ -701,7 +707,7 @@ function showToast(message) {
 }
 
 async function apiRequest(path, options = {}) {
-  const response = await fetch(path, {
+  const response = await fetch(`${apiBaseUrl}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -716,6 +722,15 @@ async function apiRequest(path, options = {}) {
     throw error;
   }
   return payload;
+}
+
+function setApiBaseUrl(url) {
+  const next = String(url || "").trim().replace(/\/+$/, "");
+  if (next) {
+    localStorage.setItem("socialContentStudioApiBase", next);
+  } else {
+    localStorage.removeItem("socialContentStudioApiBase");
+  }
 }
 
 function setAiStatus(mode, text) {
