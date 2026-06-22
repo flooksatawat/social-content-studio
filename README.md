@@ -1,4 +1,4 @@
-# Life Plan Content Studio
+# Content Studio
 
 เว็บสำหรับสร้างคอนเทนต์ประกันชีวิตและที่ปรึกษาทางการเงินมืออาชีพ รองรับ Facebook, YouTube, TikTok, LINE VOOM, Blog SEO และ AI Search
 

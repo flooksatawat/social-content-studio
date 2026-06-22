@@ -1760,6 +1760,13 @@ function bindEvents() {
   }
   const copyPromptButton = $("#copyPrompt");
   if (copyPromptButton) copyPromptButton.addEventListener("click", () => copyText(els.prompt.value));
+  const editPromptButton = $("#editPrompt");
+  if (editPromptButton) {
+    editPromptButton.addEventListener("click", () => {
+      els.prompt.focus();
+      els.prompt.setSelectionRange(els.prompt.value.length, els.prompt.value.length);
+    });
+  }
   $$("[data-step-toggle]").forEach((button) => {
     button.addEventListener("click", () => {
       const panel = button.closest(".panel");

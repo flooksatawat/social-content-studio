@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Life Plan Content Studio</title>
+    <title>Content Studio</title>
     <meta
       name="description"
       content="เครื่องมือสร้างคอนเทนต์สำหรับประกันชีวิตและที่ปรึกษาทางการเงินมืออาชีพ พร้อม SEO brief สำหรับ Facebook, YouTube, TikTok, LINE VOOM และ Blog"
     />
-    <link rel="stylesheet" href="./styles.css?v=light-controls-3" />
+    <link rel="stylesheet" href="./styles.css?v=all-controls-5" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
   </head>
   <body>
@@ -16,13 +16,8 @@
       <header class="topbar creator-hero">
         <div class="brand-lockup">
           <p class="creator-kicker">AI Creator Workspace</p>
-          <h1>Life Plan Content Studio</h1>
+          <h1>Content Studio</h1>
           <p class="creator-subtitle">คิดกลยุทธ์ สร้างคอนเทนต์ และวางแผนทุกช่องทางในพื้นที่เดียว</p>
-          <div class="creator-pulse" aria-label="ความสามารถของระบบ">
-            <span><b>6</b> Channels</span>
-            <span><b>30</b> Day Plan</span>
-            <span><b>AI</b> Co-creator</span>
-          </div>
         </div>
         <div class="creator-scene" id="creatorScene" aria-hidden="true">
           <div class="scene-grid"></div>
@@ -183,11 +178,12 @@
           <div class="image-prompt-block">
             <div class="image-prompt-head">
               <label class="image-prompt-label" for="imagePrompt">AI Image Prompt</label>
-              <span class="block-tools image-prompt-tools">
-                <button class="block-icon-btn" id="copyPrompt" type="button" aria-label="คัดลอก prompt"><i class="ti ti-copy" aria-hidden="true"></i></button>
-              </span>
             </div>
             <textarea id="imagePrompt" rows="7"></textarea>
+            <span class="block-tools image-prompt-tools">
+              <button class="block-icon-btn" id="copyPrompt" type="button" aria-label="คัดลอก prompt"><i class="ti ti-copy" aria-hidden="true"></i></button>
+              <button class="block-icon-btn" id="editPrompt" type="button" aria-label="แก้ไข prompt"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+            </span>
           </div>
           </aside>
 
@@ -318,9 +314,11 @@
             <p class="eyebrow">Daily Preview</p>
             <h2 id="calendarPreviewTitle">เลือกวันจากตารางเพื่อดู Step 1-4</h2>
           </div>
-          <button class="dialog-close" id="closeCalendarPreview" type="button" aria-label="ปิด">x</button>
         </div>
         <div id="calendarPreview"></div>
+        <div class="calendar-dialog-actions">
+          <button class="dialog-close" id="closeCalendarPreview" type="button" aria-label="ปิด">x</button>
+        </div>
       </div>
     </dialog>
 
@@ -355,6 +353,6 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./app.js?v=light-controls-3"></script>
+    <script src="./app.js?v=all-controls-5"></script>
   </body>
 </html>
