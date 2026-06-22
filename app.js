@@ -147,6 +147,7 @@ const state = {
   aiConnected: false,
   apiAvailable: false,
   generatedImage: "",
+  selectedCalendarDay: null,
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -160,6 +161,8 @@ const els = {
   videoOutput: $("#videoOutput"),
   calendarSummary: $("#calendarSummary"),
   calendarBody: $("#calendarBody"),
+  calendarPreview: $("#calendarPreview"),
+  calendarPreviewTitle: $("#calendarPreviewTitle"),
   postingWindow: $("#postingWindow"),
   calendarDays: $("#calendarDays"),
   copyCalendar: $("#copyCalendar"),
@@ -678,6 +681,10 @@ function renderCalendar(result) {
   const times = getPostingTimes();
   const channelList = (brief.channels?.length ? brief.channels : getSelectedChannels()).map((channel) => platformMeta[channel]?.label || channel);
 
+  if (!state.selectedCalendarDay) {
+    state.selectedCalendarDay = rows[0] || null;
+  }
+
   els.calendarSummary.innerHTML = `
     <article class="calendar-summary-card">
       <strong>AI schedule</strong>
@@ -689,7 +696,7 @@ function renderCalendar(result) {
 
   els.calendarBody.innerHTML = rows
     .map((row) => `
-      <article class="calendar-day-card">
+      <button class="calendar-day-card ${state.selectedCalendarDay?.day === row.day ? "active" : ""}" type="button" data-day="${row.day}">
         <div class="calendar-day-head">
           <div>
             <strong>Day ${row.day}</strong>
@@ -711,10 +718,163 @@ function renderCalendar(result) {
               `
             )
             .join("")}
-        </div>
-      </article>
+          </div>
+      </button>
     `)
     .join("");
+
+  renderCalendarPreview(state.selectedCalendarDay || rows[0], result);
+}
+
+function buildCalendarPreviewResult(baseResult, row) {
+  if (!baseResult || !row) return null;
+  const brief = baseResult.brief || getBrief();
+  const variantBrief = {
+    ...brief,
+    audience: `${brief.audience} · Day ${row.day}`,
+    painPoint: `${brief.painPoint} | ${row.angle}`,
+    offer: brief.offer,
+  };
+  const strategy = buildStrategy(variantBrief);
+  const content = buildPlatformContent(variantBrief);
+  const filteredContent = Object.fromEntries(
+    variantBrief.channels.map((channel) => [channel, content[channel]]).filter(([, blocks]) => blocks)
+  );
+  return {
+    ...baseResult,
+    brief: variantBrief,
+    strategy,
+    hooks: buildHooks(variantBrief),
+    imagePrompt: buildImagePrompt(variantBrief, strategy, content),
+    content: filteredContent,
+    video: buildVideoContent(variantBrief),
+  };
+}
+
+function renderCalendarPreview(row, baseResult) {
+  if (!els.calendarPreview || !els.calendarPreviewTitle) return;
+  if (!row) {
+    els.calendarPreviewTitle.textContent = "เลือกวันจากตารางเพื่อดู Step 1-4";
+    els.calendarPreview.innerHTML = `<div class="empty-state"><h3>ยังไม่มีวันให้แสดง</h3><p>เลือกวันในตารางเพื่อดูแพ็กเกจคอนเทนต์ของวันนั้น</p></div>`;
+    return;
+  }
+
+  const previewResult = buildCalendarPreviewResult(baseResult, row);
+  if (!previewResult) return;
+  els.calendarPreviewTitle.textContent = `Day ${row.day} · ${shortText(row.angle, 60)}`;
+  els.calendarPreview.innerHTML = `
+    <div class="calendar-preview-stack">
+      <section class="calendar-preview-step">
+        <h4>Step 1 / 2 · Strategy</h4>
+        <div class="snapshot-grid calendar-preview-grid" data-preview="strategy"></div>
+      </section>
+      <section class="calendar-preview-step">
+        <h4>Step 3 · Image Prompt</h4>
+        <div class="calendar-preview-box">
+          <p class="calendar-preview-lead">${escapeHtml(shortText(previewResult.imagePrompt, 420))}</p>
+        </div>
+      </section>
+      <section class="calendar-preview-step">
+        <h4>Step 4 · Video</h4>
+        <div class="calendar-preview-box" data-preview="video"></div>
+      </section>
+      <section class="calendar-preview-step">
+        <h4>Step 2 / Content Output</h4>
+        <div class="tabs tabs-center calendar-preview-tabs" data-preview="tabs"></div>
+        <div class="output-stack" data-preview="output"></div>
+      </section>
+    </div>
+  `;
+
+  const strategyBox = els.calendarPreview.querySelector('[data-preview="strategy"]');
+  if (strategyBox) {
+    const cards = [
+      ["AI วิเคราะห์ปัญหา", previewResult.strategy.angle],
+      ["AI เข้าใจความต้องการ", previewResult.strategy.promise],
+      ["Hook แนะนำ", previewResult.strategy.proof],
+      ["Trust Building", previewResult.strategy.trustAngle],
+      ["Education Focus", previewResult.strategy.educationAngle],
+      ["Case Variety", previewResult.strategy.caseAngle],
+      ["Reference Map", (previewResult.strategy.referenceMap || []).join("\n")],
+      ["Case Examples", (previewResult.strategy.caseExamples || []).join("\n")],
+    ];
+    strategyBox.innerHTML = cards.map(([title, text]) => `
+      <article class="snapshot-card">
+        <strong>${escapeHtml(title)}</strong>
+        <p>${escapeHtml(text)}</p>
+      </article>
+    `).join("");
+  }
+
+  const tabsBox = els.calendarPreview.querySelector('[data-preview="tabs"]');
+  const outputBox = els.calendarPreview.querySelector('[data-preview="output"]');
+  if (tabsBox && outputBox) {
+    const channels = Object.keys(previewResult.content);
+    const active = channels[0] || "facebook";
+    tabsBox.innerHTML = channels.map((channel) => {
+      const meta = platformMeta[channel];
+      return `<button class="tab-button ${channel === active ? "active" : ""}" type="button" data-preview-tab="${channel}">${meta.label}</button>`;
+    }).join("");
+
+    const renderPreviewOutput = (channel) => {
+      const content = previewResult.content[channel];
+      const meta = platformMeta[channel];
+      if (!content) {
+        outputBox.innerHTML = `<div class="empty-state"><h3>ยังไม่มีคอนเทนต์</h3><p>เลือกวันอื่นหรือรันใหม่อีกครั้ง</p></div>`;
+        return;
+      }
+      outputBox.innerHTML = `
+        <article class="content-card">
+          <div class="content-card-header">
+            <div>
+              <h3>${escapeHtml(meta.label)} Content Pack</h3>
+              <p class="eyebrow">${escapeHtml(meta.ratioLabel)} · ${escapeHtml(meta.note)}</p>
+            </div>
+          </div>
+          <div class="content-card-body">
+            ${content.map((item) => `
+              <section class="output-block">
+                <h4>${escapeHtml(item.title)}</h4>
+                <pre class="output-text">${escapeHtml(item.text)}</pre>
+              </section>
+            `).join("")}
+          </div>
+        </article>
+      `;
+    };
+
+    renderPreviewOutput(active);
+    tabsBox.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-preview-tab]");
+      if (!button) return;
+      tabsBox.querySelectorAll(".tab-button").forEach((tab) => tab.classList.remove("active"));
+      button.classList.add("active");
+      renderPreviewOutput(button.dataset.previewTab);
+    }, { once: true });
+  }
+
+  const videoBox = els.calendarPreview.querySelector('[data-preview="video"]');
+  if (videoBox) {
+    const blocks = buildVideoContent(previewResult.brief);
+    videoBox.innerHTML = `
+      <article class="content-card">
+        <div class="content-card-header">
+          <div>
+            <h3>Video Script Pack</h3>
+            <p class="eyebrow">สคริปต์สั้นพร้อมใช้</p>
+          </div>
+        </div>
+        <div class="content-card-body">
+          ${blocks.map((item) => `
+            <section class="output-block">
+              <h4>${escapeHtml(item.title)}</h4>
+              <pre class="output-text">${escapeHtml(item.text)}</pre>
+            </section>
+          `).join("")}
+        </div>
+      </article>
+    `;
+  }
 }
 
 function renderSnapshot(strategy) {
@@ -1449,6 +1609,18 @@ function bindEvents() {
     copyText(decodeURIComponent(button.dataset.copy));
   });
 
+  if (els.calendarBody) {
+    els.calendarBody.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-day]");
+      if (!button || !state.latest) return;
+      const rows = buildCalendarPlan(state.latest);
+      const selected = rows.find((row) => String(row.day) === button.dataset.day);
+      if (!selected) return;
+      state.selectedCalendarDay = selected;
+      renderCalendar(state.latest);
+    });
+  }
+
   $$("input[name='channels']").forEach((input) => {
     input.addEventListener("change", () => {
       syncChannelSelection();
@@ -1468,7 +1640,10 @@ function bindEvents() {
   }
   if (els.calendarDays) {
     els.calendarDays.addEventListener("change", () => {
-      if (state.latest) renderCalendar(state.latest);
+      if (state.latest) {
+        state.selectedCalendarDay = null;
+        renderCalendar(state.latest);
+      }
     });
   }
 

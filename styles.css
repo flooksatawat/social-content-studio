@@ -629,6 +629,14 @@ canvas[hidden] {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(247, 252, 252, 0.88));
   box-shadow: var(--shadow-soft);
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+}
+
+.calendar-day-card.active {
+  border-color: rgba(20, 184, 166, 0.36);
+  box-shadow: 0 16px 32px rgba(20, 184, 166, 0.12);
 }
 
 .calendar-day-head {
@@ -698,6 +706,57 @@ canvas[hidden] {
   color: var(--muted);
   font-size: 12px;
   line-height: 1.45;
+}
+
+.calendar-preview {
+  display: grid;
+  gap: 14px;
+  padding: 0 18px 18px;
+}
+
+.calendar-preview-heading {
+  padding-inline: 0;
+  border-bottom: 0;
+  background: transparent;
+}
+
+.calendar-preview-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.calendar-preview-step {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.calendar-preview-step h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.calendar-preview-grid {
+  min-height: auto;
+}
+
+.calendar-preview-box {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(255, 255, 255, 0.96));
+}
+
+.calendar-preview-lead {
+  margin: 0;
+  color: var(--text);
+  white-space: pre-wrap;
+  line-height: 1.6;
 }
 
 .calendar-table {
