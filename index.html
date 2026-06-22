@@ -30,7 +30,7 @@
             <form id="briefForm" class="brief-form">
             <div class="step-strip" aria-label="ขั้นตอนบรีฟ">
               <span>1. เลือกกลุ่มเป้าหมาย</span>
-              <span>2. เลือกโทนเสียง</span>
+              <span>2. เลือกสไตล์การสื่อสาร</span>
               <span>3. ให้ AI วิเคราะห์</span>
             </div>
 
@@ -57,14 +57,16 @@
             </label>
 
             <label>
-              โทนเสียง
-              <select id="tone" name="tone">
-                <option value="มืออาชีพ อบอุ่น">มืออาชีพ อบอุ่น</option>
-                <option value="อธิบายง่าย จริงใจ">อธิบายง่าย จริงใจ</option>
-                <option value="ผู้เชี่ยวชาญ ให้ความรู้">ผู้เชี่ยวชาญ ให้ความรู้</option>
-                <option value="หรูหรา น่าเชื่อถือ">หรูหรา น่าเชื่อถือ</option>
-                <option value="ขายตรง ชัดเจน">ขายตรง ชัดเจน</option>
-              </select>
+              สไตล์การสื่อสาร
+              <input id="tone" name="tone" list="tonePresets" placeholder="เช่น มืออาชีพ อบอุ่น, กระชับ, เป็นกันเอง" />
+              <datalist id="tonePresets">
+                <option value="มืออาชีพ อบอุ่น"></option>
+                <option value="อธิบายง่าย จริงใจ"></option>
+                <option value="ผู้เชี่ยวชาญ ให้ความรู้"></option>
+                <option value="หรูหรา น่าเชื่อถือ"></option>
+                <option value="ขายตรง ชัดเจน"></option>
+                <option value="สบาย ๆ เหมือนคุยกัน"></option>
+              </datalist>
             </label>
 
             <fieldset class="channel-fieldset">
