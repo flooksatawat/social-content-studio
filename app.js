@@ -827,6 +827,7 @@ function setButtonLoading(button, loading, loadingText) {
 
 function setImageGenerationEnabled(enabled) {
   const renderButton = els.renderButton;
+  if (!renderButton) return;
   renderButton.disabled = false;
   renderButton.title = enabled
     ? "สร้างภาพด้วย Gemini"
@@ -1081,9 +1082,6 @@ function downloadCanvas() {
 
 function bindEvents() {
   els.form.addEventListener("submit", runGeneration);
-  if (els.renderButton) els.renderButton.addEventListener("click", generateAiImage);
-  const downloadImageButton = $("#downloadImage");
-  if (downloadImageButton) downloadImageButton.addEventListener("click", downloadCanvas);
   const copyPromptButton = $("#copyPrompt");
   if (copyPromptButton) copyPromptButton.addEventListener("click", () => copyText(els.prompt.value));
   const copyAllButton = $("#copyAll");
