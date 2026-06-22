@@ -292,7 +292,7 @@ button {
 
 .brief-form {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .brief-heading {
@@ -302,7 +302,25 @@ button {
 
 .brief-body {
   display: grid;
+  gap: 12px;
+}
+
+.brief-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
   gap: 14px;
+  align-items: stretch;
+}
+
+.brief-main-fields,
+.brief-side-fields {
+  display: grid;
+  gap: 11px;
+  min-width: 0;
+}
+
+.brief-side-fields {
+  align-content: start;
 }
 
 label,
@@ -368,7 +386,7 @@ select:hover {
 
 textarea {
   resize: vertical;
-  min-height: 94px;
+  min-height: 74px;
 }
 
 input:focus,
@@ -390,7 +408,7 @@ textarea:focus {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  padding: 12px 0 2px;
+  padding: 10px 0 0;
 }
 
 .step-strip span {
@@ -406,10 +424,10 @@ textarea:focus {
 }
 
 .channel-fieldset {
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   border: 1px solid rgba(14, 165, 233, 0.18);
   border-radius: 18px;
-  padding: 15px;
+  padding: 12px;
   margin: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(248, 250, 252, 0.72));
 }
@@ -420,15 +438,15 @@ textarea:focus {
 }
 
 .channel-fieldset {
-  gap: 12px;
+  gap: 9px;
 }
 
 .channel-chip {
   display: flex;
   align-items: center;
-  gap: 11px;
-  min-height: 52px;
-  padding: 11px 15px;
+  gap: 10px;
+  min-height: 42px;
+  padding: 9px 12px;
   border: 1px solid var(--line);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.5);
@@ -511,6 +529,7 @@ textarea:focus {
   gap: 10px;
   flex-wrap: nowrap;
   align-items: center;
+  margin-top: 2px;
 }
 
 .button-row .bridge-button {
@@ -1475,6 +1494,14 @@ button:disabled {
 
   .step-strip {
     grid-template-columns: 1fr;
+  }
+
+  .brief-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .channel-fieldset {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
