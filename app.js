@@ -1151,18 +1151,18 @@ function outputBlockHtml(title, text, { withToggle = false } = {}) {
   return `
     <section class="output-block">
       <div class="output-block-head">
-        <div class="output-block-actions">
-          <span class="block-tools">
-            <button class="block-icon-btn" type="button" data-block-copy aria-label="คัดลอก"><i class="ti ti-copy" aria-hidden="true"></i></button>
-            <button class="block-icon-btn" type="button" data-block-edit aria-label="แก้ไข"><i class="ti ti-pencil" aria-hidden="true"></i></button>
-          </span>
-        </div>
         <div class="output-block-title">
           ${title ? `<h4>${escapeHtml(title)}</h4>` : `<span class="output-block-spacer"></span>`}
         </div>
         ${withToggle ? `<button class="block-toggle" type="button" data-block-toggle aria-label="ซ่อน/แสดง"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>` : ""}
       </div>
       <pre class="output-text">${escapeHtml(text)}</pre>
+      <div class="output-block-actions">
+        <span class="block-tools">
+          <button class="block-icon-btn" type="button" data-block-copy aria-label="คัดลอก"><i class="ti ti-copy" aria-hidden="true"></i></button>
+          <button class="block-icon-btn" type="button" data-block-edit aria-label="แก้ไข"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+        </span>
+      </div>
     </section>
   `;
 }
