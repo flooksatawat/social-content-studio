@@ -693,10 +693,6 @@ textarea:focus {
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
   pointer-events: none;
 }
 
