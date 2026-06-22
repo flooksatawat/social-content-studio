@@ -1612,8 +1612,14 @@ function renderVideoOutput(result) {
         ${blocks
           .map(
             (item) => `
-              <section class="output-block">
-                <h4>${escapeHtml(item.title)}</h4>
+              <section class="output-block collapsible-block">
+                <div class="output-block-head">
+                  <h4>${escapeHtml(item.title)}</h4>
+                  <div class="output-block-actions">
+                    <button class="copy-button" type="button" data-copy="${encodeURIComponent(item.text)}">คัดลอก</button>
+                    <button class="block-toggle" type="button" data-block-toggle aria-label="ซ่อน/แสดง"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
+                  </div>
+                </div>
                 <pre class="output-text">${escapeHtml(item.text)}</pre>
               </section>
             `
@@ -1791,6 +1797,21 @@ function bindEvents() {
     if (!button) return;
     copyText(decodeURIComponent(button.dataset.copy));
   });
+
+  if (els.videoOutput) {
+    els.videoOutput.addEventListener("click", (event) => {
+      const copyButton = event.target.closest("[data-copy]");
+      if (copyButton) {
+        copyText(decodeURIComponent(copyButton.dataset.copy));
+        return;
+      }
+      const toggleButton = event.target.closest("[data-block-toggle]");
+      if (toggleButton) {
+        const block = toggleButton.closest(".output-block");
+        block?.classList.toggle("is-collapsed");
+      }
+    });
+  }
 
   if (els.calendarBody) {
     els.calendarBody.addEventListener("click", (event) => {

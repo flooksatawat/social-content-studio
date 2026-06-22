@@ -752,6 +752,58 @@ textarea:focus {
   letter-spacing: 0.05em;
 }
 
+.output-block-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.output-block-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.block-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: background 140ms ease, border-color 140ms ease, transform 140ms ease;
+}
+
+.block-toggle i {
+  font-size: 14px;
+  line-height: 1;
+  transition: transform 200ms ease;
+}
+
+.block-toggle:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(15, 23, 42, 0.2);
+}
+
+.block-toggle:active {
+  transform: scale(0.92);
+}
+
+.output-block.is-collapsed .block-toggle i {
+  transform: rotate(180deg);
+}
+
+.output-block.is-collapsed .output-text {
+  display: none;
+}
+
 .output-text {
   margin: 0;
   padding: 12px;
