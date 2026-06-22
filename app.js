@@ -300,6 +300,12 @@ function buildStrategy(brief) {
     `ถ้าลูกค้ากลัวงบสูง -> เปิดตัวเลือกตามงบและลำดับความสำคัญ`,
     `ถ้าลูกค้าสงสัยความคุ้มค่า -> อธิบายผลลัพธ์เชิงชีวิตจริง`,
   ];
+  const concernMap = [
+    `ความกังวลเรื่องงบประมาณ -> เสนอแผนตามลำดับความสำคัญ`,
+    `ความกังวลเรื่องความเข้าใจยาก -> ใช้ภาษาง่ายและตัวอย่างใกล้ตัว`,
+    `ความกังวลเรื่องซื้อไปแล้วไม่คุ้ม -> แสดงผลลัพธ์ที่เชื่อมกับชีวิตจริง`,
+    `ความกังวลเรื่องยังไม่พร้อม -> ให้ checklist แทนการปิดการขายทันที`,
+  ];
   const caseExamples = [
     `เคส 1: ครอบครัวเริ่มต้นที่อยากคุ้มครองรายได้หลัก`,
     `เคส 2: เจ้าของกิจการที่ต้องแบ่งความเสี่ยงส่วนตัวกับธุรกิจ`,
@@ -320,6 +326,7 @@ function buildStrategy(brief) {
     referenceMap,
     proofNotes,
     objectionHandling,
+    concernMap,
     caseExamples,
   };
 }
@@ -344,6 +351,9 @@ function buildImagePrompt(brief, strategy = {}, content = {}) {
   const proofLine =
     strategy.proofNotes?.join(" | ") ||
     "ชีวิตจริง, ตรวจสอบได้, ไม่อ้างเกินจริง";
+  const concernLine =
+    strategy.concernMap?.join(" | ") ||
+    "งบประมาณ, ความเข้าใจ, ความคุ้มค่า, ความพร้อม";
   const contentLead = firstChannel?.text ? shortText(firstChannel.text, 140) : shortText(brief.painPoint, 140);
   return [
     `Create a clean, premium social media image for a life insurance and financial advisory brand.`,
@@ -353,6 +363,7 @@ function buildImagePrompt(brief, strategy = {}, content = {}) {
     `Content lead: ${contentLead}.`,
     `Reference map: ${referenceLine}.`,
     `Proof approach: ${proofLine}.`,
+    `Main concerns addressed: ${concernLine}.`,
     `Visual style: modern premium finance aesthetic with intelligent AI overlay, trustworthy, human-centered, bright natural lighting, realistic Thai professional scene, clear focal point, space for Thai headline text.`,
     `Include subtle cues related to ${keyword}, family protection, financial planning, insights, funnel map, and calm advisor consultation.`,
     `Mirror the same message used in Step 2 strategy, Step 3 content output, and Step 4 video script.`,
@@ -379,6 +390,9 @@ function buildPlatformContent(brief) {
           "",
           `AI วิเคราะห์แล้วว่ากลุ่มเป้าหมายมีปัญหาหลักคือ: ${shortText(brief.painPoint, 96)}`,
           `ความต้องการหลักคือ: ${preset.need}`,
+          "",
+          "ข้อโต้แย้ง / ความกังวลที่ต้องตอบ:",
+          ...(strategy.concernMap || []).map((item) => `- ${item}`),
           "",
           "ใช้ประเด็นเดียวกันนี้ต่อใน YouTube เพื่อขยายเหตุผล และตัดลง TikTok / LINE VOOM ให้เหลือแค่ hook สั้น ๆ",
           "",
@@ -585,7 +599,7 @@ function buildVideoContent(brief) {
       [
         `0-3s: เปิดคำถาม "${preset.hook}"`,
         `4-10s: พูดถึง ${keyword} แบบเข้าใจง่าย`,
-        `11-18s: ย้ำปัญหาที่ลูกค้ากำลังเจอ และทางออกที่เหมาะกับชีวิตจริง โดยอ้างอิง ${shortText(strategy.educationAngle, 96)}`,
+        `11-18s: ย้ำปัญหาที่ลูกค้ากำลังเจอ, ความกังวลที่พบบ่อย, และทางออกที่เหมาะกับชีวิตจริง โดยอ้างอิง ${shortText(strategy.educationAngle, 96)}`,
         `19-25s: ปิดด้วย CTA: ${preset.cta}`,
       ].join("\n")
     ),
@@ -893,6 +907,7 @@ function renderSnapshot(strategy) {
     ["Reference Map", (strategy.referenceMap || []).join("\n")],
     ["Proof Notes", (strategy.proofNotes || []).join("\n")],
     ["Objection Handling", (strategy.objectionHandling || []).join("\n")],
+    ["Concerns", (strategy.concernMap || []).join("\n")],
     ["Case Examples", (strategy.caseExamples || []).join("\n")],
   ];
 
