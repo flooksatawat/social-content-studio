@@ -140,7 +140,6 @@ const state = {
   history: [],
   generatedImage: "",
   selectedCalendarDay: null,
-  characterPhoto: "",
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -176,10 +175,6 @@ const els = {
   customAudienceProblem: $("#customAudienceProblem"),
   customAudienceNeed: $("#customAudienceNeed"),
   copyVideoScript: $("#copyVideoScript"),
-  characterPhoto: $("#characterPhoto"),
-  characterPreview: $("#characterPreview"),
-  characterPreviewImg: $("#characterPreviewImg"),
-  removeCharacterPhoto: $("#removeCharacterPhoto"),
 };
 
 function getBrief() {
@@ -206,7 +201,6 @@ function getBrief() {
     offer: preset.cta,
     keywords: ["ประกันชีวิต", "ที่ปรึกษาทางการเงิน", "วางแผนคุ้มครอง"],
     channels: channels.length ? channels : defaultChannels,
-    hasCharacterPhoto: Boolean(state.characterPhoto),
   };
 }
 
@@ -733,9 +727,7 @@ function buildVideoContent(brief) {
   const keyword = brief.keywords[0] || "ประกันชีวิต";
   const strategy = buildStrategy(brief);
 
-  const faceLock = brief.hasCharacterPhoto
-    ? `IMPORTANT character lock: a reference photo of a real person is attached. Use that exact person as the on-screen presenter in every shot and every video — match their face, hairstyle and features exactly; do not invent a different face.`
-    : "";
+  const faceLock = `If a reference photo of a person is attached in this chat, use that exact person as the on-screen presenter in every shot — match their face, hairstyle and features exactly; do not invent a different face.`;
 
   const geminiPrompt = [
     `Generate this video now. Do not write a script, concept, or ask questions — output the rendered video directly.`,
@@ -1713,14 +1705,6 @@ function bindEvents() {
   }
   const importExternalAiResponseButton = $("#importExternalAiResponse");
   if (importExternalAiResponseButton) importExternalAiResponseButton.addEventListener("click", importExternalAiResponse);
-  if (els.characterPhoto) els.characterPhoto.addEventListener("change", handleCharacterPhotoChange);
-  if (els.removeCharacterPhoto) {
-    els.removeCharacterPhoto.addEventListener("click", () => {
-      setCharacterPhoto("");
-      if (els.characterPhoto) els.characterPhoto.value = "";
-      showToast("ลบรูปล็อกหน้าแล้ว");
-    });
-  }
   $$('[data-ai-provider]').forEach((button) => {
     button.addEventListener("click", () => launchExternalAi(button.dataset.aiProvider));
   });
@@ -1884,52 +1868,6 @@ function bindEvents() {
   }
 }
 
-function renderCharacterPhoto() {
-  if (!els.characterPreview || !els.characterPreviewImg) return;
-  if (state.characterPhoto) {
-    els.characterPreviewImg.src = state.characterPhoto;
-    els.characterPreview.hidden = false;
-  } else {
-    els.characterPreviewImg.removeAttribute("src");
-    els.characterPreview.hidden = true;
-  }
-}
-
-function setCharacterPhoto(dataUrl) {
-  state.characterPhoto = dataUrl || "";
-  try {
-    if (dataUrl) localStorage.setItem("socialContentStudioCharacterPhoto", dataUrl);
-    else localStorage.removeItem("socialContentStudioCharacterPhoto");
-  } catch {
-    /* storage full or blocked — keep in memory only */
-  }
-  renderCharacterPhoto();
-}
-
-function loadCharacterPhoto() {
-  try {
-    state.characterPhoto = localStorage.getItem("socialContentStudioCharacterPhoto") || "";
-  } catch {
-    state.characterPhoto = "";
-  }
-  renderCharacterPhoto();
-}
-
-function handleCharacterPhotoChange(event) {
-  const file = event.target.files?.[0];
-  if (!file) return;
-  if (!file.type.startsWith("image/")) {
-    showToast("กรุณาเลือกไฟล์รูปภาพ");
-    return;
-  }
-  const reader = new FileReader();
-  reader.onload = () => {
-    setCharacterPhoto(String(reader.result || ""));
-    showToast("อัปโหลดรูปล็อกหน้าแล้ว");
-  };
-  reader.readAsDataURL(file);
-}
-
 function setupCreatorScene() {
   const scene = document.querySelector("#creatorScene");
   if (!scene) return;
@@ -1955,7 +1893,6 @@ function setupCreatorScene() {
 bindEvents();
 setupCreatorScene();
 loadHistory();
-loadCharacterPhoto();
 renderSnapshot(buildStrategy(getBrief()));
 drawCanvas();
 
