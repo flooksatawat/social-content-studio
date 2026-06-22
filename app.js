@@ -161,9 +161,15 @@ const els = {
   aiStatusButton: $("#aiStatusButton"),
   aiStatusText: $("#aiStatusText"),
   aiDialog: $("#aiDialog"),
+  customAudienceDialog: $("#customAudienceDialog"),
   aiConnectForm: $("#aiConnectForm"),
+  customAudienceForm: $("#customAudienceForm"),
   apiKeyInput: $("#apiKeyInput"),
   aiDialogMessage: $("#aiDialogMessage"),
+  customAudienceMessage: $("#customAudienceMessage"),
+  customAudienceWho: $("#customAudienceWho"),
+  customAudienceProblem: $("#customAudienceProblem"),
+  customAudienceNeed: $("#customAudienceNeed"),
   generateButton: $("#generateContent"),
   renderButton: $("#renderImage"),
   copyVideoScript: $("#copyVideoScript"),
@@ -173,14 +179,22 @@ function getBrief() {
   const data = Object.fromEntries(new FormData(els.form).entries());
   const channels = $$("input[name='channels']:checked").map((input) => input.value);
   const preset = audiencePresets[data.audiencePreset] || audiencePresets["young-family"];
-  const audienceText = data.audiencePreset === "custom" ? clean(data.audience) : preset.label;
+  const customBrief = loadCustomAudienceBrief();
+  const audienceText =
+    data.audiencePreset === "custom"
+      ? clean(customBrief.who) || clean(data.audience) || preset.label
+      : preset.label;
+  const painText =
+    data.audiencePreset === "custom"
+      ? [customBrief.problem, customBrief.need].filter(Boolean).join(" | ") || clean(data.painPoint) || preset.problem
+      : clean(data.painPoint) || preset.problem;
 
   return {
     brandName: "ที่ปรึกษาของคุณ",
     audiencePreset: clean(data.audiencePreset) || "young-family",
     audience: audienceText || "กลุ่มเป้าหมายหลัก",
     tone: clean(data.tone) || "มืออาชีพ อบอุ่น",
-    painPoint: clean(data.painPoint) || preset.problem,
+    painPoint: painText,
     campaignGoal: preset.funnel,
     offer: preset.cta,
     keywords: ["ประกันชีวิต", "ที่ปรึกษาทางการเงิน", "วางแผนคุ้มครอง"],
@@ -796,6 +810,39 @@ function setDialogMessage(message = "", isError = false) {
   els.aiDialogMessage.classList.toggle("is-error", isError);
 }
 
+function setCustomAudienceMessage(message = "", isError = false) {
+  if (!els.customAudienceMessage) return;
+  els.customAudienceMessage.textContent = message;
+  els.customAudienceMessage.classList.toggle("is-error", isError);
+}
+
+function loadCustomAudienceBrief() {
+  try {
+    return JSON.parse(localStorage.getItem("socialContentStudioCustomAudience") || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveCustomAudienceBrief(brief) {
+  localStorage.setItem("socialContentStudioCustomAudience", JSON.stringify(brief));
+}
+
+function openCustomAudienceDialog() {
+  setCustomAudienceMessage("");
+  const saved = loadCustomAudienceBrief();
+  if (els.customAudienceWho) els.customAudienceWho.value = saved.who || "";
+  if (els.customAudienceProblem) els.customAudienceProblem.value = saved.problem || "";
+  if (els.customAudienceNeed) els.customAudienceNeed.value = saved.need || "";
+  if (!els.customAudienceDialog.open) els.customAudienceDialog.showModal();
+  window.setTimeout(() => els.customAudienceWho?.focus(), 50);
+}
+
+function closeCustomAudienceDialog() {
+  els.customAudienceDialog.close();
+  setCustomAudienceMessage("");
+}
+
 function openAiDialog(message = "") {
   setDialogMessage(message);
   if (!els.apiKeyInput.value) {
@@ -1082,6 +1129,13 @@ function downloadCanvas() {
 
 function bindEvents() {
   els.form.addEventListener("submit", runGeneration);
+  if (els.form.audiencePreset) {
+    els.form.audiencePreset.addEventListener("change", () => {
+      if (els.form.audiencePreset.value === "custom") {
+        openCustomAudienceDialog();
+      }
+    });
+  }
   const copyPromptButton = $("#copyPrompt");
   if (copyPromptButton) copyPromptButton.addEventListener("click", () => copyText(els.prompt.value));
   const copyAllButton = $("#copyAll");
@@ -1124,6 +1178,33 @@ function bindEvents() {
 
   els.aiStatusButton.addEventListener("click", () => openAiDialog());
   els.aiConnectForm.addEventListener("submit", connectAi);
+  if (els.customAudienceForm) {
+    els.customAudienceForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const who = clean(els.customAudienceWho?.value);
+      const problem = clean(els.customAudienceProblem?.value);
+      const need = clean(els.customAudienceNeed?.value);
+      if (!who || !problem || !need) {
+        setCustomAudienceMessage("กรอกให้ครบทั้ง 3 ช่องก่อน", true);
+        return;
+      }
+      saveCustomAudienceBrief({ who, problem, need });
+      if (els.form.audiencePreset) els.form.audiencePreset.value = "custom";
+      setCustomAudienceMessage("บันทึกแล้ว");
+      closeCustomAudienceDialog();
+      showToast("บันทึกข้อมูลกำหนดเองแล้ว");
+      drawCanvas();
+    });
+  }
+  const closeCustomAudienceDialogButton = $("#closeCustomAudienceDialog");
+  if (closeCustomAudienceDialogButton) closeCustomAudienceDialogButton.addEventListener("click", closeCustomAudienceDialog);
+  const cancelCustomAudienceButton = $("#cancelCustomAudience");
+  if (cancelCustomAudienceButton) cancelCustomAudienceButton.addEventListener("click", closeCustomAudienceDialog);
+  if (els.customAudienceDialog) {
+    els.customAudienceDialog.addEventListener("click", (event) => {
+      if (event.target === els.customAudienceDialog) closeCustomAudienceDialog();
+    });
+  }
   const closeAiDialogButton = $("#closeAiDialog");
   if (closeAiDialogButton) closeAiDialogButton.addEventListener("click", closeAiDialog);
   const disconnectAiButton = $("#disconnectAi");

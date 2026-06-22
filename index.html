@@ -43,7 +43,7 @@
                 <option value="planning">คนที่เริ่มสนใจวางแผนชีวิตและเกษียณ</option>
                 <option value="custom">กำหนดเอง</option>
               </select>
-              <p class="field-hint">ถ้าเลือก <strong>กำหนดเอง</strong> ให้พิมพ์สั้น ๆ ว่า ลูกค้าเป็นใคร เจอปัญหาอะไร และอยากให้ AI ช่วยตอบเรื่องไหน</p>
+              <p class="field-hint">ถ้าเลือก <strong>กำหนดเอง</strong> จะมีป็อปอัพขึ้นมาให้กรอกข้อมูลสั้น ๆ</p>
             </label>
 
             <label>
@@ -203,6 +203,36 @@
         <div class="dialog-actions">
           <button class="secondary-button" id="disconnectAi" type="button">ตัดการเชื่อมต่อ</button>
           <button class="primary-button" id="connectAi" type="submit">เชื่อม Gemini</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="ai-dialog custom-dialog" id="customAudienceDialog">
+      <form class="ai-dialog-form" id="customAudienceForm" method="dialog">
+        <div class="ai-dialog-heading">
+          <div>
+            <p class="eyebrow">Custom audience</p>
+            <h2>กำหนดเอง</h2>
+          </div>
+          <button class="dialog-close" id="closeCustomAudienceDialog" type="button" aria-label="ปิด">x</button>
+        </div>
+        <p class="dialog-copy">พิมพ์สั้น ๆ ว่า ลูกค้าเป็นใคร เจอปัญหาอะไร และอยากให้ AI ช่วยตอบเรื่องไหน</p>
+        <label>
+          ลูกค้าเป็นใคร
+          <textarea id="customAudienceWho" rows="2" placeholder="เช่น เจ้าของร้านอายุ 35-45 ปี"></textarea>
+        </label>
+        <label>
+          เจอปัญหาอะไร
+          <textarea id="customAudienceProblem" rows="2" placeholder="เช่น รายได้ไม่สม่ำเสมอ อยากคุ้มครองครอบครัว"></textarea>
+        </label>
+        <label>
+          อยากให้ AI ช่วยตอบเรื่องไหน
+          <textarea id="customAudienceNeed" rows="2" placeholder="เช่น ช่วยวางหัวข้อ Hook และ CTA"></textarea>
+        </label>
+        <p class="dialog-message" id="customAudienceMessage"></p>
+        <div class="dialog-actions">
+          <button class="secondary-button" id="cancelCustomAudience" type="button">ยกเลิก</button>
+          <button class="primary-button" id="saveCustomAudience" type="submit">บันทึก</button>
         </div>
       </form>
     </dialog>
