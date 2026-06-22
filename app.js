@@ -263,12 +263,40 @@ function buildStrategy(brief) {
   const keywordLead = brief.keywords[0] || "ประกันชีวิต";
   const audienceShort = shortText(brief.audience, 76);
   const painShort = shortText(brief.painPoint, 92);
+  const trustAngle = brief.audiencePreset === "custom"
+    ? "ใช้ข้อมูลจริงจากบริบทของลูกค้าเป็นแกนสื่อสาร"
+    : `สร้างความเชื่อถือผ่านการอธิบายแบบค่อยเป็นค่อยไปสำหรับ ${audienceShort}`;
+  const educationAngle = `ให้ความรู้แบบเข้าใจง่าย โดยเริ่มจากปัญหาจริง ${painShort}`;
+  const caseAngle = `ยกเคสตัวอย่างหลากหลาย เช่น ${preset.label} / คนมีภาระครอบครัว / เจ้าของกิจการ / คนเริ่มวางแผนเกษียณ`;
+  const contentPillars = [
+    `1. Trust: สื่อสารด้วยข้อเท็จจริงและคำอธิบายที่ไม่กดดัน`,
+    `2. Education: อธิบายเหตุผล, ความเสี่ยง, และแนวคิดการวางแผน`,
+    `3. Case-based: เล่าตัวอย่างเคสจากหลายสถานการณ์จริง`,
+    `4. Conversion: ปิดท้ายด้วย CTA ที่ชวนประเมินแผน`,
+  ];
+  const funnelPlan = [
+    `Awareness: เปิดด้วยปัญหาและคำถามที่ตรงชีวิตจริง`,
+    `Consideration: อธิบายทางเลือก, ข้อดีข้อจำกัด, และสิ่งที่ควรเช็ก`,
+    `Lead: ชวนประเมินแผน / นัดคุย / รับ checklist`,
+  ];
+  const caseExamples = [
+    `เคส 1: ครอบครัวเริ่มต้นที่อยากคุ้มครองรายได้หลัก`,
+    `เคส 2: เจ้าของกิจการที่ต้องแบ่งความเสี่ยงส่วนตัวกับธุรกิจ`,
+    `เคส 3: คนมีลูกเล็กที่อยากวางแผนการศึกษาร่วมกับความคุ้มครอง`,
+    `เคส 4: คนเริ่มวางแผนเกษียณที่ต้องการบาลานซ์ระหว่างคุ้มครองกับเงินออม`,
+  ];
 
   return {
     angle: `AI วิเคราะห์กลุ่ม ${audienceShort} ที่มี pain point "${painShort}"`,
     promise: `แปลงข้อมูลเป็นคอนเทนต์ที่ตอบโจทย์ตามโทน "${brief.tone}" และ funnel "${preset.funnel}"`,
     proof: `อ้างอิง funnel "${preset.funnel}" พร้อม keyword "${keywordLead}" เพื่อวางคอนเทนต์ที่พาคนจากสนใจไปสู่การทัก`,
     cta: preset.cta,
+    trustAngle,
+    educationAngle,
+    caseAngle,
+    contentPillars,
+    funnelPlan,
+    caseExamples,
   };
 }
 
@@ -649,9 +677,15 @@ function renderSnapshot(strategy) {
     ["AI วิเคราะห์ปัญหา", strategy.angle],
     ["AI เข้าใจความต้องการ", strategy.promise],
     ["Hook แนะนำ", strategy.proof],
+    ["Trust Building", strategy.trustAngle],
+    ["Education Focus", strategy.educationAngle],
+    ["Case Variety", strategy.caseAngle],
     ["Keyword", (state.latest?.brief.keywords || []).join(", ") || "ประกันชีวิต"],
     ["Sell Funnel", strategy.promise.includes("funnel") ? strategy.promise : "Awareness -> Consideration -> Lead"],
     ["CTA", strategy.cta],
+    ["Content Pillars", (strategy.contentPillars || []).join("\n")],
+    ["Funnel Plan", (strategy.funnelPlan || []).join("\n")],
+    ["Case Examples", (strategy.caseExamples || []).join("\n")],
   ];
 
   els.snapshot.innerHTML = cards
