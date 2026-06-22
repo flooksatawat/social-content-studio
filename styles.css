@@ -428,11 +428,10 @@ textarea:focus {
 .channel-chip input:checked::after {
   content: "";
   width: 5px;
-  height: 10px;
-  margin-top: -2px;
+  height: 9px;
   border: solid var(--accent-strong);
   border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
+  transform: translateY(-1px) rotate(45deg);
 }
 
 .channel-chip input:focus-visible {
