@@ -177,6 +177,10 @@ const els = {
   aiStatusButton: $("#aiStatusButton"),
   aiStatusText: $("#aiStatusText"),
   aiDialog: $("#aiDialog"),
+  aiBridgeDialog: $("#aiBridgeDialog"),
+  aiBridgeMessage: $("#aiBridgeMessage"),
+  externalAiPrompt: $("#externalAiPrompt"),
+  externalAiResponse: $("#externalAiResponse"),
   customAudienceDialog: $("#customAudienceDialog"),
   aiConnectForm: $("#aiConnectForm"),
   customAudienceForm: $("#customAudienceForm"),
@@ -1447,6 +1451,130 @@ function closeAiDialog() {
   setDialogMessage("");
 }
 
+function setAiBridgeMessage(message = "", isError = false) {
+  if (!els.aiBridgeMessage) return;
+  els.aiBridgeMessage.textContent = message;
+  els.aiBridgeMessage.classList.toggle("is-error", isError);
+}
+
+function buildExternalAiPrompt(brief = getBrief()) {
+  const selectedChannels = brief.channels?.length ? brief.channels : defaultChannels;
+  const contentShape = Object.fromEntries(
+    selectedChannels.map((channel) => [
+      channel,
+      [
+        { title: "หัวข้อส่วนที่ 1", text: "ข้อความพร้อมใช้งานจริง" },
+        { title: "หัวข้อส่วนที่ 2", text: "ข้อความพร้อมใช้งานจริง" },
+      ],
+    ])
+  );
+  const outputShape = {
+    strategy: {
+      angle: "วิเคราะห์ปัญหาหลักอย่างละเอียด",
+      promise: "ความต้องการและผลลัพธ์ที่กลุ่มเป้าหมายต้องการ",
+      proof: "Hook และเหตุผลที่ทำให้เชื่อถือ",
+      cta: "CTA ที่ชัดเจนและไม่กดดัน",
+      trustAngle: "แนวทางสร้างความเชื่อใจ",
+      educationAngle: "แนวทางให้ความรู้",
+      caseAngle: "แนวทางเล่าเคส",
+      contentPillars: ["เสาหลักคอนเทนต์อย่างน้อย 4 ข้อ"],
+      funnelPlan: ["Awareness", "Consideration", "Lead"],
+      referenceMap: ["วิธีเชื่อมเนื้อหาระหว่างช่องทาง"],
+      proofNotes: ["หลักฐานหรือคำอธิบายที่ตรวจสอบได้"],
+      objectionHandling: ["ข้อโต้แย้งและวิธีตอบ"],
+      concernMap: ["ความกังวลและวิธีคลี่คลาย"],
+      caseExamples: ["ตัวอย่างเคสอย่างน้อย 4 แบบ"],
+      audienceInsight: ["Insight กลุ่มเป้าหมาย"],
+      messageAngles: ["มุมสื่อสารอย่างน้อย 3 มุม"],
+      trustProofStack: ["องค์ประกอบสร้างความน่าเชื่อถือ"],
+      contentSequence: ["ลำดับคอนเทนต์จากรู้จักไปสู่ทักหา"],
+      complianceNotes: ["คำเตือนด้านความถูกต้องและไม่กล่าวอ้างเกินจริง"],
+      leadQualification: ["คำถามคัดกรองลูกค้า"],
+      channelExecution: ["วิธีนำไปใช้ในแต่ละช่องทาง"],
+    },
+    hooks: ["Hook 1", "Hook 2", "Hook 3", "Hook 4"],
+    imagePrompt: "English image-generation prompt aligned with the strategy",
+    content: contentShape,
+  };
+
+  return [
+    "คุณคือ Content Strategist ภาษาไทยสำหรับที่ปรึกษาประกันชีวิตและการเงินมืออาชีพ",
+    "สร้างกลยุทธ์และคอนเทนต์ที่พร้อมนำไปใช้จริงจาก Campaign Brief ด้านล่าง",
+    "ใช้ภาษาชัดเจน อบอุ่น น่าเชื่อถือ ไม่ข่มขู่ ไม่รับประกันผลตอบแทน และไม่สร้างสถิติขึ้นเอง",
+    "แต่ละช่องทางต้องปรับรูปแบบให้เหมาะกับแพลตฟอร์ม และมีรายละเอียดเพียงพอสำหรับนำไปโพสต์ได้ทันที",
+    "ตอบกลับเป็น JSON ที่ parse ได้เท่านั้น ห้ามใช้ Markdown ห้ามใส่ ``` และห้ามเขียนคำอธิบายนอก JSON",
+    "ถ้าข้อมูลบางส่วนไม่ครบ ให้คิดสมมติฐานที่สมเหตุผลและปลอดภัยแล้วเติมให้ครบ",
+    "",
+    "CAMPAIGN BRIEF:",
+    JSON.stringify({ ...brief, channels: selectedChannels }, null, 2),
+    "",
+    "REQUIRED JSON SHAPE:",
+    JSON.stringify(outputShape, null, 2),
+    "",
+    "ข้อกำหนดเพิ่มเติม: content ของแต่ละช่องทางต้องมี 2-5 blocks แต่ละ block มี title และ text ระบบปลายทางจะนำ JSON นี้ไปสร้าง Video Prompt และปฏิทิน 30 วันต่อโดยอัตโนมัติ",
+  ].join("\n");
+}
+
+function openAiBridgeDialog() {
+  setAiBridgeMessage("");
+  if (els.externalAiPrompt) els.externalAiPrompt.value = buildExternalAiPrompt(getBrief());
+  if (!els.aiBridgeDialog.open) els.aiBridgeDialog.showModal();
+  window.setTimeout(() => els.externalAiPrompt?.focus(), 50);
+}
+
+function closeAiBridgeDialog() {
+  if (els.aiBridgeDialog?.open) els.aiBridgeDialog.close();
+  setAiBridgeMessage("");
+}
+
+function parseExternalAiResponse(rawResponse) {
+  const raw = clean(rawResponse);
+  if (!raw) throw new Error("วางคำตอบ JSON จาก ChatGPT หรือ Claude ก่อน");
+  const withoutFence = raw
+    .replace(/^\s*```(?:json)?\s*/i, "")
+    .replace(/\s*```\s*$/i, "");
+  const firstBrace = withoutFence.indexOf("{");
+  const lastBrace = withoutFence.lastIndexOf("}");
+  if (firstBrace < 0 || lastBrace <= firstBrace) {
+    throw new Error("ไม่พบ JSON object ในคำตอบ กรุณาสั่ง AI ให้ตอบเฉพาะ JSON");
+  }
+  const parsed = JSON.parse(withoutFence.slice(firstBrace, lastBrace + 1));
+  if (!parsed || typeof parsed !== "object" || (!parsed.strategy && !parsed.content)) {
+    throw new Error("JSON ต้องมี strategy หรือ content อย่างน้อยหนึ่งส่วน");
+  }
+  return parsed;
+}
+
+function importExternalAiResponse() {
+  try {
+    const brief = getBrief();
+    const imported = parseExternalAiResponse(els.externalAiResponse?.value);
+    renderGenerationResult({
+      ...imported,
+      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+      createdAt: new Date().toISOString(),
+      brief,
+    });
+    closeAiBridgeDialog();
+    showToast("นำเข้าคำตอบ AI และสร้าง Step 2-5 แล้ว");
+    document.querySelector("#output-title")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (error) {
+    setAiBridgeMessage(error.message || "นำเข้าคำตอบไม่สำเร็จ", true);
+  }
+}
+
+function launchExternalAi(provider) {
+  const urls = {
+    chatgpt: "https://chatgpt.com/",
+    claude: "https://claude.ai/new",
+  };
+  const url = urls[provider];
+  if (!url) return;
+  copyText(els.externalAiPrompt?.value || buildExternalAiPrompt(getBrief()));
+  window.open(url, "_blank", "noopener,noreferrer");
+  setAiBridgeMessage(`คัดลอก Prompt แล้ว วางใน ${provider === "chatgpt" ? "ChatGPT" : "Claude"} ได้เลย`);
+}
+
 function setButtonLoading(button, loading, loadingText) {
   if (!button) return;
   if (loading) {
@@ -1725,6 +1853,24 @@ function downloadCanvas() {
 
 function bindEvents() {
   els.form.addEventListener("submit", runGeneration);
+  const openAiBridgeButton = $("#openAiBridge");
+  if (openAiBridgeButton) openAiBridgeButton.addEventListener("click", openAiBridgeDialog);
+  const closeAiBridgeButton = $("#closeAiBridge");
+  if (closeAiBridgeButton) closeAiBridgeButton.addEventListener("click", closeAiBridgeDialog);
+  const copyExternalAiPromptButton = $("#copyExternalAiPrompt");
+  if (copyExternalAiPromptButton) {
+    copyExternalAiPromptButton.addEventListener("click", () => copyText(els.externalAiPrompt?.value || buildExternalAiPrompt(getBrief())));
+  }
+  const importExternalAiResponseButton = $("#importExternalAiResponse");
+  if (importExternalAiResponseButton) importExternalAiResponseButton.addEventListener("click", importExternalAiResponse);
+  $$('[data-ai-provider]').forEach((button) => {
+    button.addEventListener("click", () => launchExternalAi(button.dataset.aiProvider));
+  });
+  if (els.aiBridgeDialog) {
+    els.aiBridgeDialog.addEventListener("click", (event) => {
+      if (event.target === els.aiBridgeDialog) closeAiBridgeDialog();
+    });
+  }
   if (els.form.audiencePreset) {
     els.form.audiencePreset.addEventListener("change", () => {
       if (els.form.audiencePreset.value === "custom") {
