@@ -727,7 +727,8 @@ function buildVideoContent(brief) {
   const keyword = brief.keywords[0] || "ประกันชีวิต";
   const strategy = buildStrategy(brief);
   const geminiPrompt = [
-    `Create a short vertical video concept for a life insurance and financial advisory brand.`,
+    `Create a short VERTICAL video concept (9:16 portrait, full-screen mobile) for a life insurance and financial advisory brand.`,
+    `Aspect ratio must always be 9:16 vertical, optimized for TikTok, Reels, YouTube Shorts and LINE VOOM.`,
     `Audience: ${brief.audience}.`,
     `Core pain point: ${brief.painPoint}.`,
     `Core strategy: ${shortText(strategy.angle, 120)}.`,
@@ -736,15 +737,18 @@ function buildVideoContent(brief) {
     `Concerns to address: ${(strategy.concernMap || []).join(" | ")}.`,
     `Proof notes: ${(strategy.proofNotes || []).join(" | ")}.`,
     `Use a warm professional tone, simple Thai language, and a clear CTA: ${preset.cta}.`,
-    `Output structure: hook, problem, insight, example, CTA, and scene direction.`,
+    `Frame every shot for vertical 9:16: subject centered, safe margins for captions top and bottom, large readable Thai text overlays.`,
+    `Output structure: hook, problem, insight, example, CTA, and vertical scene direction.`,
   ].join(" ");
   const flowPrompt = [
-    `Make a Flow-ready video prompt from the same brief for ${brief.audience}.`,
+    `Make a Flow-ready VERTICAL video prompt (9:16 portrait, full-screen mobile) from the same brief for ${brief.audience}.`,
+    `Aspect ratio must always be 9:16 vertical — never landscape.`,
     `The video must mirror Step 2 strategy and Step 3 content.`,
-    `Include: hook, message angle, concern handling, proof points, scene beats, pacing, and CTA.`,
+    `Include: hook, message angle, concern handling, proof points, vertical scene beats, pacing, and CTA.`,
     `Use this content lead: ${shortText(strategy.proof, 120)}.`,
     `Use these reference channels: ${(strategy.referenceMap || []).join(" | ")}.`,
-    `Keep it concise enough to paste into Flow and generate a polished social video.`,
+    `Compose all shots for a 9:16 vertical frame with centered subjects and space for Thai captions.`,
+    `Keep it concise enough to paste into Flow and generate a polished vertical social video.`,
   ].join(" ");
   return [
     block(
@@ -754,6 +758,7 @@ function buildVideoContent(brief) {
     block(
       "Short Script",
       [
+        `รูปแบบ: วิดีโอแนวตั้ง 9:16 เต็มจอมือถือ`,
         `0-3s: "${preset.hook}"`,
         `4-10s: "${keyword} ไม่ใช่การซื้อให้แพงที่สุด แต่คือการเตรียมแผนให้คนที่เรารัก ถ้าวันหนึ่งรายได้ของเราหยุดลง"`,
         `11-18s: "เริ่มจากดูว่าใครต้องพึ่งรายได้เรา มีหนี้หรือค่าใช้จ่ายจำเป็นเท่าไร แล้วค่อยเลือกความคุ้มครองให้พอดีกับงบที่จ่ายไหว"`,
