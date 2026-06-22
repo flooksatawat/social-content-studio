@@ -8,7 +8,8 @@
       name="description"
       content="เครื่องมือสร้างคอนเทนต์สำหรับประกันชีวิตและที่ปรึกษาทางการเงินมืออาชีพ พร้อม SEO brief สำหรับ Facebook, YouTube, TikTok, LINE VOOM และ Blog"
     />
-    <link rel="stylesheet" href="./styles.css?v=manual-ai-bridge-1" />
+    <link rel="stylesheet" href="./styles.css?v=modern-toggle-1" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -39,10 +40,6 @@
           <span class="idea-card idea-card-b">STORY</span>
           <span class="idea-card idea-card-c">CREATE</span>
         </div>
-        <button class="status-cluster" id="aiStatusButton" type="button" aria-label="สถานะ Gemini">
-          <span class="status-dot"></span>
-          <span id="aiStatusText">กำลังตรวจสอบ Gemini</span>
-        </button>
       </header>
 
       <main class="workspace">
@@ -54,9 +51,8 @@
                   <p class="eyebrow">Step 1</p>
                   <h2 id="brief-title">Campaign Brief</h2>
                 </div>
-              <button class="panel-toggle" type="button" data-step-toggle="step-1" aria-expanded="true">
-                <span class="panel-toggle-icon">▾</span>
-                <span class="panel-toggle-text">ซ่อน</span>
+              <button class="panel-toggle" type="button" data-step-toggle="step-1" aria-expanded="true" aria-label="ซ่อน/แสดง">
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
               </div>
 
@@ -112,8 +108,7 @@
             </fieldset>
 
             <div class="button-row">
-              <button class="primary-button" id="generateContent" type="submit">ให้ AI วิเคราะห์และสร้างชุดคอนเทนต์</button>
-              <button class="bridge-button" id="openAiBridge" type="button">ChatGPT / Claude / Gemini Bridge</button>
+<button class="bridge-button" id="openAiBridge" type="submit">ChatGPT / Claude / Gemini Bridge</button>
               <button class="secondary-button" id="resetForm" type="reset">รีเซ็ต</button>
             </div>
               </div>
@@ -127,9 +122,8 @@
               <h2 id="output-title">Campaign Strategy</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-2" aria-expanded="true">
-                <span class="panel-toggle-icon">▾</span>
-                <span class="panel-toggle-text">ซ่อน</span>
+              <button class="panel-toggle" type="button" data-step-toggle="step-2" aria-expanded="true" aria-label="ซ่อน/แสดง">
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
               <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
             </div>
@@ -146,9 +140,8 @@
               <h2 id="content-title">เลือกช่องทางและดูคอนเทนต์</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-3" aria-expanded="true">
-                <span class="panel-toggle-icon">▾</span>
-                <span class="panel-toggle-text">ซ่อน</span>
+              <button class="panel-toggle" type="button" data-step-toggle="step-3" aria-expanded="true" aria-label="ซ่อน/แสดง">
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
               <span class="ghost-button ghost-static">6 channels</span>
             </div>
@@ -172,9 +165,8 @@
               <h2 id="visual-title">Image Prompt</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-4" aria-expanded="true">
-                <span class="panel-toggle-icon">▾</span>
-                <span class="panel-toggle-text">ซ่อน</span>
+              <button class="panel-toggle" type="button" data-step-toggle="step-4" aria-expanded="true" aria-label="ซ่อน/แสดง">
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
               <button class="ghost-button" id="copyPromptTop" type="button">คัดลอก prompt</button>
             </div>
@@ -244,7 +236,9 @@
               <h2 id="calendar-title">30-Day Content Calendar</h2>
             </div>
             <div class="panel-actions">
-              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-5" aria-expanded="true">ซ่อน</button>
+              <button class="panel-toggle" type="button" data-step-toggle="step-5" aria-expanded="true" aria-label="ซ่อน/แสดง">
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
+              </button>
               <button class="ghost-button" id="copyCalendar" type="button">คัดลอกตาราง</button>
             </div>
           </div>

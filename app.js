@@ -1682,17 +1682,12 @@ function setPanelCollapsed(panel, collapsed) {
   const button = panel.querySelector("[data-step-toggle]");
   if (button) {
     button.setAttribute("aria-expanded", String(!collapsed));
-    const text = button.querySelector(".panel-toggle-text");
-    const icon = button.querySelector(".panel-toggle-icon");
-    if (text) text.textContent = collapsed ? "แสดง" : "ซ่อน";
-    if (icon) icon.textContent = collapsed ? "▸" : "▾";
+    button.setAttribute("aria-label", collapsed ? "แสดง" : "ซ่อน");
   }
 }
 
 function bindEvents() {
   els.form.addEventListener("submit", runGeneration);
-  const openAiBridgeButton = $("#openAiBridge");
-  if (openAiBridgeButton) openAiBridgeButton.addEventListener("click", openAiBridgeDialog);
   const closeAiBridgeButton = $("#closeAiBridge");
   if (closeAiBridgeButton) closeAiBridgeButton.addEventListener("click", closeAiBridgeDialog);
   const copyExternalAiPromptButton = $("#copyExternalAiPrompt");
