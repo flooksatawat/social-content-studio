@@ -442,20 +442,38 @@ textarea:focus {
 }
 
 .channel-chip {
+  --channel-color: var(--accent-strong);
+  --channel-soft: rgba(20, 184, 166, 0.08);
   display: flex;
   align-items: center;
   gap: 10px;
   min-height: 42px;
   padding: 9px 12px;
-  border: 1px solid var(--line);
+  border: 1px solid color-mix(in srgb, var(--channel-color) 24%, transparent);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.5);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--channel-color) 9%, transparent), rgba(255, 255, 255, 0.84)),
+    rgba(255, 255, 255, 0.62);
   color: var(--muted);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
   user-select: none;
-  transition: border-color 150ms ease, background 150ms ease, color 150ms ease, transform 120ms ease;
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease, transform 120ms ease, box-shadow 150ms ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.channel-chip i {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--channel-color) 12%, white);
+  color: var(--channel-color);
+  font-size: 18px;
+  line-height: 1;
 }
 
 .channel-chip span {
@@ -463,8 +481,11 @@ textarea:focus {
 }
 
 .channel-chip:hover {
-  border-color: rgba(20, 184, 166, 0.32);
-  background: rgba(255, 255, 255, 0.85);
+  border-color: color-mix(in srgb, var(--channel-color) 42%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--channel-color) 14%, transparent), rgba(255, 255, 255, 0.9)),
+    rgba(255, 255, 255, 0.88);
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--channel-color) 11%, transparent);
 }
 
 .channel-chip:active {
@@ -472,8 +493,10 @@ textarea:focus {
 }
 
 .channel-chip:has(input:checked) {
-  border-color: rgba(20, 184, 166, 0.38);
-  background: rgba(20, 184, 166, 0.06);
+  border-color: color-mix(in srgb, var(--channel-color) 48%, transparent);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--channel-color) 18%, transparent), rgba(255, 255, 255, 0.9)),
+    var(--channel-soft);
   color: var(--bg-ink);
 }
 
@@ -485,15 +508,15 @@ textarea:focus {
   height: 20px;
   flex: 0 0 auto;
   margin: 0;
-  border: 1.5px solid var(--line);
+  border: 1.5px solid color-mix(in srgb, var(--channel-color) 36%, var(--line));
   border-radius: 6px;
   background: transparent;
   transition: background 150ms ease, border-color 150ms ease;
 }
 
 .channel-chip input:checked {
-  border-color: var(--accent-strong);
-  background: var(--accent-soft);
+  border-color: var(--channel-color);
+  background: color-mix(in srgb, var(--channel-color) 17%, white);
 }
 
 .channel-chip input:checked::after {
@@ -503,7 +526,7 @@ textarea:focus {
   top: 50%;
   width: 5px;
   height: 9px;
-  border: solid var(--accent-strong);
+  border: solid var(--channel-color);
   border-width: 0 2px 2px 0;
   transform: translate(-50%, -60%) rotate(45deg);
 }
@@ -511,6 +534,36 @@ textarea:focus {
 .channel-chip input:focus-visible {
   outline: 3px solid rgba(20, 184, 166, 0.22);
   outline-offset: 2px;
+}
+
+.channel-facebook {
+  --channel-color: #1877f2;
+  --channel-soft: rgba(24, 119, 242, 0.08);
+}
+
+.channel-line {
+  --channel-color: #06c755;
+  --channel-soft: rgba(6, 199, 85, 0.09);
+}
+
+.channel-tiktok {
+  --channel-color: #111827;
+  --channel-soft: rgba(17, 24, 39, 0.06);
+}
+
+.channel-youtube {
+  --channel-color: #ff0033;
+  --channel-soft: rgba(255, 0, 51, 0.08);
+}
+
+.channel-blog {
+  --channel-color: #f97316;
+  --channel-soft: rgba(249, 115, 22, 0.09);
+}
+
+.channel-email {
+  --channel-color: #0ea5e9;
+  --channel-soft: rgba(14, 165, 233, 0.09);
 }
 
 .ghost-static {
