@@ -919,7 +919,7 @@ function renderCalendarPreview(row, baseResult) {
       tabsBox.querySelectorAll(".tab-button").forEach((tab) => tab.classList.remove("active"));
       button.classList.add("active");
       renderPreviewOutput(button.dataset.previewTab);
-    }, { once: true });
+    });
   }
 
   const videoBox = els.calendarPreview.querySelector('[data-preview="video"]');
@@ -1645,7 +1645,10 @@ function bindEvents() {
       }
       const rows = buildCalendarPlan(state.latest);
       const text = rows
-        .map((row) => `Day ${row.day}: ${row.times.join(" / ")} | ${row.channel} | ${shortText(row.angle, 70)}`)
+        .map((row) => [
+          `Day ${row.day}: ${shortText(row.angle, 70)}`,
+          ...row.slots.map((slot) => `- ${slot.time} | ${slot.label} | ${slot.focus}`),
+        ].join("\n"))
         .join("\n");
       copyText(text);
     });
