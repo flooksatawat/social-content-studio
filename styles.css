@@ -480,6 +480,12 @@ textarea:focus {
   gap: 12px;
 }
 
+.canvas-wrap,
+#downloadImage,
+#renderImage {
+  display: none !important;
+}
+
 .canvas-wrap {
   display: grid;
   place-items: center;
