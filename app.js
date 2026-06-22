@@ -29,6 +29,12 @@
     ratioLabel: "1.91:1",
     note: "เหมาะกับ title, meta, outline, FAQ และ internal link",
   },
+  email: {
+    label: "Email",
+    size: [1200, 630],
+    ratioLabel: "1.91:1",
+    note: "เหมาะกับ subject line, preview text และ follow-up sequence",
+  },
   aiSearch: {
     label: "AI Search",
     size: [1200, 630],
@@ -404,6 +410,33 @@ function buildPlatformContent(brief) {
           "Q: ต้องซื้อแผนแพงที่สุดไหม?",
           "A: ไม่จำเป็น แผนที่ดีควรเหมาะกับความเสี่ยง เป้าหมาย และกำลังจ่ายจริงของแต่ละคน",
         ].join("\n")
+      ),
+    ],
+    email: [
+      block(
+        "Subject Lines",
+        [
+          `1. ${keyword}: เริ่มวางแผนคุ้มครองให้เหมาะกับชีวิตจริง`,
+          `2. 3 สิ่งที่ควรเช็กก่อนเลือก${keyword}`,
+          `3. AI ช่วยสรุปแผนคุ้มครองที่เหมาะกับคุณ`,
+        ].join("\n")
+      ),
+      block(
+        "Email Copy",
+        [
+          `สวัสดี ${brief.audience}`,
+          "",
+          `ถ้าคุณกำลังพิจารณา${keyword} ลองเริ่มจาก 3 จุดนี้ก่อน:`,
+          "1. ใครคือคนที่ต้องดูแล",
+          "2. ความเสี่ยงหรือภาระหลักคืออะไร",
+          "3. งบที่จ่ายต่อเนื่องได้จริงอยู่ระดับไหน",
+          "",
+          `ถ้าต้องการแผนที่เหมาะกับสถานการณ์จริง: ${preset.cta}`,
+        ].join("\n")
+      ),
+      block(
+        "Preview Text",
+        `แนวทางสั้น ๆ สำหรับ ${brief.audience} ที่อยากเริ่มจากข้อมูลจริงก่อนตัดสินใจเรื่อง${keyword}`
       ),
     ],
     aiSearch: [
