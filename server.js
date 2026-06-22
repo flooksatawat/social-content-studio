@@ -154,6 +154,12 @@ function contentPackSchema() {
     maxItems: 5,
     items: contentBlockSchema(),
   };
+  const stringListSchema = {
+    type: "array",
+    minItems: 2,
+    maxItems: 6,
+    items: { type: "string" },
+  };
 
   return {
     type: "object",
@@ -169,6 +175,24 @@ function contentPackSchema() {
           promise: { type: "string" },
           proof: { type: "string" },
           cta: { type: "string" },
+          trustAngle: { type: "string" },
+          educationAngle: { type: "string" },
+          caseAngle: { type: "string" },
+          contentPillars: stringListSchema,
+          autoFillPlan: stringListSchema,
+          funnelPlan: stringListSchema,
+          referenceMap: stringListSchema,
+          proofNotes: stringListSchema,
+          objectionHandling: stringListSchema,
+          concernMap: stringListSchema,
+          caseExamples: stringListSchema,
+          audienceInsight: stringListSchema,
+          messageAngles: stringListSchema,
+          trustProofStack: stringListSchema,
+          contentSequence: stringListSchema,
+          complianceNotes: stringListSchema,
+          leadQualification: stringListSchema,
+          channelExecution: stringListSchema,
         },
       },
       hooks: {
@@ -215,6 +239,7 @@ async function generateContent(brief) {
           "Keep each channel block short and useful. Prefer compact hooks and one clear CTA.",
           "Facebook needs a strong caption and CTA. YouTube needs a short title, script, and description. TikTok and LINE VOOM need concise mobile-first scripts.",
           "Blog SEO needs title, meta description, outline, FAQ, and search intent. Email needs subject lines, preview text, and a short body. AI Search needs answer-first copy and concise FAQs.",
+          "Strategy must be detailed and practical: include audience insight, message angles, trust proof stack, content sequence, objections, concerns, case examples, compliance notes, lead qualification, and channel execution.",
           "Keep the image prompt brief and visual with premium finance, advisor consultation, family protection, and planning cues. Do not ask the image model to render long text.",
         ].join(" "),
       }],

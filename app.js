@@ -43,6 +43,8 @@
   },
 };
 
+const defaultChannels = ["facebook", "linevoom", "tiktok", "youtube", "blog", "email"];
+
 const moodPalettes = {
   clean: {
     name: "Clean Expert",
@@ -212,7 +214,7 @@ function getBrief() {
     campaignGoal: preset.funnel,
     offer: preset.cta,
     keywords: ["ประกันชีวิต", "ที่ปรึกษาทางการเงิน", "วางแผนคุ้มครอง"],
-    channels: channels.length ? channels : ["facebook"],
+    channels: channels.length ? channels : defaultChannels,
   };
 }
 
@@ -318,6 +320,47 @@ function buildStrategy(brief) {
     `เคส 3: คนมีลูกเล็กที่อยากวางแผนการศึกษาร่วมกับความคุ้มครอง`,
     `เคส 4: คนเริ่มวางแผนเกษียณที่ต้องการบาลานซ์ระหว่างคุ้มครองกับเงินออม`,
   ];
+  const audienceInsight = [
+    `ลูกค้ากลุ่มนี้ไม่ได้ต้องการซื้อทันที แต่ต้องการเข้าใจก่อนว่าแผนแบบไหนเหมาะกับชีวิตจริง`,
+    `แรงจูงใจหลักคือความสบายใจของครอบครัว การคุมงบ และการไม่ตัดสินใจผิด`,
+    `คอนเทนต์ควรเริ่มจากภาษาคนทั่วไป แล้วค่อยเชื่อมไปสู่การประเมินแผนกับที่ปรึกษา`,
+  ];
+  const messageAngles = [
+    `Angle 1: เริ่มจากความเสี่ยงรายได้หยุด แต่เล่าอย่างนุ่มนวล ไม่ขู่`,
+    `Angle 2: เปรียบเทียบการเลือกแผนจากภาระจริง เช่น รายจ่าย บ้าน ลูก และพ่อแม่`,
+    `Angle 3: ทำให้เห็นว่าที่ปรึกษาช่วยจัดลำดับความสำคัญ ไม่ใช่ขายแบบเดียวให้ทุกคน`,
+  ];
+  const trustProofStack = [
+    `อธิบายขั้นตอนประเมินก่อนเสนอแผน`,
+    `ใช้ตัวอย่างงบประมาณและภาระที่หลากหลาย`,
+    `ย้ำว่าเงื่อนไขและความคุ้มครองขึ้นกับแบบประกันและการพิจารณารับประกัน`,
+    `เปิดพื้นที่ให้ถามก่อนตัดสินใจ เพื่อสร้างความไว้วางใจระยะยาว`,
+  ];
+  const contentSequence = [
+    `โพสต์ 1: เปิดปัญหาและคำถามที่คนกลุ่มนี้คิดอยู่`,
+    `โพสต์ 2: ให้ความรู้ด้วย checklist หรือ framework`,
+    `โพสต์ 3: ยกเคสตัวอย่างและข้อควรระวัง`,
+    `โพสต์ 4: ชวนประเมินแผนแบบไม่กดดัน`,
+  ];
+  const complianceNotes = [
+    `หลีกเลี่ยงคำรับประกันผลตอบแทนหรือคำกล่าวอ้างเกินจริง`,
+    `ไม่ใช้ภาพหรือคำที่ทำให้กลัวเกินจำเป็น`,
+    `ใส่บริบทว่าแผนที่เหมาะสมขึ้นกับเป้าหมาย งบประมาณ สุขภาพ และเงื่อนไขกรมธรรม์`,
+  ];
+  const leadQualification = [
+    `ถามรายได้หลักและภาระที่ต้องดูแล`,
+    `ถามงบต่อเดือนที่สบายใจ`,
+    `ถามเป้าหมายสำคัญ เช่น คุ้มครองรายได้ การศึกษาลูก เกษียณ หรือหนี้สิน`,
+    `ชวนส่งข้อมูลเบื้องต้นเพื่อประเมิน ไม่เร่งปิดการขายในคอมเมนต์`,
+  ];
+  const channelExecution = [
+    `Facebook: เล่าเรื่องและสร้างความน่าเชื่อถือ`,
+    `Line: สรุปสั้น ชวนคุยต่อ และส่ง checklist`,
+    `TikTok: Hook เร็ว ตอบข้อสงสัยหนึ่งเรื่องต่อคลิป`,
+    `YouTube: อธิบายเชิงลึกพร้อมตัวอย่างเคส`,
+    `Blog SEO: เก็บบทความยาว FAQ และคีย์เวิร์ด`,
+    `Email: follow-up คนที่สนใจด้วยเนื้อหาและ CTA ชัดเจน`,
+  ];
 
   return {
     angle: `AI วิเคราะห์กลุ่ม ${audienceShort} ที่มี pain point "${painShort}"`,
@@ -335,6 +378,13 @@ function buildStrategy(brief) {
     objectionHandling,
     concernMap,
     caseExamples,
+    audienceInsight,
+    messageAngles,
+    trustProofStack,
+    contentSequence,
+    complianceNotes,
+    leadQualification,
+    channelExecution,
   };
 }
 
@@ -582,16 +632,29 @@ function mergeDefined(fallback, override) {
 }
 
 function normalizeGeneratedResult(result, brief) {
-  const fallback = generateContent(brief);
+  const selectedChannels = brief.channels?.length ? brief.channels : defaultChannels;
+  const safeBrief = { ...brief, channels: selectedChannels };
+  const fallback = generateContent(safeBrief);
   const strategy = mergeDefined(fallback.strategy, result?.strategy);
-  const content = mergeDefined(fallback.content, result?.content);
+  const mergedContent = mergeDefined(fallback.content, result?.content);
+  const allFallbackContent = buildPlatformContent(safeBrief);
+  const content = Object.fromEntries(
+    selectedChannels
+      .map((channel) => {
+        const blocks = Array.isArray(mergedContent[channel]) && mergedContent[channel].length
+          ? mergedContent[channel]
+          : allFallbackContent[channel];
+        return [channel, blocks];
+      })
+      .filter(([, blocks]) => Array.isArray(blocks) && blocks.length)
+  );
   return {
     ...fallback,
     ...(result || {}),
-    brief,
+    brief: safeBrief,
     strategy,
     hooks: Array.isArray(result?.hooks) && result.hooks.length ? result.hooks : fallback.hooks,
-    imagePrompt: result?.imagePrompt || buildImagePrompt(brief, strategy, content),
+    imagePrompt: result?.imagePrompt || buildImagePrompt(safeBrief, strategy, content),
     content,
   };
 }
@@ -605,22 +668,23 @@ function buildHashtags(brief) {
 }
 
 function generateContent(brief) {
-  const strategy = buildStrategy(brief);
-  const allContent = buildPlatformContent(brief);
+  const safeBrief = { ...brief, channels: brief.channels?.length ? brief.channels : defaultChannels };
+  const strategy = buildStrategy(safeBrief);
+  const allContent = buildPlatformContent(safeBrief);
   const selectedContent = Object.fromEntries(
-    brief.channels.map((channel) => [channel, allContent[channel]]).filter(([, content]) => content)
+    safeBrief.channels.map((channel) => [channel, allContent[channel]]).filter(([, content]) => content)
   );
   const fallbackChannels = Object.fromEntries(
-    Object.entries(allContent).filter(([channel]) => brief.channels.includes(channel))
+    Object.entries(allContent).filter(([channel]) => safeBrief.channels.includes(channel))
   );
 
-  const imagePrompt = buildImagePrompt(brief, strategy, allContent);
+  const imagePrompt = buildImagePrompt(safeBrief, strategy, allContent);
   return {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
     createdAt: new Date().toISOString(),
-    brief,
+    brief: safeBrief,
     strategy,
-    hooks: buildHooks(brief),
+    hooks: buildHooks(safeBrief),
     imagePrompt,
     content: { ...fallbackChannels, ...selectedContent },
   };
@@ -967,6 +1031,13 @@ function renderSnapshot(strategy) {
     ["Objection Handling", (safeStrategy.objectionHandling || []).join("\n")],
     ["Concerns", (safeStrategy.concernMap || []).join("\n")],
     ["Case Examples", (safeStrategy.caseExamples || []).join("\n")],
+    ["Audience Insight", (safeStrategy.audienceInsight || []).join("\n")],
+    ["Message Angles", (safeStrategy.messageAngles || []).join("\n")],
+    ["Trust Proof Stack", (safeStrategy.trustProofStack || []).join("\n")],
+    ["Content Sequence", (safeStrategy.contentSequence || []).join("\n")],
+    ["Compliance Notes", (safeStrategy.complianceNotes || []).join("\n")],
+    ["Lead Qualification", (safeStrategy.leadQualification || []).join("\n")],
+    ["Channel Execution", (safeStrategy.channelExecution || []).join("\n")],
   ].filter(([, text]) => clean(text) && clean(text) !== "undefined");
 
   els.snapshot.innerHTML = cards
@@ -982,7 +1053,8 @@ function renderSnapshot(strategy) {
 }
 
 function renderTabs(result) {
-  const channels = Object.keys(result.content);
+  const channelOrder = result.brief?.channels?.length ? result.brief.channels : Object.keys(result.content);
+  const channels = channelOrder.filter((channel) => result.content[channel]);
   if (!channels.includes(state.activeChannel)) {
     state.activeChannel = channels[0] || "facebook";
   }
