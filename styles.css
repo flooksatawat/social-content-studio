@@ -525,6 +525,80 @@ canvas[hidden] {
   display: none;
 }
 
+.calendar-panel {
+  display: grid;
+  gap: 14px;
+  margin-top: 14px;
+  padding-bottom: 18px;
+}
+
+.calendar-controls {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 12px;
+  padding: 0 18px;
+}
+
+.calendar-summary {
+  padding: 0 18px;
+}
+
+.calendar-summary-card {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(247, 252, 252, 0.84));
+  box-shadow: var(--shadow-soft);
+}
+
+.calendar-summary-card strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--accent-strong);
+}
+
+.calendar-summary-card p {
+  margin: 0 0 6px;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.calendar-table-wrap {
+  overflow-x: auto;
+  padding: 0 18px 18px;
+}
+
+.calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 960px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.calendar-table th,
+.calendar-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  line-height: 1.45;
+}
+
+.calendar-table th {
+  position: sticky;
+  top: 0;
+  background: rgba(248, 250, 252, 0.98);
+  color: var(--accent-strong);
+  font-size: 13px;
+}
+
+.calendar-table tbody tr:nth-child(even) td {
+  background: rgba(248, 252, 252, 0.56);
+}
+
 .image-prompt-label {
   margin-top: 16px;
 }

@@ -152,6 +152,11 @@ const els = {
   tabs: $("#channelTabs"),
   output: $("#contentOutput"),
   videoOutput: $("#videoOutput"),
+  calendarSummary: $("#calendarSummary"),
+  calendarBody: $("#calendarBody"),
+  postingWindow: $("#postingWindow"),
+  calendarDays: $("#calendarDays"),
+  copyCalendar: $("#copyCalendar"),
   canvas: $("#postCanvas"),
   generatedImage: $("#generatedImage"),
   prompt: $("#imagePrompt"),
@@ -484,6 +489,69 @@ function buildVideoContent(brief) {
       ].join("\n")
     ),
   ];
+}
+
+function getPostingTimes() {
+  const raw = clean(els.postingWindow?.value || "08:30, 12:30, 19:30");
+  const times = raw.split(",").map((item) => item.trim()).filter(Boolean);
+  return times.slice(0, 3).concat(["08:30", "12:30", "19:30"]).slice(0, 3);
+}
+
+function buildCalendarPlan(result) {
+  const brief = result?.brief || getBrief();
+  const channels = brief.channels?.length ? brief.channels : getSelectedChannels();
+  const times = getPostingTimes();
+  const days = Math.min(Math.max(Number(els.calendarDays?.value || 30) || 30, 7), 90);
+  const angles = (result?.hooks || buildHooks(brief)).concat([brief.painPoint, brief.offer, brief.tone]);
+  const primaryChannels = channels.length ? channels : ["facebook", "linevoom", "tiktok"];
+  const rows = [];
+
+  for (let day = 1; day <= days; day += 1) {
+    const dayChannels = [
+      primaryChannels[day % primaryChannels.length],
+      primaryChannels[(day + 1) % primaryChannels.length],
+      primaryChannels[(day + 2) % primaryChannels.length],
+    ];
+    const angle = angles[day % angles.length] || brief.painPoint;
+    rows.push({
+      day,
+      times,
+      channel: platformMeta[dayChannels[0]]?.label || "Facebook",
+      angle,
+      channels: dayChannels,
+    });
+  }
+
+  return rows;
+}
+
+function renderCalendar(result) {
+  if (!els.calendarBody || !els.calendarSummary) return;
+  const brief = result?.brief || getBrief();
+  const rows = buildCalendarPlan(result);
+  const times = getPostingTimes();
+  const channelList = (brief.channels?.length ? brief.channels : getSelectedChannels()).map((channel) => platformMeta[channel]?.label || channel);
+
+  els.calendarSummary.innerHTML = `
+    <article class="calendar-summary-card">
+      <strong>AI schedule</strong>
+      <p>แผน 30 วันสำหรับ ${escapeHtml(brief.audience)} โฟกัสช่องทาง ${escapeHtml(channelList.join(", "))}</p>
+      <p>เวลาหลัก: ${escapeHtml(times.join(" / "))}</p>
+    </article>
+  `;
+
+  els.calendarBody.innerHTML = rows
+    .map((row) => `
+      <tr>
+        <td>Day ${row.day}</td>
+        <td>${escapeHtml(times[0] || "")}</td>
+        <td>${escapeHtml(times[1] || "")}</td>
+        <td>${escapeHtml(times[2] || "")}</td>
+        <td>${escapeHtml(row.channel)}</td>
+        <td>${escapeHtml(shortText(row.angle, 72))}</td>
+      </tr>
+    `)
+    .join("");
 }
 
 function renderSnapshot(strategy) {
@@ -988,6 +1056,7 @@ function renderGenerationResult(result) {
   renderTabs(result);
   renderOutput(result);
   renderVideoOutput(result);
+  renderCalendar(result);
   els.imageFormat.value = Object.keys(result.content).includes(els.imageFormat.value)
     ? els.imageFormat.value
     : result.brief.channels.find((channel) => platformMeta[channel]?.size) || "facebook";
@@ -1159,6 +1228,19 @@ function bindEvents() {
   }
   const copyPromptButton = $("#copyPrompt");
   if (copyPromptButton) copyPromptButton.addEventListener("click", () => copyText(els.prompt.value));
+  if (els.copyCalendar) {
+    els.copyCalendar.addEventListener("click", () => {
+      if (!state.latest) {
+        showToast("ยังไม่มีตารางให้คัดลอก");
+        return;
+      }
+      const rows = buildCalendarPlan(state.latest);
+      const text = rows
+        .map((row) => `Day ${row.day}: ${row.times.join(" / ")} | ${row.channel} | ${shortText(row.angle, 70)}`)
+        .join("\n");
+      copyText(text);
+    });
+  }
   const copyAllButton = $("#copyAll");
   if (copyAllButton) {
     copyAllButton.addEventListener("click", () => {
@@ -1205,6 +1287,16 @@ function bindEvents() {
   [els.imageFormat, els.visualMood].forEach((control) => {
     control.addEventListener("change", () => drawCanvas());
   });
+  if (els.postingWindow) {
+    els.postingWindow.addEventListener("change", () => {
+      if (state.latest) renderCalendar(state.latest);
+    });
+  }
+  if (els.calendarDays) {
+    els.calendarDays.addEventListener("change", () => {
+      if (state.latest) renderCalendar(state.latest);
+    });
+  }
 
   els.aiStatusButton.addEventListener("click", () => openAiDialog());
   els.aiConnectForm.addEventListener("submit", connectAi);

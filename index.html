@@ -181,6 +181,44 @@
           </div>
           </section>
         </div>
+
+        <section class="panel calendar-panel" aria-labelledby="calendar-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Step 5</p>
+              <h2 id="calendar-title">30-Day Content Calendar</h2>
+            </div>
+            <button class="ghost-button" id="copyCalendar" type="button">คัดลอกตาราง</button>
+          </div>
+
+          <div class="calendar-controls">
+            <label>
+              ช่วงเวลาโพสต์
+              <input id="postingWindow" type="text" value="08:30, 12:30, 19:30" />
+            </label>
+            <label>
+              ระยะเวลา
+              <input id="calendarDays" type="number" min="7" max="90" value="30" />
+            </label>
+          </div>
+
+          <div class="calendar-summary" id="calendarSummary"></div>
+          <div class="calendar-table-wrap">
+            <table class="calendar-table">
+              <thead>
+                <tr>
+                  <th>Day</th>
+                  <th>Time 1</th>
+                  <th>Time 2</th>
+                  <th>Time 3</th>
+                  <th>Channel focus</th>
+                  <th>Content angle</th>
+                </tr>
+              </thead>
+              <tbody id="calendarBody"></tbody>
+            </table>
+          </div>
+        </section>
       </main>
     </div>
 
