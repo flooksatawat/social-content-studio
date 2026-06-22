@@ -1672,17 +1672,20 @@ async function runGeneration(event) {
     renderGenerationResult(result);
     showToast("AI สร้างชุดคอนเทนต์แล้ว");
   } catch (error) {
-    if ([400, 401, 403].includes(error.status)) {
+    const quotaLike =
+      error?.status === 429 ||
+      /quota|billing|limit|exceeded|free_tier/i.test(String(error.message || ""));
+    if ([400, 401, 403].includes(error.status) && !quotaLike) {
       state.aiConnected = false;
       setAiStatus("error", "API key ใช้งานไม่ได้");
     }
-    els.output.innerHTML = `
-      <div class="empty-state">
-        <h3>สร้างคอนเทนต์ไม่สำเร็จ</h3>
-        <p>${escapeHtml(error.message)}</p>
-      </div>
-    `;
-    showToast(error.message);
+    const fallbackResult = generateContent(brief);
+    renderGenerationResult(fallbackResult);
+    showToast(
+      quotaLike
+        ? "Gemini เต็มโควตาชั่วคราว ระบบสร้างชุดสำรองพร้อม Prompt ให้แล้ว"
+        : "เชื่อม AI ไม่สำเร็จ ระบบสร้างชุดสำรองพร้อมใช้งานให้แล้ว"
+    );
   } finally {
     setButtonLoading(els.generateButton, false);
   }
