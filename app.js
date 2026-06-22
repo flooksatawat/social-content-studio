@@ -1228,6 +1228,8 @@ function bindEvents() {
   }
   const copyPromptButton = $("#copyPrompt");
   if (copyPromptButton) copyPromptButton.addEventListener("click", () => copyText(els.prompt.value));
+  const copyPromptTopButton = $("#copyPromptTop");
+  if (copyPromptTopButton) copyPromptTopButton.addEventListener("click", () => copyText(els.prompt.value));
   if (els.copyCalendar) {
     els.copyCalendar.addEventListener("click", () => {
       if (!state.latest) {
