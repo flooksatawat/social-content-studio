@@ -140,6 +140,7 @@ const state = {
   history: [],
   generatedImage: "",
   selectedCalendarDay: null,
+  characterPhoto: "",
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -175,6 +176,10 @@ const els = {
   customAudienceProblem: $("#customAudienceProblem"),
   customAudienceNeed: $("#customAudienceNeed"),
   copyVideoScript: $("#copyVideoScript"),
+  characterPhoto: $("#characterPhoto"),
+  characterPreview: $("#characterPreview"),
+  characterPreviewImg: $("#characterPreviewImg"),
+  removeCharacterPhoto: $("#removeCharacterPhoto"),
 };
 
 function getBrief() {
@@ -201,6 +206,7 @@ function getBrief() {
     offer: preset.cta,
     keywords: ["ประกันชีวิต", "ที่ปรึกษาทางการเงิน", "วางแผนคุ้มครอง"],
     channels: channels.length ? channels : defaultChannels,
+    hasCharacterPhoto: Boolean(state.characterPhoto),
   };
 }
 
@@ -726,8 +732,14 @@ function buildVideoContent(brief) {
   const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
   const keyword = brief.keywords[0] || "ประกันชีวิต";
   const strategy = buildStrategy(brief);
+
+  const faceLock = brief.hasCharacterPhoto
+    ? `IMPORTANT character lock: a reference photo of a real person is attached. Use that exact person as the on-screen presenter in every shot and every video — match their face, hairstyle and features exactly; do not invent a different face.`
+    : "";
+
   const geminiPrompt = [
     `Generate this video now. Do not write a script, concept, or ask questions — output the rendered video directly.`,
+    faceLock,
     `An 8-second cinematic VERTICAL 9:16 video (full-screen mobile, never landscape) for a life insurance and financial advisory brand.`,
     `Scene: a warm, trustworthy Thai financial advisor in their mid-30s, sitting in a softly lit modern home office, smiling gently and speaking straight to the camera with reassuring eye contact.`,
     `Camera: slow push-in, eye-level, shallow depth of field. Lighting: soft natural window light. Mood: warm, calm, professional, hopeful.`,
@@ -735,15 +747,16 @@ function buildVideoContent(brief) {
     `Large readable Thai caption centered with safe margins top and bottom: "${shortText(strategy.angle, 44)}"`,
     `End on a clear call-to-action caption: "${preset.cta}".`,
     `Subject centered for vertical 9:16, audience ${brief.audience}, tone simple and human.`,
-  ].join(" ");
+  ].filter(Boolean).join(" ");
   const flowPrompt = [
     `Generate this video directly in Flow — render it, do not return a written plan.`,
+    faceLock,
     `A VERTICAL 9:16 portrait social video (full-screen mobile, never landscape) for ${brief.audience}, life insurance and financial advisory.`,
     `Shot 1: warm Thai advisor smiling at camera in a bright modern office, slow push-in, Thai caption "${shortText(strategy.angle, 36)}".`,
     `Shot 2: relatable b-roll of a Thai family at home (parent and child), soft natural light, gentle handheld motion.`,
-    `Shot 3: advisor gestures warmly to camera with CTA caption "${preset.cta}".`,
+    `Shot 3: the same presenter gestures warmly to camera with CTA caption "${preset.cta}".`,
     `Style: warm, calm, professional, cinematic, shallow depth of field. All shots framed for 9:16 vertical with centered subjects and space for Thai captions.`,
-  ].join(" ");
+  ].filter(Boolean).join(" ");
   return [
     block(
       "Video Hook",
@@ -1694,6 +1707,14 @@ function bindEvents() {
   }
   const importExternalAiResponseButton = $("#importExternalAiResponse");
   if (importExternalAiResponseButton) importExternalAiResponseButton.addEventListener("click", importExternalAiResponse);
+  if (els.characterPhoto) els.characterPhoto.addEventListener("change", handleCharacterPhotoChange);
+  if (els.removeCharacterPhoto) {
+    els.removeCharacterPhoto.addEventListener("click", () => {
+      setCharacterPhoto("");
+      if (els.characterPhoto) els.characterPhoto.value = "";
+      showToast("ลบรูปล็อกหน้าแล้ว");
+    });
+  }
   $$('[data-ai-provider]').forEach((button) => {
     button.addEventListener("click", () => launchExternalAi(button.dataset.aiProvider));
   });
@@ -1842,6 +1863,52 @@ function bindEvents() {
   }
 }
 
+function renderCharacterPhoto() {
+  if (!els.characterPreview || !els.characterPreviewImg) return;
+  if (state.characterPhoto) {
+    els.characterPreviewImg.src = state.characterPhoto;
+    els.characterPreview.hidden = false;
+  } else {
+    els.characterPreviewImg.removeAttribute("src");
+    els.characterPreview.hidden = true;
+  }
+}
+
+function setCharacterPhoto(dataUrl) {
+  state.characterPhoto = dataUrl || "";
+  try {
+    if (dataUrl) localStorage.setItem("socialContentStudioCharacterPhoto", dataUrl);
+    else localStorage.removeItem("socialContentStudioCharacterPhoto");
+  } catch {
+    /* storage full or blocked — keep in memory only */
+  }
+  renderCharacterPhoto();
+}
+
+function loadCharacterPhoto() {
+  try {
+    state.characterPhoto = localStorage.getItem("socialContentStudioCharacterPhoto") || "";
+  } catch {
+    state.characterPhoto = "";
+  }
+  renderCharacterPhoto();
+}
+
+function handleCharacterPhotoChange(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) {
+    showToast("กรุณาเลือกไฟล์รูปภาพ");
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    setCharacterPhoto(String(reader.result || ""));
+    showToast("อัปโหลดรูปล็อกหน้าแล้ว");
+  };
+  reader.readAsDataURL(file);
+}
+
 function setupCreatorScene() {
   const scene = document.querySelector("#creatorScene");
   if (!scene) return;
@@ -1867,6 +1934,7 @@ function setupCreatorScene() {
 bindEvents();
 setupCreatorScene();
 loadHistory();
+loadCharacterPhoto();
 renderSnapshot(buildStrategy(getBrief()));
 drawCanvas();
 

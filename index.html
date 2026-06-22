@@ -107,6 +107,22 @@
               <label class="channel-chip"><input type="checkbox" name="channels" value="email" checked /><span>Email</span></label>
             </fieldset>
 
+            <div class="character-lock">
+              <p class="character-label">ล็อกหน้าบุคคลในวิดีโอ</p>
+              <div class="character-upload-row">
+                <label class="character-upload" for="characterPhoto">
+                  <i class="ti ti-camera" aria-hidden="true"></i>
+                  <span>อัปโหลดรูปคนจริง เพื่อล็อกหน้าให้เหมือนทุกคลิป</span>
+                  <input id="characterPhoto" type="file" accept="image/*" hidden />
+                </label>
+                <div class="character-preview" id="characterPreview" hidden>
+                  <img id="characterPreviewImg" alt="รูปบุคคลที่ล็อกหน้า" />
+                  <button type="button" id="removeCharacterPhoto" class="character-remove" aria-label="ลบรูป">×</button>
+                </div>
+              </div>
+              <p class="character-hint">เมื่อมีรูป ระบบจะใส่คำสั่งล็อกหน้าใน Video Prompt ให้อัตโนมัติ แล้วแนบรูปนี้ตอนสร้างใน Veo / Flow</p>
+            </div>
+
             <div class="button-row">
 <button class="bridge-button" id="openAiBridge" type="submit">ChatGPT / Claude / Gemini Bridge</button>
               <button class="secondary-button" id="resetForm" type="reset">รีเซ็ต</button>
