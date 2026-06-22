@@ -604,11 +604,33 @@ function buildVideoContent(brief) {
   const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
   const keyword = brief.keywords[0] || "ประกันชีวิต";
   const strategy = buildStrategy(brief);
+  const geminiPrompt = [
+    `Create a short vertical video concept for a life insurance and financial advisory brand.`,
+    `Audience: ${brief.audience}.`,
+    `Core pain point: ${brief.painPoint}.`,
+    `Core strategy: ${shortText(strategy.angle, 120)}.`,
+    `Trust angle: ${shortText(strategy.trustAngle, 120)}.`,
+    `Education angle: ${shortText(strategy.educationAngle, 120)}.`,
+    `Concerns to address: ${(strategy.concernMap || []).join(" | ")}.`,
+    `Proof notes: ${(strategy.proofNotes || []).join(" | ")}.`,
+    `Use a warm professional tone, simple Thai language, and a clear CTA: ${preset.cta}.`,
+    `Output structure: hook, problem, insight, example, CTA, on-screen text, and scene direction.`,
+  ].join(" ");
+  const flowPrompt = [
+    `Make a Flow-ready video prompt from the same brief for ${brief.audience}.`,
+    `The video must mirror Step 2 strategy and Step 3 content.`,
+    `Include: hook, message angle, concern handling, proof points, scene beats, pacing, and CTA.`,
+    `Use this content lead: ${shortText(strategy.proof, 120)}.`,
+    `Use these reference channels: ${(strategy.referenceMap || []).join(" | ")}.`,
+    `Keep it concise enough to paste into Flow and generate a polished social video.`,
+  ].join(" ");
   return [
     block(
       "Video Hook",
       `${preset.hook} | อ้างอิงจาก ${shortText(strategy.angle, 88)}`
     ),
+    block("Gemini Prompt", geminiPrompt),
+    block("Flow Prompt", flowPrompt),
     block(
       "Short Script",
       [
