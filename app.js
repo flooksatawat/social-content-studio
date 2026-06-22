@@ -332,14 +332,27 @@ function buildHooks(brief) {
   ];
 }
 
-function buildImagePrompt(brief) {
+function buildImagePrompt(brief, strategy = {}, content = {}) {
   const keyword = brief.keywords[0] || "ประกันชีวิต";
+  const firstChannel = Object.values(content).flat().find(Boolean) || null;
+  const referenceLine =
+    strategy.referenceMap?.join(" | ") ||
+    "Facebook -> problem framing | YouTube -> detailed explanation | TikTok / LINE VOOM -> short hook | Blog SEO / Email / AI Search -> long-form support";
+  const proofLine =
+    strategy.proofNotes?.join(" | ") ||
+    "ชีวิตจริง, ตรวจสอบได้, ไม่อ้างเกินจริง";
+  const contentLead = firstChannel?.text ? shortText(firstChannel.text, 140) : shortText(brief.painPoint, 140);
   return [
     `Create a clean, premium social media image for a life insurance and financial advisory brand.`,
     `Subject: AI analyzed content for ${brief.audience}.`,
     `Audience: ${brief.audience}.`,
+    `Core strategy: ${shortText(strategy.angle || brief.painPoint, 140)}.`,
+    `Content lead: ${contentLead}.`,
+    `Reference map: ${referenceLine}.`,
+    `Proof approach: ${proofLine}.`,
     `Visual style: modern premium finance aesthetic with intelligent AI overlay, trustworthy, human-centered, bright natural lighting, realistic Thai professional scene, clear focal point, space for Thai headline text.`,
     `Include subtle cues related to ${keyword}, family protection, financial planning, insights, funnel map, and calm advisor consultation.`,
+    `Mirror the same message used in Step 2 strategy, Step 3 content output, and Step 4 video script.`,
     `Avoid clutter, avoid tiny text, avoid fear-based imagery, avoid exaggerated claims.`,
     `Aspect ratio should match the selected platform.`,
   ].join(" ");
@@ -543,7 +556,7 @@ function generateContent(brief) {
     Object.entries(allContent).filter(([channel]) => brief.channels.includes(channel))
   );
 
-  const imagePrompt = buildImagePrompt(brief);
+  const imagePrompt = buildImagePrompt(brief, strategy, allContent);
   return {
     id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
     createdAt: new Date().toISOString(),
@@ -558,17 +571,18 @@ function generateContent(brief) {
 function buildVideoContent(brief) {
   const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
   const keyword = brief.keywords[0] || "ประกันชีวิต";
+  const strategy = buildStrategy(brief);
   return [
     block(
       "Video Hook",
-      preset.hook
+      `${preset.hook} | อ้างอิงจาก ${shortText(strategy.angle, 88)}`
     ),
     block(
       "Short Script",
       [
         `0-3s: เปิดคำถาม "${preset.hook}"`,
         `4-10s: พูดถึง ${keyword} แบบเข้าใจง่าย`,
-        "11-18s: ย้ำปัญหาที่ลูกค้ากำลังเจอ และทางออกที่เหมาะกับชีวิตจริง",
+        `11-18s: ย้ำปัญหาที่ลูกค้ากำลังเจอ และทางออกที่เหมาะกับชีวิตจริง โดยอ้างอิง ${shortText(strategy.educationAngle, 96)}`,
         `19-25s: ปิดด้วย CTA: ${preset.cta}`,
       ].join("\n")
     ),
@@ -577,7 +591,7 @@ function buildVideoContent(brief) {
       [
         `1. ${keyword}`,
         "2. เข้าใจปัญหาก่อนเลือกแผน",
-        "3. นัดคุยเพื่อประเมินเบื้องต้น",
+        `3. นัดคุยเพื่อประเมินเบื้องต้น | ${shortText(strategy.cta, 52)}`,
       ].join("\n")
     ),
   ];
@@ -880,7 +894,7 @@ function drawCanvas(result = state.latest) {
   ctx.textBaseline = "alphabetic";
   ctx.fillText("Ready-to-post creative preview", margin, height - margin);
 
-  els.prompt.value = result?.imagePrompt || buildImagePrompt(brief);
+  els.prompt.value = result?.imagePrompt || buildImagePrompt(brief, result?.strategy || {}, result?.content || {});
 }
 
 function buildCanvasHeadline(brief) {
@@ -1292,7 +1306,7 @@ function showFallbackImage(message) {
 async function generateAiImage() {
   if (!requireAiConnection()) return;
 
-  const prompt = els.prompt.value.trim() || buildImagePrompt(getBrief());
+  const prompt = els.prompt.value.trim() || buildImagePrompt(getBrief(), state.latest?.strategy || {}, state.latest?.content || {});
   setButtonLoading(els.renderButton, true, "AI กำลังสร้างภาพ...");
   try {
     const image = await apiRequest("/api/generate-image", {
