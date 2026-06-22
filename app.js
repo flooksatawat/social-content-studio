@@ -277,6 +277,12 @@ function buildStrategy(brief) {
     `3. Case-based: เล่าตัวอย่างเคสจากหลายสถานการณ์จริง`,
     `4. Conversion: ปิดท้ายด้วย CTA ที่ชวนประเมินแผน`,
   ];
+  const autoFillPlan = [
+    `สิ่งที่ผู้ใช้กรอก -> ใช้เป็นแกนหลักของ brief เท่านั้น`,
+    `สิ่งที่ไม่กรอก -> ให้ AI เติมด้วยสมมติฐานที่สอดคล้องกับอุตสาหกรรมและ audience`,
+    `ผลลัพธ์ -> ต้องละเอียดพอให้เอาไปโพสต์ / ส่งต่อ / วางแผนต่อได้ทันที`,
+    `ถ้าข้อมูลไม่ครบ -> AI ต้องเลือกแนวทางที่ปลอดภัย ชัดเจน และใช้งานได้จริง`,
+  ];
   const funnelPlan = [
     `Awareness: เปิดด้วยปัญหาและคำถามที่ตรงชีวิตจริง`,
     `Consideration: อธิบายทางเลือก, ข้อดีข้อจำกัด, และสิ่งที่ควรเช็ก`,
@@ -322,6 +328,7 @@ function buildStrategy(brief) {
     educationAngle,
     caseAngle,
     contentPillars,
+    autoFillPlan,
     funnelPlan,
     referenceMap,
     proofNotes,
@@ -379,6 +386,7 @@ function buildPlatformContent(brief) {
   const keyword = brief.keywords[0] || "ประกันชีวิต";
   const blogTitle = `${keyword}: วิธีวางแผนคุ้มครองให้เหมาะกับ${shortText(brief.audience, 24)}`;
   const slug = slugifyThai(blogTitle);
+  const strategy = buildStrategy(brief);
 
   return {
     facebook: [
@@ -404,6 +412,9 @@ function buildPlatformContent(brief) {
           `${brief.brandName} ช่วยวิเคราะห์ภาพรวมและแนะนำแนวทางคุ้มครองให้สอดคล้องกับ funnel "${preset.funnel}"`,
           `CTA: ${preset.cta}`,
           "",
+          "AI เติมสิ่งที่ผู้ใช้ไม่ได้กรอกให้ครบโดยอิงจากบริบทจริง:",
+          ...(strategy.autoFillPlan || []).map((item) => `- ${item}`),
+          "",
           hashtags,
         ].join("\n")
       ),
@@ -427,6 +438,7 @@ function buildPlatformContent(brief) {
           `19-25s: ปิดด้วย CTA: ${preset.cta}`,
           "",
           "อ้างอิงจาก Facebook เพื่อเล่าปัญหา, จาก Blog SEO เพื่อให้ข้อมูลลึก, และจาก Email เพื่อ follow-up",
+          "คอนเทนต์นี้ถูกคิดจาก Step 2 และเติมความกังวลจริงของลูกค้าไว้แล้ว",
         ].join("\n")
       ),
       block("Description", [`${brief.painPoint}`, "", `เหมาะสำหรับ ${brief.audience}`, `เริ่มวางแผนกับ ${brief.brandName}: ${preset.cta}`, "", hashtags].join("\n")),
@@ -461,6 +473,8 @@ function buildPlatformContent(brief) {
           `${brief.brandName} ช่วยดูภาพรวมรายได้ ภาระ ครอบครัว และเป้าหมาย เพื่อวางแนวทางคุ้มครองที่เหมาะกับคุณมากขึ้น`,
           "",
           `เริ่มง่าย ๆ: ${preset.cta}`,
+          "",
+          "AI เติมข้อมูลต่อให้ครบจากบริบทที่ไม่ได้ระบุไว้ เพื่อให้เอาไปใช้งานได้เลย",
         ].join("\n")
       ),
       block("LINE VOOM Note", "ใช้ข้อความสั้นกว่า Facebook เน้นความเข้าใจง่าย ความน่าเชื่อถือ และชวนทักเพื่อประเมินเบื้องต้น"),
@@ -518,6 +532,7 @@ function buildPlatformContent(brief) {
           `ถ้าต้องการแผนที่เหมาะกับสถานการณ์จริง: ${preset.cta}`,
           "",
           "อ้างอิงต่อจาก Facebook / Blog / AI Search เพื่อให้ข้อความไม่ซ้ำ แต่เล่าต่อกันได้",
+          "ถ้าข้อมูลไม่ครบ AI จะเติมรายละเอียดและทางเลือกให้เองโดยไม่ปล่อยช่องว่าง",
         ].join("\n")
       ),
       block(
@@ -903,6 +918,7 @@ function renderSnapshot(strategy) {
     ["Sell Funnel", strategy.promise.includes("funnel") ? strategy.promise : "Awareness -> Consideration -> Lead"],
     ["CTA", strategy.cta],
     ["Content Pillars", (strategy.contentPillars || []).join("\n")],
+    ["Auto Fill Plan", (strategy.autoFillPlan || []).join("\n")],
     ["Funnel Plan", (strategy.funnelPlan || []).join("\n")],
     ["Reference Map", (strategy.referenceMap || []).join("\n")],
     ["Proof Notes", (strategy.proofNotes || []).join("\n")],
