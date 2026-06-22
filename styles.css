@@ -233,6 +233,13 @@ button {
 
 .brief-panel.is-collapsed > .brief-form {
   display: grid;
+  gap: 0;
+  padding: 0;
+}
+
+.brief-panel.is-collapsed .brief-heading {
+  margin: 0;
+  border-bottom: 0;
 }
 
 .panel.is-collapsed .brief-body {

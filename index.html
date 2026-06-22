@@ -8,7 +8,7 @@
       name="description"
       content="เครื่องมือสร้างคอนเทนต์สำหรับประกันชีวิตและที่ปรึกษาทางการเงินมืออาชีพ พร้อม SEO brief สำหรับ Facebook, YouTube, TikTok, LINE VOOM และ Blog"
     />
-    <link rel="stylesheet" href="./styles.css?v=all-controls-5" />
+    <link rel="stylesheet" href="./styles.css?v=matched-collapse-6" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
   </head>
   <body>
@@ -81,15 +81,18 @@
 
             <label>
               สไตล์การสื่อสาร
-              <input id="tone" name="tone" list="tonePresets" placeholder="เช่น มืออาชีพ อบอุ่น, กระชับ, เป็นกันเอง" />
-              <datalist id="tonePresets">
-                <option value="มืออาชีพ อบอุ่น"></option>
-                <option value="อธิบายง่าย จริงใจ"></option>
-                <option value="ผู้เชี่ยวชาญ ให้ความรู้"></option>
-                <option value="หรูหรา น่าเชื่อถือ"></option>
-                <option value="ขายตรง ชัดเจน"></option>
-                <option value="สบาย ๆ เหมือนคุยกัน"></option>
-              </datalist>
+              <select id="tone" name="tone">
+                <option value="มืออาชีพ อบอุ่น" selected>มืออาชีพ อบอุ่น</option>
+                <option value="สร้างการติดตามและความสัมพันธ์">สร้างการติดตาม</option>
+                <option value="ให้ความรู้แบบผู้เชี่ยวชาญ">ให้ความรู้</option>
+                <option value="เล่าเรื่องอย่างมีชั้นเชิง">เรื่องเล่า</option>
+                <option value="ยกตัวอย่างจากสถานการณ์จริง">ตัวอย่าง</option>
+                <option value="สร้างยอดขายอย่างน่าเชื่อถือ">สร้างยอดขาย</option>
+                <option value="อธิบายง่ายและจริงใจ">อธิบายง่าย จริงใจ</option>
+                <option value="ให้คำปรึกษาอย่างเป็นมืออาชีพ">ให้คำปรึกษา</option>
+                <option value="สร้างความน่าเชื่อถือด้วยหลักฐาน">สร้างความน่าเชื่อถือ</option>
+                <option value="ถามตอบข้อกังวลแบบ FAQ">ถาม-ตอบข้อกังวล</option>
+              </select>
             </label>
 
             <fieldset class="channel-fieldset">
