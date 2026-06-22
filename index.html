@@ -115,32 +115,14 @@
             </form>
           </section>
 
-          <section class="panel output-panel output-summary-panel" aria-labelledby="output-title">
+          <section class="panel output-panel output-middle-panel" aria-labelledby="content-title" data-step-panel="step-2">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 2</p>
-              <h2 id="output-title">Campaign Strategy</h2>
+              <h2 id="content-title">Content Output</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-2" aria-expanded="true" aria-label="ซ่อน/แสดง">
-                <i class="ti ti-chevron-up" aria-hidden="true"></i>
-              </button>
-              <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
-            </div>
-          </div>
-
-          <div class="snapshot-grid" id="strategySnapshot" aria-live="polite"></div>
-          </section>
-        </div>
-
-        <section class="panel output-panel output-middle-panel" aria-labelledby="content-title" data-step-panel="step-2">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">Content Output</p>
-              <h2 id="content-title">เลือกช่องทางและดูคอนเทนต์</h2>
-            </div>
-            <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-3" aria-expanded="true" aria-label="ซ่อน/แสดง">
+              <button class="panel-toggle" type="button" data-step-toggle="step-content" aria-expanded="true" aria-label="ซ่อน/แสดง">
                 <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
               <span class="ghost-button ghost-static">6 channels</span>
@@ -155,6 +137,24 @@
               <p>กรอก brief ด้านซ้าย แล้วกดสร้าง ระบบจะทำ caption, hooks, script, SEO brief และ image prompt ให้ตามช่องทางที่เลือก</p>
             </div>
           </div>
+        </section>
+        </div>
+
+        <section class="panel output-panel output-summary-panel is-collapsed" aria-labelledby="output-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">ภาพรวมกลยุทธ์</p>
+              <h2 id="output-title">Campaign Strategy</h2>
+            </div>
+            <div class="panel-actions">
+              <button class="panel-toggle" type="button" data-step-toggle="step-strategy" aria-expanded="false" aria-label="ซ่อน/แสดง">
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
+              </button>
+              <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
+            </div>
+          </div>
+
+          <div class="snapshot-grid" id="strategySnapshot" aria-live="polite"></div>
         </section>
 
         <div class="workspace-row workspace-row-bottom">
