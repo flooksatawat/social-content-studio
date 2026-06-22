@@ -391,46 +391,60 @@ function buildHooks(brief) {
 }
 
 function buildFacebookPost(brief, strategy, hooks, hashtags) {
-  const keyword = brief.keywords[0] || "ประกันชีวิต";
-  const concerns = (strategy.concernMap || []).slice(0, 4);
-  const cases = (strategy.caseExamples || []).slice(0, 4);
-  const proofNotes = (strategy.proofNotes || []).slice(0, 4);
-  return [
-    `## ${hooks[0]} ##`,
-    ".",
-    `ขอชวนมองเรื่อง ${keyword} แบบใช้ได้จริงกับชีวิตก่อนนะครับ`,
-    `ไม่ใช่เริ่มจากว่าแผนไหนขายดี แต่เริ่มจากว่าชีวิตจริงของเราเป็นแบบไหน`,
-    ".",
-    `หลายคนยังคิดว่าความคุ้มครองคือเรื่องของ “เบี้ยเท่าไร” ก่อน แต่สิ่งที่สำคัญกว่าคือ “ใครต้องได้รับการดูแล” และ “ภาระอะไรต้องรับมือ”`,
-    `ถ้าคุณอ่านมาถึงตรงนี้ แปลว่าอาจกำลังอยู่ในจุดที่ต้องเริ่มวางแผนให้ชัดขึ้น`,
-    ".",
-    `### Key message ###`,
-    `ประกันชีวิตที่ดี ไม่ใช่แผนที่ถูกที่สุด แต่คือแผนที่ช่วยให้ครอบครัวเดินต่อได้จริง`,
-    ".",
-    `### จุดที่ควรคิดก่อนตัดสินใจ ###`,
-    `1. ใครคือคนที่ต้องพึ่งรายได้ของเรา`,
-    `2. ภาระจำเป็นมีอะไรบ้าง เช่น บ้าน หนี้ ลูก หรือพ่อแม่`,
-    `3. งบต่อเดือนที่จ่ายไหวแบบไม่ฝืนคือเท่าไร`,
-    `4. แผนที่เลือกอธิบายเงื่อนไขและความคุ้มครองได้ชัดไหม`,
-    ".",
-    `### ความกังวลที่ต้องตอบให้ครบ ###`,
-    ...concerns.map((item, index) => `${index + 1}. ${item}`),
-    ".",
-    `### ตัวอย่างเคสที่ควรนึกถึง ###`,
-    ...cases.map((item, index) => `${index + 1}. ${item}`),
-    ".",
-    `### หลักคิดที่ควรใช้ร่วมกัน ###`,
-    ...proofNotes.map((item, index) => `${index + 1}. ${item}`),
-    ".",
-    `### สรุป ###`,
-    `ถ้าคุณยังไม่แน่ใจว่าจะเริ่มจากตรงไหน ให้เริ่มจากชีวิตจริงก่อนเสมอ`,
-    `เพราะการวางแผนที่ดีต้องตอบทั้งเรื่องคนที่ต้องดูแล รายได้ที่ต้องปกป้อง และงบที่จ่ายได้ต่อเนื่อง`,
-    ".",
-    `### ถ้าจะให้ช่วยต่อ ###`,
-    `พิมพ์ “ประเมินแผน” มาได้เลย เราจะช่วยไล่ให้ทีละขั้นว่าอะไรควรเป็นเรื่องสำคัญก่อนหลัง`,
-    ".",
+  const keyword = brief.keywords[0] || “ประกันชีวิต”;
+  const concerns = (strategy.concernMap || []).slice(0, 3);
+  const cases = (strategy.caseExamples || []).slice(0, 2);
+  const proofNotes = (strategy.proofNotes || []).slice(0, 2);
+  const preset = audiencePresets[brief.audiencePreset] || audiencePresets[“young-family”];
+
+  const lines = [
+    `## ${hooks[0] || `อยากดูแล${keyword} แต่ยังไม่รู้จะเริ่มต้นยังไง`} ##`,
+    “.”,
+    `หลายคนรู้ว่าควรมี${keyword} แต่พอถึงเวลาจริงก็ไม่รู้จะเริ่มจากตรงไหน`,
+    `ความจริงคือ ไม่ต้องเริ่มจากการเลือกแผน`,
+    `แต่เริ่มจากการเข้าใจว่าครอบครัวของเราต้องการอะไร`,
+    “.”,
+  ];
+
+  if (concerns.length) {
+    lines.push(`# ${concerns[0]} #`);
+    lines.push(“.”);
+    concerns.forEach((c, i) => {
+      lines.push(`${i + 1}. ${c}`);
+    });
+    lines.push(“.”);
+  }
+
+  if (cases.length) {
+    lines.push(`# ตัวอย่างที่หลายคนเจอ #`);
+    lines.push(“.”);
+    cases.forEach((c, i) => {
+      lines.push(`${i + 1}. ${c}`);
+    });
+    lines.push(“.”);
+  }
+
+  if (proofNotes.length) {
+    lines.push(`# หลักคิดสำคัญ #`);
+    lines.push(“.”);
+    proofNotes.forEach((p) => {
+      lines.push(`· ${p}`);
+    });
+    lines.push(“.”);
+  }
+
+  lines.push(
+    `# ${keyword}ที่ดี ไม่ใช่แผนที่ใหญ่ที่สุด แต่คือแผนที่เดินต่อได้จริง #`,
+    “.”,
+    `ถ้าอยากรู้ว่าแผนแบบไหนเหมาะกับชีวิตของคุณ`,
+    `ทักมาได้เลยนะครับ ไม่มีค่าใช้จ่าย ไม่มีแรงกดดัน`,
+    “.”,
+    `พิมพ์ “${preset.cta?.split(“ “)[0] || “ประเมินแผน”}” มาได้เลย 👋`,
+    “.”,
     hashtags,
-  ].join("\n");
+  );
+
+  return lines.join(“\n”);
 }
 
 function buildImagePrompt(brief, strategy = {}, content = {}) {
@@ -1126,17 +1140,26 @@ function renderOutput(result) {
     return;
   }
 
-  const blocks = content
-    .map(
-      (item) => `
-        <section class="output-block">
-          <h4>${escapeHtml(item.title)}</h4>
-          <pre class="output-text">${escapeHtml(item.text)}</pre>
-          <button class="copy-button" type="button" data-copy="${encodeURIComponent(item.text)}">คัดลอกส่วนนี้</button>
-        </section>
-      `
-    )
-    .join("");
+  const fullText = formatChannelContent(channel, content);
+
+  let bodyHtml;
+  if (channel === "facebook") {
+    const postText = content.map((item) => item.text).join("\n.\n");
+    bodyHtml = `
+      <section class="output-block">
+        <pre class="output-text">${escapeHtml(postText)}</pre>
+        <button class="copy-button" type="button" data-copy="${encodeURIComponent(postText)}">คัดลอกโพสต์</button>
+      </section>
+    `;
+  } else {
+    bodyHtml = content.map((item) => `
+      <section class="output-block">
+        <h4>${escapeHtml(item.title)}</h4>
+        <pre class="output-text">${escapeHtml(item.text)}</pre>
+        <button class="copy-button" type="button" data-copy="${encodeURIComponent(item.text)}">คัดลอกส่วนนี้</button>
+      </section>
+    `).join("");
+  }
 
   els.output.innerHTML = `
     <article class="content-card">
@@ -1145,10 +1168,10 @@ function renderOutput(result) {
           <h3>${meta.label} Content Pack</h3>
           <p class="eyebrow">${meta.ratioLabel} · ${escapeHtml(meta.note)}</p>
         </div>
-        <button class="copy-button" type="button" data-copy="${encodeURIComponent(formatChannelContent(channel, content))}">คัดลอกช่องทางนี้</button>
+        <button class="copy-button" type="button" data-copy="${encodeURIComponent(fullText)}">คัดลอกช่องทางนี้</button>
       </div>
       <div class="content-card-body">
-        ${blocks}
+        ${bodyHtml}
       </div>
     </article>
   `;
