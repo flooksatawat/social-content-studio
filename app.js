@@ -1014,42 +1014,66 @@ function renderSnapshot(strategy) {
   const fallback = buildStrategy(state.latest?.brief || getBrief());
   const safeStrategy = mergeDefined(fallback, strategy);
   const cards = [
-    ["AI วิเคราะห์ปัญหา", safeStrategy.angle],
-    ["AI เข้าใจความต้องการ", safeStrategy.promise],
-    ["Hook แนะนำ", safeStrategy.proof],
-    ["Trust Building", safeStrategy.trustAngle],
-    ["Education Focus", safeStrategy.educationAngle],
-    ["Case Variety", safeStrategy.caseAngle],
-    ["Keyword", (state.latest?.brief.keywords || []).join(", ") || "ประกันชีวิต"],
-    ["Sell Funnel", safeStrategy.promise.includes("funnel") ? safeStrategy.promise : "Awareness -> Consideration -> Lead"],
-    ["CTA", safeStrategy.cta],
-    ["Content Pillars", (safeStrategy.contentPillars || []).join("\n")],
-    ["Auto Fill Plan", (safeStrategy.autoFillPlan || []).join("\n")],
-    ["Funnel Plan", (safeStrategy.funnelPlan || []).join("\n")],
-    ["Reference Map", (safeStrategy.referenceMap || []).join("\n")],
-    ["Proof Notes", (safeStrategy.proofNotes || []).join("\n")],
-    ["Objection Handling", (safeStrategy.objectionHandling || []).join("\n")],
-    ["Concerns", (safeStrategy.concernMap || []).join("\n")],
-    ["Case Examples", (safeStrategy.caseExamples || []).join("\n")],
-    ["Audience Insight", (safeStrategy.audienceInsight || []).join("\n")],
-    ["Message Angles", (safeStrategy.messageAngles || []).join("\n")],
-    ["Trust Proof Stack", (safeStrategy.trustProofStack || []).join("\n")],
-    ["Content Sequence", (safeStrategy.contentSequence || []).join("\n")],
-    ["Compliance Notes", (safeStrategy.complianceNotes || []).join("\n")],
-    ["Lead Qualification", (safeStrategy.leadQualification || []).join("\n")],
-    ["Channel Execution", (safeStrategy.channelExecution || []).join("\n")],
-  ].filter(([, text]) => clean(text) && clean(text) !== "undefined");
+    ["core", "AI วิเคราะห์ปัญหา", safeStrategy.angle],
+    ["core", "AI เข้าใจความต้องการ", safeStrategy.promise],
+    ["core", "Hook แนะนำ", safeStrategy.proof],
+    ["core", "Keyword", (state.latest?.brief.keywords || []).join(", ") || "ประกันชีวิต"],
+    ["core", "Sell Funnel", safeStrategy.promise.includes("funnel") ? safeStrategy.promise : "Awareness -> Consideration -> Lead"],
+    ["core", "CTA", safeStrategy.cta],
+    ["trust", "Trust Building", safeStrategy.trustAngle],
+    ["trust", "Education Focus", safeStrategy.educationAngle],
+    ["trust", "Case Variety", safeStrategy.caseAngle],
+    ["trust", "Proof Notes", (safeStrategy.proofNotes || []).join("\n")],
+    ["trust", "Objection Handling", (safeStrategy.objectionHandling || []).join("\n")],
+    ["trust", "Concerns", (safeStrategy.concernMap || []).join("\n")],
+    ["trust", "Case Examples", (safeStrategy.caseExamples || []).join("\n")],
+    ["trust", "Audience Insight", (safeStrategy.audienceInsight || []).join("\n")],
+    ["trust", "Trust Proof Stack", (safeStrategy.trustProofStack || []).join("\n")],
+    ["trust", "Compliance Notes", (safeStrategy.complianceNotes || []).join("\n")],
+    ["content", "Content Pillars", (safeStrategy.contentPillars || []).join("\n")],
+    ["content", "Message Angles", (safeStrategy.messageAngles || []).join("\n")],
+    ["content", "Content Sequence", (safeStrategy.contentSequence || []).join("\n")],
+    ["content", "Funnel Plan", (safeStrategy.funnelPlan || []).join("\n")],
+    ["execution", "Auto Fill Plan", (safeStrategy.autoFillPlan || []).join("\n")],
+    ["execution", "Reference Map", (safeStrategy.referenceMap || []).join("\n")],
+    ["execution", "Lead Qualification", (safeStrategy.leadQualification || []).join("\n")],
+    ["execution", "Channel Execution", (safeStrategy.channelExecution || []).join("\n")],
+  ].filter(([, , text]) => clean(text) && clean(text) !== "undefined");
 
-  els.snapshot.innerHTML = cards
-    .map(
-      ([title, text]) => `
-        <article class="snapshot-card">
+  const groups = [
+    ["core", "ภาพรวม", "06"],
+    ["trust", "ความน่าเชื่อถือ", "10"],
+    ["content", "แผนคอนเทนต์", "04"],
+    ["execution", "การนำไปใช้", "04"],
+  ];
+
+  els.snapshot.innerHTML = `
+    <div class="strategy-toolbar" role="tablist" aria-label="หมวดกลยุทธ์">
+      ${groups.map(([id, label, count], index) => `
+        <button class="strategy-tab ${index === 0 ? "active" : ""}" type="button" data-strategy-tab="${id}" role="tab">
+          <span>${label}</span><b>${count}</b>
+        </button>
+      `).join("")}
+    </div>
+    <div class="strategy-card-grid">
+      ${cards.map(([group, title, text]) => `
+        <article class="snapshot-card ${group === "core" ? "active" : ""}" data-strategy-group="${group}">
           <strong>${escapeHtml(title)}</strong>
           <p>${escapeHtml(text)}</p>
         </article>
-      `
-    )
-    .join("");
+      `).join("")}
+    </div>
+  `;
+
+  els.snapshot.querySelectorAll("[data-strategy-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const activeGroup = button.dataset.strategyTab;
+      els.snapshot.querySelectorAll("[data-strategy-tab]").forEach((tab) => tab.classList.toggle("active", tab === button));
+      els.snapshot.querySelectorAll("[data-strategy-group]").forEach((card) => {
+        card.classList.toggle("active", card.dataset.strategyGroup === activeGroup);
+      });
+    });
+  });
 }
 
 function renderTabs(result) {
@@ -1842,7 +1866,30 @@ function bindEvents() {
   });
 }
 
+function setupCreatorScene() {
+  const scene = document.querySelector("#creatorScene");
+  if (!scene) return;
+
+  scene.addEventListener("pointermove", (event) => {
+    const bounds = scene.getBoundingClientRect();
+    const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
+    const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    scene.style.setProperty("--scene-x", `${x * 12}deg`);
+    scene.style.setProperty("--scene-y", `${y * -10}deg`);
+    scene.style.setProperty("--light-x", `${50 + x * 24}%`);
+    scene.style.setProperty("--light-y", `${50 + y * 20}%`);
+  });
+
+  scene.addEventListener("pointerleave", () => {
+    scene.style.setProperty("--scene-x", "0deg");
+    scene.style.setProperty("--scene-y", "0deg");
+    scene.style.setProperty("--light-x", "50%");
+    scene.style.setProperty("--light-y", "50%");
+  });
+}
+
 bindEvents();
+setupCreatorScene();
 loadHistory();
 if (els.apiKeyInput) els.apiKeyInput.value = getStoredApiKey();
 renderSnapshot(buildStrategy(getBrief()));
