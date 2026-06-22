@@ -150,6 +150,7 @@ const els = {
   snapshot: $("#strategySnapshot"),
   tabs: $("#channelTabs"),
   output: $("#contentOutput"),
+  audioOutput: $("#audioOutput"),
   videoOutput: $("#videoOutput"),
   calendarSummary: $("#calendarSummary"),
   calendarBody: $("#calendarBody"),
@@ -743,14 +744,16 @@ function buildVideoContent(brief) {
     `End on a clear call-to-action caption: "${preset.cta}".`,
     `Subject centered for vertical 9:16, audience ${brief.audience}, tone simple and human.`,
   ].filter(Boolean).join(" ");
+  const flowSpokenLine = `เริ่มวางแผน${keyword}วันนี้ เพื่อดูแลคนที่คุณรักอย่างมั่นใจ`;
   const flowPrompt = [
-    `Generate this video directly in Flow — render it, do not return a written plan.`,
-    faceLock,
-    `A VERTICAL 9:16 portrait social video (full-screen mobile, never landscape) for ${brief.audience}, life insurance and financial advisory.`,
-    `Shot 1: warm Thai advisor smiling at camera in a bright modern office, slow push-in, Thai caption "${shortText(strategy.angle, 36)}".`,
-    `Shot 2: relatable b-roll of a Thai family at home (parent and child), soft natural light, gentle handheld motion.`,
-    `Shot 3: the same presenter gestures warmly to camera with CTA caption "${preset.cta}".`,
-    `Style: warm, calm, professional, cinematic, shallow depth of field. All shots framed for 9:16 vertical with centered subjects and space for Thai captions.`,
+    `Generate exactly one complete 8-second video directly in Flow. Render the finished video only; do not return a script, storyboard, explanation, or questions.`,
+    `Use the uploaded reference image as the sole visual source and the exact first-frame composition. Preserve the original person's identity, facial geometry, skin tone, age, hairstyle, body proportions, clothing, accessories, background, lighting, camera angle, framing, and color palette. Do not redesign, beautify, replace, morph, or reinterpret the person or scene. Do not introduce any additional people, objects, locations, or b-roll.`,
+    `Format: VERTICAL 9:16, full-screen mobile, exactly 8 seconds, one continuous shot, no cuts, no transitions, no scene changes.`,
+    `Timing: 0.0-1.0s hold the original composition with natural breathing and one subtle blink. 1.0-6.2s the presenter maintains eye contact, makes one small natural hand gesture, and says in warm natural Thai with accurate lip sync: "${flowSpokenLine}". 6.2-8.0s complete the gesture, close the mouth naturally, return to a calm smile, and hold a stable final pose so the clip ends cleanly instead of cutting mid-action.`,
+    `Camera and motion: locked eye-level camera with only a very subtle slow push-in; realistic micro-movements; stable face and hands; no sudden motion, zoom, crop, reframing, or camera shake.`,
+    `Visual style: photorealistic, warm, calm, premium, trustworthy, professional, soft natural light, consistent with the uploaded image.`,
+    `Do not display subtitles, captions, titles, lower thirds, labels, logos, watermarks, interface elements, or any on-screen text at any time. Spoken audio only.`,
+    `Quality control: finish every action and the full spoken line before 6.2 seconds, preserve identity and scene continuity in every frame, avoid facial drift, lip distortion, extra fingers, warped hands, flicker, abrupt cuts, frozen frames, or an incomplete ending.`,
   ].filter(Boolean).join(" ");
   return [
     block(
@@ -927,7 +930,7 @@ function buildCalendarPreviewResult(baseResult, row) {
 function renderCalendarPreview(row, baseResult) {
   if (!els.calendarPreview || !els.calendarPreviewTitle) return;
   if (!row) {
-    els.calendarPreviewTitle.textContent = "เลือกวันจากตารางเพื่อดู Step 1-4";
+    els.calendarPreviewTitle.textContent = "เลือกวันจากตารางเพื่อดู Step 1-5";
     els.calendarPreview.innerHTML = `<div class="empty-state"><h3>ยังไม่มีวันให้แสดง</h3><p>เลือกวันในตารางเพื่อดูแพ็กเกจคอนเทนต์ของวันนั้น</p></div>`;
     return;
   }
@@ -938,8 +941,13 @@ function renderCalendarPreview(row, baseResult) {
   els.calendarPreview.innerHTML = `
     <div class="calendar-preview-stack">
       <section class="calendar-preview-step">
-        <h4>Step 1 / 2 · Strategy</h4>
+        <h4>Step 1 · Campaign Strategy</h4>
         <div class="snapshot-grid calendar-preview-grid" data-preview="strategy"></div>
+      </section>
+      <section class="calendar-preview-step">
+        <h4>Step 2 · Content Output</h4>
+        <div class="tabs tabs-center calendar-preview-tabs" data-preview="tabs"></div>
+        <div class="output-stack" data-preview="output"></div>
       </section>
       <section class="calendar-preview-step">
         <h4>Step 3 · Image Prompt</h4>
@@ -948,13 +956,12 @@ function renderCalendarPreview(row, baseResult) {
         </div>
       </section>
       <section class="calendar-preview-step">
-        <h4>Step 4 · Video</h4>
-        <div class="calendar-preview-box" data-preview="video"></div>
+        <h4>Step 4 · Audio Story / Podcast</h4>
+        <div class="calendar-preview-box" data-preview="audio"></div>
       </section>
       <section class="calendar-preview-step">
-        <h4>Step 2 / Content Output</h4>
-        <div class="tabs tabs-center calendar-preview-tabs" data-preview="tabs"></div>
-        <div class="output-stack" data-preview="output"></div>
+        <h4>Step 5 · Video</h4>
+        <div class="calendar-preview-box" data-preview="video"></div>
       </section>
     </div>
   `;
@@ -1026,6 +1033,29 @@ function renderCalendarPreview(row, baseResult) {
     });
   }
 
+  const audioBox = els.calendarPreview.querySelector('[data-preview="audio"]');
+  if (audioBox) {
+    const blocks = buildAudioContent(previewResult.brief);
+    audioBox.innerHTML = `
+      <article class="content-card">
+        <div class="content-card-header">
+          <div>
+            <h3>Podcast Audio Pack</h3>
+            <p class="eyebrow">เรื่องเล่าเสียงพร้อมสร้าง</p>
+          </div>
+        </div>
+        <div class="content-card-body">
+          ${blocks.map((item) => `
+            <section class="output-block">
+              <h4>${escapeHtml(item.title)}</h4>
+              <pre class="output-text">${escapeHtml(item.text)}</pre>
+            </section>
+          `).join("")}
+        </div>
+      </article>
+    `;
+  }
+
   const videoBox = els.calendarPreview.querySelector('[data-preview="video"]');
   if (videoBox) {
     const blocks = buildVideoContent(previewResult.brief);
@@ -1048,6 +1078,52 @@ function renderCalendarPreview(row, baseResult) {
       </article>
     `;
   }
+}
+
+function buildAudioContent(brief) {
+  const preset = audiencePresets[brief.audiencePreset] || audiencePresets["young-family"];
+  const keyword = brief.keywords[0] || "ประกันชีวิต";
+  const audience = shortText(brief.audience || preset.label, 90);
+  const painPoint = shortText(brief.painPoint || preset.pain, 120);
+  const podcastHook = `เคยไหมครับ เราตั้งใจดูแลทุกคนให้ดีที่สุด แต่เรื่องสำคัญอย่าง${keyword}กลับถูกเลื่อนไปเป็นวันพรุ่งนี้`;
+  const narration = [
+    podcastHook,
+    `ลองนึกถึงใครคนหนึ่งในกลุ่ม${audience} ทุกเช้าเขารีบออกไปทำงาน รับผิดชอบทั้งรายได้ ค่าใช้จ่าย และความฝันของคนในบ้าน`,
+    `เขารู้ว่าควรวางแผน แต่ยังติดอยู่กับคำถามว่า ${painPoint} จึงบอกตัวเองเสมอว่า รอให้พร้อมกว่านี้ก่อน`,
+    `จนวันหนึ่ง เขาได้หยุดคิดว่า ถ้ารายได้หยุดลงกะทันหัน คนที่รักจะเดินต่ออย่างไร คำถามนั้นไม่ได้ทำให้กลัว แต่ช่วยให้เห็นว่า การวางแผนที่ดีควรเริ่มจากชีวิตจริง`,
+    `เราไม่จำเป็นต้องเริ่มจากแผนที่แพงที่สุด เริ่มจากดูว่าใครพึ่งพารายได้เรา มีภาระอะไรบ้าง และงบที่ดูแลต่อเนื่องได้คือเท่าไร แล้วจึงเลือกความคุ้มครองให้พอดี`,
+    `เพราะ${keyword}ที่ดี ไม่ได้มีไว้เพื่อขายความกลัว แต่มีไว้ช่วยให้คนข้างหลังยังมีทางเลือก`,
+    `${preset.cta} แล้วเราจะช่วยเรียงคำตอบให้ทีละขั้นอย่างตรงไปตรงมา`,
+  ].join("\n\n");
+  const storyPlan = [
+    `รูปแบบ: Podcast Storytelling 60-75 วินาที | ผู้เล่า 1 คน | ภาษาไทย`,
+    `0-8s · Hook: ${podcastHook}`,
+    `8-28s · Story: คนทำงานที่ดูแลทุกคน แต่เลื่อนการวางแผนเพราะยังรู้สึกว่าไม่พร้อม`,
+    `28-48s · Turning point: ตั้งคำถามว่าคนในบ้านจะเดินต่ออย่างไรหากรายได้หยุดลง`,
+    `48-65s · Insight: เริ่มจากภาระ คนที่พึ่งพารายได้ และงบที่จ่ายไหว ไม่ใช่แผนที่แพงที่สุด`,
+    `65-75s · CTA: ${preset.cta}`,
+  ].join("\n");
+  const voiceDirection = [
+    `เสียงภาษาไทยแบบผู้เล่า Podcast มืออาชีพ อบอุ่น จริงใจ และน่าเชื่อถือ`,
+    `จังหวะประมาณ 135-145 คำต่อนาที ใช้น้ำเสียงสนทนา ไม่อ่านแบบโฆษณา`,
+    `เปิดเรื่องอย่างใกล้ชิด เว้นวรรคสั้นหลังคำถาม และเน้นคำว่า “ชีวิตจริง”, “ทางเลือก” และ “ทีละขั้น” อย่างเป็นธรรมชาติ`,
+    `หลีกเลี่ยงน้ำเสียงเร่งขาย เศร้าเกินจริง หรือสร้างความกลัว`,
+    `บันทึกแบบ close-mic เสียงสะอาด อบอุ่น ลดเสียงสะท้อน และคงระดับความดังสม่ำเสมอ`,
+  ].join("\n");
+  const audioPrompt = [
+    `Create a studio-quality Thai podcast voiceover from the script below.`,
+    `Voice: warm, trustworthy Thai professional, natural conversational delivery, calm confidence, subtle emotional storytelling, never salesy or fear-based.`,
+    `Pacing: 135-145 Thai words per minute with short natural pauses between paragraphs. Use clear Thai pronunciation and consistent volume.`,
+    `Audio: close-mic podcast sound, clean and intimate, minimal room tone, no background music, no sound effects, no intro jingle, no added words.`,
+    `Read the Thai script exactly as written:\n\n${narration}`,
+  ].join("\n");
+  return [
+    block("Podcast Hook", podcastHook),
+    block("Story Structure", storyPlan),
+    block("TTS-Ready Story Script", narration),
+    block("Voice Direction", voiceDirection),
+    block("Audio Generation Prompt", audioPrompt),
+  ];
 }
 
 function openCalendarPreview(row, baseResult) {
@@ -1632,6 +1708,7 @@ function renderGenerationResult(result) {
   renderSnapshot(normalized.strategy);
   renderTabs(normalized);
   renderOutput(normalized);
+  renderAudioOutput(normalized);
   renderVideoOutput(normalized);
   renderCalendar(normalized);
   els.imageFormat.value = Object.keys(normalized.content).includes(els.imageFormat.value)
@@ -1639,6 +1716,25 @@ function renderGenerationResult(result) {
     : normalized.brief.channels.find((channel) => platformMeta[channel]?.size) || "facebook";
   drawCanvas(normalized);
   saveHistory(normalized);
+}
+
+function renderAudioOutput(result) {
+  if (!els.audioOutput) return;
+  const brief = result?.brief || getBrief();
+  const blocks = buildAudioContent(brief);
+  els.audioOutput.innerHTML = `
+    <article class="content-card">
+      <div class="content-card-header">
+        <div>
+          <h3>Podcast Audio Pack</h3>
+          <p class="eyebrow">เรื่องเล่าเสียงพร้อมสร้าง</p>
+        </div>
+      </div>
+      <div class="content-card-body">
+        ${blocks.map((item) => outputBlockHtml(item.title, item.text, { withToggle: true })).join("")}
+      </div>
+    </article>
+  `;
 }
 
 function renderVideoOutput(result) {
@@ -1820,6 +1916,7 @@ function bindEvents() {
   });
 
   els.output.addEventListener("click", handleOutputBlockClick);
+  if (els.audioOutput) els.audioOutput.addEventListener("click", handleOutputBlockClick);
   if (els.videoOutput) els.videoOutput.addEventListener("click", handleOutputBlockClick);
 
   if (els.calendarBody) {

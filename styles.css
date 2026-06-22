@@ -138,6 +138,22 @@ button {
   grid-template-columns: minmax(360px, 1fr) minmax(360px, 1fr);
 }
 
+.workspace-column {
+  display: grid;
+  gap: 16px;
+  align-content: start;
+  min-width: 0;
+}
+
+.workspace-column > *,
+.audio-panel {
+  min-width: 0;
+}
+
+.audio-panel {
+  min-height: auto;
+}
+
 .workspace > *,
 .workspace-row > *,
 .panel {

@@ -8,7 +8,7 @@
       name="description"
       content="เครื่องมือสร้างคอนเทนต์สำหรับประกันชีวิตและที่ปรึกษาทางการเงินมืออาชีพ พร้อม SEO brief สำหรับ Facebook, YouTube, TikTok, LINE VOOM และ Blog"
     />
-    <link rel="stylesheet" href="./styles.css?v=matched-collapse-6" />
+    <link rel="stylesheet" href="./styles.css?v=audio-step-8" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
   </head>
   <body>
@@ -138,6 +138,7 @@
         </div>
 
         <div class="workspace-row workspace-row-bottom">
+          <div class="workspace-column">
           <aside class="panel visual-panel" aria-labelledby="visual-title" data-step-panel="step-3">
           <div class="panel-heading">
             <div>
@@ -145,7 +146,7 @@
               <h2 id="visual-title">Image Prompt</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-4" aria-expanded="true" aria-label="ซ่อน/แสดง">
+              <button class="panel-toggle" type="button" data-step-toggle="step-3" aria-expanded="true" aria-label="ซ่อน/แสดง">
                 <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
             </div>
@@ -190,14 +191,36 @@
           </div>
           </aside>
 
-          <section class="panel video-panel" aria-labelledby="video-title" data-step-panel="step-4">
+          <section class="panel audio-panel" aria-labelledby="audio-title" data-step-panel="step-4-audio">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 4</p>
+              <h2 id="audio-title">Audio Story / Podcast</h2>
+            </div>
+            <div class="panel-actions">
+              <button class="panel-toggle" type="button" data-step-toggle="step-4-audio" aria-expanded="true" aria-label="ซ่อน/แสดง">
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="output-stack" id="audioOutput" aria-live="polite">
+            <div class="empty-state">
+              <h3>พร้อมสร้างคลิปเสียง</h3>
+              <p>กดสร้างคอนเทนต์ก่อน แล้วระบบจะเรียบเรียง Hook, เรื่องเล่า Podcast, แนวทางการอ่าน และ Prompt สำหรับสร้างเสียงให้ทันที</p>
+            </div>
+          </div>
+          </section>
+          </div>
+
+          <section class="panel video-panel" aria-labelledby="video-title" data-step-panel="step-5-video">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Step 5</p>
               <h2 id="video-title">Video</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-4-video" aria-expanded="true" aria-label="ซ่อน/แสดง">
+              <button class="panel-toggle" type="button" data-step-toggle="step-5-video" aria-expanded="true" aria-label="ซ่อน/แสดง">
                 <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
             </div>
@@ -315,7 +338,7 @@
         <div class="ai-dialog-heading">
           <div>
             <p class="eyebrow">Daily Preview</p>
-            <h2 id="calendarPreviewTitle">เลือกวันจากตารางเพื่อดู Step 1-4</h2>
+            <h2 id="calendarPreviewTitle">เลือกวันจากตารางเพื่อดู Step 1-5</h2>
           </div>
         </div>
         <div id="calendarPreview"></div>
@@ -356,6 +379,6 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
-    <script src="./app.js?v=all-controls-5"></script>
+    <script src="./app.js?v=audio-step-8"></script>
   </body>
 </html>
