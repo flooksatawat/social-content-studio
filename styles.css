@@ -178,13 +178,47 @@ button {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.46), rgba(255, 255, 255, 0));
 }
 
+.panel-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .brief-form,
 .visual-panel > :not(.panel-heading),
 .output-panel > :not(.panel-heading) {
   padding: 18px;
 }
 
+.panel.is-collapsed > :not(.panel-heading) {
+  display: none;
+}
+
+.panel.is-collapsed .brief-body {
+  display: none;
+}
+
+.panel.is-collapsed {
+  min-height: unset;
+}
+
+.panel-toggle {
+  min-width: 72px;
+}
+
 .brief-form {
+  display: grid;
+  gap: 14px;
+}
+
+.brief-heading {
+  margin: -18px -18px 2px;
+  border-bottom: 1px solid var(--line);
+}
+
+.brief-body {
   display: grid;
   gap: 14px;
 }

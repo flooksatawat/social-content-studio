@@ -49,6 +49,15 @@
         <div class="workspace-row workspace-row-top">
           <section class="panel brief-panel" aria-labelledby="brief-title">
             <form id="briefForm" class="brief-form">
+              <div class="panel-heading brief-heading">
+                <div>
+                  <p class="eyebrow">Step 1</p>
+                  <h2 id="brief-title">Campaign Brief</h2>
+                </div>
+                <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-1" aria-expanded="true">ซ่อน</button>
+              </div>
+
+              <div class="brief-body">
             <div class="step-strip" aria-label="ขั้นตอนบรีฟ">
               <span>1. เลือกกลุ่มเป้าหมาย</span>
               <span>2. เลือกสไตล์การสื่อสาร</span>
@@ -104,6 +113,7 @@
               <button class="bridge-button" id="openAiBridge" type="button">ChatGPT / Claude / Gemini Bridge</button>
               <button class="secondary-button" id="resetForm" type="reset">รีเซ็ต</button>
             </div>
+              </div>
             </form>
           </section>
 
@@ -113,20 +123,26 @@
               <p class="eyebrow">Step 2</p>
               <h2 id="output-title">Campaign Strategy</h2>
             </div>
-            <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
+            <div class="panel-actions">
+              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-2" aria-expanded="true">ซ่อน</button>
+              <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
+            </div>
           </div>
 
           <div class="snapshot-grid" id="strategySnapshot" aria-live="polite"></div>
           </section>
         </div>
 
-        <section class="panel output-panel output-middle-panel" aria-labelledby="content-title">
+        <section class="panel output-panel output-middle-panel" aria-labelledby="content-title" data-step-panel="step-2">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Content Output</p>
               <h2 id="content-title">เลือกช่องทางและดูคอนเทนต์</h2>
             </div>
-            <span class="ghost-button ghost-static">6 channels</span>
+            <div class="panel-actions">
+              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-3" aria-expanded="true">ซ่อน</button>
+              <span class="ghost-button ghost-static">6 channels</span>
+            </div>
           </div>
 
           <div class="tabs tabs-center" id="channelTabs" role="tablist" aria-label="เลือกช่องทาง"></div>
@@ -140,13 +156,16 @@
         </section>
 
         <div class="workspace-row workspace-row-bottom">
-          <aside class="panel visual-panel" aria-labelledby="visual-title">
+          <aside class="panel visual-panel" aria-labelledby="visual-title" data-step-panel="step-3">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 3</p>
               <h2 id="visual-title">Image Prompt</h2>
             </div>
-            <button class="ghost-button" id="copyPromptTop" type="button">คัดลอก prompt</button>
+            <div class="panel-actions">
+              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-4" aria-expanded="true">ซ่อน</button>
+              <button class="ghost-button" id="copyPromptTop" type="button">คัดลอก prompt</button>
+            </div>
           </div>
 
           <div class="visual-controls">
@@ -182,13 +201,16 @@
           </label>
           </aside>
 
-          <section class="panel video-panel" aria-labelledby="video-title">
+          <section class="panel video-panel" aria-labelledby="video-title" data-step-panel="step-4">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 4</p>
               <h2 id="video-title">Video</h2>
             </div>
-            <button class="ghost-button" id="copyVideoScript" type="button">คัดลอกสคริปต์</button>
+            <div class="panel-actions">
+              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-5" aria-expanded="true">ซ่อน</button>
+              <button class="ghost-button" id="copyVideoScript" type="button">คัดลอกสคริปต์</button>
+            </div>
           </div>
 
           <div class="output-stack" id="videoOutput" aria-live="polite">
@@ -200,13 +222,16 @@
           </section>
         </div>
 
-        <section class="panel calendar-panel" aria-labelledby="calendar-title">
+        <section class="panel calendar-panel" aria-labelledby="calendar-title" data-step-panel="step-5">
           <div class="panel-heading">
             <div>
               <p class="eyebrow">Step 5</p>
               <h2 id="calendar-title">30-Day Content Calendar</h2>
             </div>
-            <button class="ghost-button" id="copyCalendar" type="button">คัดลอกตาราง</button>
+            <div class="panel-actions">
+              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-5" aria-expanded="true">ซ่อน</button>
+              <button class="ghost-button" id="copyCalendar" type="button">คัดลอกตาราง</button>
+            </div>
           </div>
 
           <div class="calendar-head">

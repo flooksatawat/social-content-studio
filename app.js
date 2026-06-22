@@ -1892,6 +1892,16 @@ function downloadCanvas() {
   link.click();
 }
 
+function setPanelCollapsed(panel, collapsed) {
+  if (!panel) return;
+  panel.classList.toggle("is-collapsed", collapsed);
+  const button = panel.querySelector("[data-step-toggle]");
+  if (button) {
+    button.setAttribute("aria-expanded", String(!collapsed));
+    button.textContent = collapsed ? "แสดง" : "ซ่อน";
+  }
+}
+
 function bindEvents() {
   els.form.addEventListener("submit", runGeneration);
   const openAiBridgeButton = $("#openAiBridge");
@@ -1923,6 +1933,14 @@ function bindEvents() {
   if (copyPromptButton) copyPromptButton.addEventListener("click", () => copyText(els.prompt.value));
   const copyPromptTopButton = $("#copyPromptTop");
   if (copyPromptTopButton) copyPromptTopButton.addEventListener("click", () => copyText(els.prompt.value));
+  $$("[data-step-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const panel = button.closest(".panel");
+      if (!panel) return;
+      const collapsed = !panel.classList.contains("is-collapsed");
+      setPanelCollapsed(panel, collapsed);
+    });
+  });
   if (els.copyCalendar) {
     els.copyCalendar.addEventListener("click", () => {
       if (!state.latest) {
