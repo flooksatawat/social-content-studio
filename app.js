@@ -719,17 +719,17 @@ function buildVideoContent(brief) {
       "Video Hook",
       `${preset.hook} | อ้างอิงจาก ${shortText(strategy.angle, 88)}`
     ),
-    block("Gemini Prompt", geminiPrompt),
-    block("Flow Prompt", flowPrompt),
     block(
       "Short Script",
       [
-        `0-3s: เปิดคำถาม "${preset.hook}"`,
-        `4-10s: พูดถึง ${keyword} แบบเข้าใจง่าย`,
-        `11-18s: ย้ำปัญหาที่ลูกค้ากำลังเจอ, ความกังวลที่พบบ่อย, และทางออกที่เหมาะกับชีวิตจริง โดยอ้างอิง ${shortText(strategy.educationAngle, 96)}`,
-        `19-25s: ปิดด้วย CTA: ${preset.cta}`,
+        `0-3s: "${preset.hook}"`,
+        `4-10s: "${keyword} ไม่ใช่เรื่องของการซื้อให้แพงที่สุด แต่คือการเตรียมเงินก้อนให้คนที่เรารัก ในวันที่รายได้ของเราอาจหยุดลง"`,
+        `11-18s: "เริ่มง่าย ๆ ด้วยการดูว่าใครพึ่งพารายได้ของเรา มีหนี้หรือค่าใช้จ่ายจำเป็นเท่าไร แล้วเลือกความคุ้มครองให้พอดีกับงบที่จ่ายไหว"`,
+        `19-25s: "แผนที่เหมาะกับแต่ละคนไม่เหมือนกันครับ ${preset.cta} แล้วเราจะช่วยจัดลำดับให้เห็นภาพก่อนตัดสินใจ"`,
       ].join("\n")
     ),
+    block("Gemini Prompt", geminiPrompt),
+    block("Flow Prompt", flowPrompt),
   ];
 }
 
@@ -1770,7 +1770,11 @@ function bindEvents() {
       const selected = rows.find((row) => String(row.day) === button.dataset.day);
       if (!selected) return;
       state.selectedCalendarDay = selected;
-      renderCalendar(state.latest);
+      els.calendarBody.querySelectorAll("[data-day]").forEach((card) => {
+        card.classList.toggle("active", card === button);
+      });
+      renderCalendarPreview(selected, state.latest);
+      document.querySelector(".calendar-preview")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
 
