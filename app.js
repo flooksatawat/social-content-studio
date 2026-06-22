@@ -570,6 +570,32 @@ function block(title, text) {
   return { title, text };
 }
 
+function mergeDefined(fallback, override) {
+  const merged = { ...(fallback || {}) };
+  Object.entries(override || {}).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+    if (typeof value === "string" && (!value.trim() || value.trim() === "undefined")) return;
+    if (Array.isArray(value) && !value.length) return;
+    merged[key] = value;
+  });
+  return merged;
+}
+
+function normalizeGeneratedResult(result, brief) {
+  const fallback = generateContent(brief);
+  const strategy = mergeDefined(fallback.strategy, result?.strategy);
+  const content = mergeDefined(fallback.content, result?.content);
+  return {
+    ...fallback,
+    ...(result || {}),
+    brief,
+    strategy,
+    hooks: Array.isArray(result?.hooks) && result.hooks.length ? result.hooks : fallback.hooks,
+    imagePrompt: result?.imagePrompt || buildImagePrompt(brief, strategy, content),
+    content,
+  };
+}
+
 function buildHashtags(brief) {
   const base = brief.keywords.length ? brief.keywords : ["ประกันชีวิต", "contentmarketing"];
   return base
@@ -614,7 +640,7 @@ function buildVideoContent(brief) {
     `Concerns to address: ${(strategy.concernMap || []).join(" | ")}.`,
     `Proof notes: ${(strategy.proofNotes || []).join(" | ")}.`,
     `Use a warm professional tone, simple Thai language, and a clear CTA: ${preset.cta}.`,
-    `Output structure: hook, problem, insight, example, CTA, on-screen text, and scene direction.`,
+    `Output structure: hook, problem, insight, example, CTA, and scene direction.`,
   ].join(" ");
   const flowPrompt = [
     `Make a Flow-ready video prompt from the same brief for ${brief.audience}.`,
@@ -921,25 +947,27 @@ function renderCalendarPreview(row, baseResult) {
 }
 
 function renderSnapshot(strategy) {
+  const fallback = buildStrategy(state.latest?.brief || getBrief());
+  const safeStrategy = mergeDefined(fallback, strategy);
   const cards = [
-    ["AI วิเคราะห์ปัญหา", strategy.angle],
-    ["AI เข้าใจความต้องการ", strategy.promise],
-    ["Hook แนะนำ", strategy.proof],
-    ["Trust Building", strategy.trustAngle],
-    ["Education Focus", strategy.educationAngle],
-    ["Case Variety", strategy.caseAngle],
+    ["AI วิเคราะห์ปัญหา", safeStrategy.angle],
+    ["AI เข้าใจความต้องการ", safeStrategy.promise],
+    ["Hook แนะนำ", safeStrategy.proof],
+    ["Trust Building", safeStrategy.trustAngle],
+    ["Education Focus", safeStrategy.educationAngle],
+    ["Case Variety", safeStrategy.caseAngle],
     ["Keyword", (state.latest?.brief.keywords || []).join(", ") || "ประกันชีวิต"],
-    ["Sell Funnel", strategy.promise.includes("funnel") ? strategy.promise : "Awareness -> Consideration -> Lead"],
-    ["CTA", strategy.cta],
-    ["Content Pillars", (strategy.contentPillars || []).join("\n")],
-    ["Auto Fill Plan", (strategy.autoFillPlan || []).join("\n")],
-    ["Funnel Plan", (strategy.funnelPlan || []).join("\n")],
-    ["Reference Map", (strategy.referenceMap || []).join("\n")],
-    ["Proof Notes", (strategy.proofNotes || []).join("\n")],
-    ["Objection Handling", (strategy.objectionHandling || []).join("\n")],
-    ["Concerns", (strategy.concernMap || []).join("\n")],
-    ["Case Examples", (strategy.caseExamples || []).join("\n")],
-  ];
+    ["Sell Funnel", safeStrategy.promise.includes("funnel") ? safeStrategy.promise : "Awareness -> Consideration -> Lead"],
+    ["CTA", safeStrategy.cta],
+    ["Content Pillars", (safeStrategy.contentPillars || []).join("\n")],
+    ["Auto Fill Plan", (safeStrategy.autoFillPlan || []).join("\n")],
+    ["Funnel Plan", (safeStrategy.funnelPlan || []).join("\n")],
+    ["Reference Map", (safeStrategy.referenceMap || []).join("\n")],
+    ["Proof Notes", (safeStrategy.proofNotes || []).join("\n")],
+    ["Objection Handling", (safeStrategy.objectionHandling || []).join("\n")],
+    ["Concerns", (safeStrategy.concernMap || []).join("\n")],
+    ["Case Examples", (safeStrategy.caseExamples || []).join("\n")],
+  ].filter(([, text]) => clean(text) && clean(text) !== "undefined");
 
   els.snapshot.innerHTML = cards
     .map(
@@ -1424,21 +1452,22 @@ function requireAiConnection() {
 }
 
 function renderGenerationResult(result) {
-  state.latest = result;
-  state.activeChannel = Object.keys(result.content)[0] || "facebook";
+  const normalized = normalizeGeneratedResult(result, result?.brief || getBrief());
+  state.latest = normalized;
+  state.activeChannel = Object.keys(normalized.content)[0] || "facebook";
 
-  syncAnalysisToForm(result);
+  syncAnalysisToForm(normalized);
 
-  renderSnapshot(result.strategy);
-  renderTabs(result);
-  renderOutput(result);
-  renderVideoOutput(result);
-  renderCalendar(result);
-  els.imageFormat.value = Object.keys(result.content).includes(els.imageFormat.value)
+  renderSnapshot(normalized.strategy);
+  renderTabs(normalized);
+  renderOutput(normalized);
+  renderVideoOutput(normalized);
+  renderCalendar(normalized);
+  els.imageFormat.value = Object.keys(normalized.content).includes(els.imageFormat.value)
     ? els.imageFormat.value
-    : result.brief.channels.find((channel) => platformMeta[channel]?.size) || "facebook";
-  drawCanvas(result);
-  saveHistory(result);
+    : normalized.brief.channels.find((channel) => platformMeta[channel]?.size) || "facebook";
+  drawCanvas(normalized);
+  saveHistory(normalized);
 }
 
 function renderVideoOutput(result) {
@@ -1549,6 +1578,7 @@ async function runGeneration(event) {
 
   const brief = getBrief();
   setButtonLoading(els.generateButton, true, "AI กำลังคิด...");
+  renderSnapshot(buildStrategy(brief));
   els.output.innerHTML = `
     <div class="empty-state">
       <h3>AI กำลังวิเคราะห์กลุ่มเป้าหมาย</h3>
@@ -1561,12 +1591,12 @@ async function runGeneration(event) {
       method: "POST",
       body: JSON.stringify({ brief }),
     });
-    const result = {
+    const result = normalizeGeneratedResult({
       ...generated,
       id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
       createdAt: new Date().toISOString(),
       brief,
-    };
+    }, brief);
     renderGenerationResult(result);
     showToast("AI สร้างชุดคอนเทนต์แล้ว");
   } catch (error) {
@@ -1733,6 +1763,7 @@ function bindEvents() {
 bindEvents();
 loadHistory();
 if (els.apiKeyInput) els.apiKeyInput.value = getStoredApiKey();
+renderSnapshot(buildStrategy(getBrief()));
 drawCanvas();
 checkAiStatus();
 
