@@ -1529,7 +1529,7 @@ function closeAiBridgeDialog() {
 
 function parseExternalAiResponse(rawResponse) {
   const raw = clean(rawResponse);
-  if (!raw) throw new Error("วางคำตอบ JSON จาก ChatGPT หรือ Claude ก่อน");
+  if (!raw) throw new Error("วางคำตอบ JSON จาก ChatGPT, Claude หรือ Gemini ก่อน");
   const withoutFence = raw
     .replace(/^\s*```(?:json)?\s*/i, "")
     .replace(/\s*```\s*$/i, "");
@@ -1567,12 +1567,18 @@ function launchExternalAi(provider) {
   const urls = {
     chatgpt: "https://chatgpt.com/",
     claude: "https://claude.ai/new",
+    gemini: "https://gemini.google.com/app",
   };
   const url = urls[provider];
   if (!url) return;
   copyText(els.externalAiPrompt?.value || buildExternalAiPrompt(getBrief()));
   window.open(url, "_blank", "noopener,noreferrer");
-  setAiBridgeMessage(`คัดลอก Prompt แล้ว วางใน ${provider === "chatgpt" ? "ChatGPT" : "Claude"} ได้เลย`);
+  const providerLabel = {
+    chatgpt: "ChatGPT",
+    claude: "Claude",
+    gemini: "Gemini",
+  }[provider] || "AI";
+  setAiBridgeMessage(`คัดลอก Prompt แล้ว วางใน ${providerLabel} ได้เลย`);
 }
 
 function setButtonLoading(button, loading, loadingText) {

@@ -101,7 +101,7 @@
 
             <div class="button-row">
               <button class="primary-button" id="generateContent" type="submit">ให้ AI วิเคราะห์และสร้างชุดคอนเทนต์</button>
-              <button class="bridge-button" id="openAiBridge" type="button">ChatGPT / Claude Bridge</button>
+              <button class="bridge-button" id="openAiBridge" type="button">ChatGPT / Claude / Gemini Bridge</button>
               <button class="secondary-button" id="resetForm" type="reset">รีเซ็ต</button>
             </div>
             </form>
@@ -273,7 +273,7 @@
         <div class="ai-dialog-heading">
           <div>
             <p class="eyebrow">Manual AI Bridge · ไม่ใช้ API</p>
-            <h2>สร้างด้วย ChatGPT หรือ Claude</h2>
+            <h2>สร้างด้วย ChatGPT, Claude หรือ Gemini</h2>
           </div>
           <button class="dialog-close" id="closeAiBridge" type="button" aria-label="ปิด">x</button>
         </div>
@@ -291,6 +291,9 @@
           <button class="provider-button provider-claude" type="button" data-ai-provider="claude">
             <strong>Claude</strong><span>เปิดแชทพร้อมคัดลอก Prompt</span>
           </button>
+          <button class="provider-button provider-gemini" type="button" data-ai-provider="gemini">
+            <strong>Gemini</strong><span>เปิดแชทพร้อมคัดลอก Prompt</span>
+          </button>
         </div>
 
         <div class="bridge-grid">
@@ -301,7 +304,7 @@
           </label>
           <label>
             วาง JSON ที่ AI ตอบกลับ
-            <textarea id="externalAiResponse" rows="13" placeholder='วางคำตอบ JSON ที่ได้จาก ChatGPT หรือ Claude ที่นี่'></textarea>
+            <textarea id="externalAiResponse" rows="13" placeholder='วางคำตอบ JSON ที่ได้จาก ChatGPT, Claude หรือ Gemini ที่นี่'></textarea>
             <button class="primary-button" id="importExternalAiResponse" type="button">นำเข้าและสร้าง Step 2-5</button>
           </label>
         </div>
