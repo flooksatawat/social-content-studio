@@ -202,6 +202,27 @@ function getBrief() {
   };
 }
 
+function getSelectedChannels() {
+  return $$("input[name='channels']:checked").map((input) => input.value);
+}
+
+function syncChannelSelection() {
+  const channels = getSelectedChannels();
+  if (!channels.length) return;
+  if (!state.latest) {
+    state.activeChannel = channels[0];
+    return;
+  }
+
+  const currentContent = state.latest.content || {};
+  const nextActive = channels.includes(state.activeChannel)
+    ? state.activeChannel
+    : channels.find((channel) => currentContent[channel]) || channels[0];
+  state.activeChannel = nextActive;
+  renderTabs(state.latest);
+  renderOutput(state.latest);
+}
+
 function clean(value) {
   return String(value || "").trim();
 }
@@ -1170,6 +1191,15 @@ function bindEvents() {
     const button = event.target.closest("[data-copy]");
     if (!button) return;
     copyText(decodeURIComponent(button.dataset.copy));
+  });
+
+  $$("input[name='channels']").forEach((input) => {
+    input.addEventListener("change", () => {
+      syncChannelSelection();
+      if (state.latest) {
+        state.latest.brief.channels = getSelectedChannels();
+      }
+    });
   });
 
   [els.imageFormat, els.visualMood].forEach((control) => {
