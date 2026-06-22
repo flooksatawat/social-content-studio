@@ -279,6 +279,24 @@ function buildStrategy(brief) {
     `Consideration: อธิบายทางเลือก, ข้อดีข้อจำกัด, และสิ่งที่ควรเช็ก`,
     `Lead: ชวนประเมินแผน / นัดคุย / รับ checklist`,
   ];
+  const referenceMap = [
+    `Facebook -> ใช้เล่าปัญหาและให้บริบทเริ่มต้น`,
+    `YouTube -> ขยายเหตุผลและสอนแบบละเอียด`,
+    `TikTok / LINE VOOM -> ตัดเป็น hook สั้นและชัด`,
+    `Blog SEO -> เก็บคำอธิบายเชิงลึกและ FAQ`,
+    `Email -> follow-up หลังคนเริ่มสนใจ`,
+    `AI Search -> ตอบคำถามแบบ answer-first พร้อม entity ชัด`,
+  ];
+  const proofNotes = [
+    `ใช้คำอธิบายจากชีวิตจริงแทนการอ้างตัวเลขลอย ๆ`,
+    `ยกตัวอย่างเคสที่ต่างกันตามอาชีพ ภาระ และงบประมาณ`,
+    `ปิดท้ายด้วยสิ่งที่ตรวจสอบได้ เช่น เงื่อนไขกรมธรรม์และความเหมาะสมของแผน`,
+  ];
+  const objectionHandling = [
+    `ถ้าลูกค้ายังไม่พร้อมตัดสินใจ -> ให้ checklist แทนการขายตรง`,
+    `ถ้าลูกค้ากลัวงบสูง -> เปิดตัวเลือกตามงบและลำดับความสำคัญ`,
+    `ถ้าลูกค้าสงสัยความคุ้มค่า -> อธิบายผลลัพธ์เชิงชีวิตจริง`,
+  ];
   const caseExamples = [
     `เคส 1: ครอบครัวเริ่มต้นที่อยากคุ้มครองรายได้หลัก`,
     `เคส 2: เจ้าของกิจการที่ต้องแบ่งความเสี่ยงส่วนตัวกับธุรกิจ`,
@@ -296,6 +314,9 @@ function buildStrategy(brief) {
     caseAngle,
     contentPillars,
     funnelPlan,
+    referenceMap,
+    proofNotes,
+    objectionHandling,
     caseExamples,
   };
 }
@@ -343,6 +364,8 @@ function buildPlatformContent(brief) {
           `AI วิเคราะห์แล้วว่ากลุ่มเป้าหมายมีปัญหาหลักคือ: ${shortText(brief.painPoint, 96)}`,
           `ความต้องการหลักคือ: ${preset.need}`,
           "",
+          "ใช้ประเด็นเดียวกันนี้ต่อใน YouTube เพื่อขยายเหตุผล และตัดลง TikTok / LINE VOOM ให้เหลือแค่ hook สั้น ๆ",
+          "",
           "ก่อนเลือกแผน ลองเช็ก 3 เรื่องนี้ก่อน:",
           "1. ใครคือคนที่เราต้องดูแล",
           "2. ความเสี่ยงหรือภาระที่ต้องรับมือคืออะไร",
@@ -372,6 +395,8 @@ function buildPlatformContent(brief) {
           "3-8s: อธิบายว่าแผนประกันที่ดีควรเริ่มจากภาระ รายได้ และเป้าหมาย ไม่ใช่เริ่มจากเบี้ย",
           "9-18s: ให้เช็กลิสต์ 3 ข้อ: คนที่ต้องดูแล, หนี้สิน, งบประมาณที่จ่ายได้ต่อเนื่อง",
           `19-25s: ปิดด้วย CTA: ${preset.cta}`,
+          "",
+          "อ้างอิงจาก Facebook เพื่อเล่าปัญหา, จาก Blog SEO เพื่อให้ข้อมูลลึก, และจาก Email เพื่อ follow-up",
         ].join("\n")
       ),
       block("Description", [`${brief.painPoint}`, "", `เหมาะสำหรับ ${brief.audience}`, `เริ่มวางแผนกับ ${brief.brandName}: ${preset.cta}`, "", hashtags].join("\n")),
@@ -447,6 +472,7 @@ function buildPlatformContent(brief) {
           `1. ${keyword}: เริ่มวางแผนคุ้มครองให้เหมาะกับชีวิตจริง`,
           `2. 3 สิ่งที่ควรเช็กก่อนเลือก${keyword}`,
           `3. AI ช่วยสรุปแผนคุ้มครองที่เหมาะกับคุณ`,
+          `4. จากโพสต์สั้น สู่แผนคุยจริง - เชื่อมข้อมูลจากทุกช่องทาง`,
         ].join("\n")
       ),
       block(
@@ -460,6 +486,8 @@ function buildPlatformContent(brief) {
           "3. งบที่จ่ายต่อเนื่องได้จริงอยู่ระดับไหน",
           "",
           `ถ้าต้องการแผนที่เหมาะกับสถานการณ์จริง: ${preset.cta}`,
+          "",
+          "อ้างอิงต่อจาก Facebook / Blog / AI Search เพื่อให้ข้อความไม่ซ้ำ แต่เล่าต่อกันได้",
         ].join("\n")
       ),
       block(
@@ -511,6 +539,9 @@ function generateContent(brief) {
   const selectedContent = Object.fromEntries(
     brief.channels.map((channel) => [channel, allContent[channel]]).filter(([, content]) => content)
   );
+  const fallbackChannels = Object.fromEntries(
+    Object.entries(allContent).filter(([channel]) => brief.channels.includes(channel))
+  );
 
   const imagePrompt = buildImagePrompt(brief);
   return {
@@ -520,7 +551,7 @@ function generateContent(brief) {
     strategy,
     hooks: buildHooks(brief),
     imagePrompt,
-    content: selectedContent,
+    content: { ...fallbackChannels, ...selectedContent },
   };
 }
 
@@ -685,6 +716,9 @@ function renderSnapshot(strategy) {
     ["CTA", strategy.cta],
     ["Content Pillars", (strategy.contentPillars || []).join("\n")],
     ["Funnel Plan", (strategy.funnelPlan || []).join("\n")],
+    ["Reference Map", (strategy.referenceMap || []).join("\n")],
+    ["Proof Notes", (strategy.proofNotes || []).join("\n")],
+    ["Objection Handling", (strategy.objectionHandling || []).join("\n")],
     ["Case Examples", (strategy.caseExamples || []).join("\n")],
   ];
 
