@@ -278,16 +278,16 @@ function buildStrategy(brief) {
   const educationAngle = `ให้ความรู้แบบเข้าใจง่าย โดยเริ่มจากปัญหาจริง ${painShort}`;
   const caseAngle = `ยกเคสตัวอย่างหลากหลาย เช่น ${preset.label} / คนมีภาระครอบครัว / เจ้าของกิจการ / คนเริ่มวางแผนเกษียณ`;
   const contentPillars = [
-    `1. Trust: สื่อสารด้วยข้อเท็จจริงและคำอธิบายที่ไม่กดดัน`,
-    `2. Education: อธิบายเหตุผล, ความเสี่ยง, และแนวคิดการวางแผน`,
-    `3. Case-based: เล่าตัวอย่างเคสจากหลายสถานการณ์จริง`,
-    `4. Conversion: ปิดท้ายด้วย CTA ที่ชวนประเมินแผน`,
+    `1. Trust: สื่อสารด้วยข้อเท็จจริง คำสั้น และจังหวะอ่านบนมือถือ`,
+    `2. Education: อธิบายเหตุผล ความเสี่ยง และสิ่งที่ต้องเช็กก่อนเลือก`,
+    `3. Case-based: เล่าตัวอย่างเคสหลากหลายจากชีวิตจริงของแต่ละกลุ่ม`,
+    `4. Conversion: ปิดท้ายด้วย CTA ที่ชวนประเมินแผนแบบไม่กดดัน`,
   ];
   const autoFillPlan = [
     `สิ่งที่ผู้ใช้กรอก -> ใช้เป็นแกนหลักของ brief เท่านั้น`,
-    `สิ่งที่ไม่กรอก -> ให้ AI เติมด้วยสมมติฐานที่สอดคล้องกับอุตสาหกรรมและ audience`,
-    `ผลลัพธ์ -> ต้องละเอียดพอให้เอาไปโพสต์ / ส่งต่อ / วางแผนต่อได้ทันที`,
-    `ถ้าข้อมูลไม่ครบ -> AI ต้องเลือกแนวทางที่ปลอดภัย ชัดเจน และใช้งานได้จริง`,
+    `สิ่งที่ไม่กรอก -> ให้ AI เติมด้วยสมมติฐานที่สอดคล้องกับอุตสาหกรรม audience และเป้าหมาย`,
+    `ผลลัพธ์ -> ต้องละเอียดพอให้เอาไปโพสต์ ส่งต่อ วางแผนต่อ และใช้คุยจริงได้ทันที`,
+    `ถ้าข้อมูลไม่ครบ -> AI ต้องเลือกแนวทางที่ปลอดภัย ชัดเจน ใช้งานได้จริง และไม่เวอร์`,
   ];
   const funnelPlan = [
     `Awareness: เปิดด้วยปัญหาและคำถามที่ตรงชีวิตจริง`,
@@ -345,6 +345,7 @@ function buildStrategy(brief) {
     `โพสต์ 2: ให้ความรู้ด้วย checklist หรือ framework`,
     `โพสต์ 3: ยกเคสตัวอย่างและข้อควรระวัง`,
     `โพสต์ 4: ชวนประเมินแผนแบบไม่กดดัน`,
+    `โพสต์ 5: ส่งต่อเป็น video script / image prompt / email follow-up`,
   ];
   const complianceNotes = [
     `หลีกเลี่ยงคำรับประกันผลตอบแทนหรือคำกล่าวอ้างเกินจริง`,
@@ -358,7 +359,7 @@ function buildStrategy(brief) {
     `ชวนส่งข้อมูลเบื้องต้นเพื่อประเมิน ไม่เร่งปิดการขายในคอมเมนต์`,
   ];
   const channelExecution = [
-    `Facebook: เล่าเรื่องและสร้างความน่าเชื่อถือ`,
+    `Facebook: เล่าเรื่องแบบ mobile-first แบ่งโซนด้วยหัวข้อสั้นและจุดคั่น`,
     `Line: สรุปสั้น ชวนคุยต่อ และส่ง checklist`,
     `TikTok: Hook เร็ว ตอบข้อสงสัยหนึ่งเรื่องต่อคลิป`,
     `YouTube: อธิบายเชิงลึกพร้อมตัวอย่างเคส`,
@@ -403,6 +404,38 @@ function buildHooks(brief) {
   ];
 }
 
+function buildFacebookPost(brief, strategy, hooks, hashtags) {
+  const keyword = brief.keywords[0] || "ประกันชีวิต";
+  const concerns = (strategy.concernMap || []).slice(0, 4);
+  const cases = (strategy.caseExamples || []).slice(0, 3);
+  const proofNotes = (strategy.proofNotes || []).slice(0, 3);
+  const post = [
+    hooks[0],
+    ".",
+    `ถ้ามองลึกกว่าคำว่า ${keyword} จริง ๆ แล้ว เราควรถามก่อนว่าใครต้องได้รับการดูแล และงบที่จ่ายไหวมีแค่ไหน`,
+    ".",
+    `สิ่งที่คนส่วนใหญ่มักติดคือ ${shortText(brief.painPoint, 110)}`,
+    ".",
+    "# ก่อนตัดสินใจ #",
+    "1. สรุปคนที่ต้องดูแลและรายได้ที่ต้องปกป้อง",
+    "2. แยกภาระจำเป็น เช่น บ้าน หนี้ ลูก หรือพ่อแม่",
+    "3. เลือกแผนที่จ่ายต่อเนื่องได้ ไม่ใช่ดูเบี้ยเริ่มต้นอย่างเดียว",
+    ".",
+    "# ความกังวลที่ควรถามให้ครบ #",
+    ...concerns.map((item, index) => `${index + 1}. ${item}`),
+    ".",
+    "# ตัวอย่างเคส #",
+    ...cases.map((item, index) => `${index + 1}. ${item}`),
+    ".",
+    "# สิ่งที่ควรเช็กเพิ่ม #",
+    ...proofNotes.map((item, index) => `${index + 1}. ${item}`),
+    ".",
+    `ถ้าอยากได้การประเมินแบบเข้ากับชีวิตจริง พิมพ์ “ประเมินแผน” แล้วเราจะช่วยไล่ให้ทีละขั้น`,
+    hashtags,
+  ];
+  return post.join("\n");
+}
+
 function buildImagePrompt(brief, strategy = {}, content = {}) {
   const keyword = brief.keywords[0] || "ประกันชีวิต";
   const firstChannel = Object.values(content).flat().find(Boolean) || null;
@@ -427,6 +460,7 @@ function buildImagePrompt(brief, strategy = {}, content = {}) {
     `Main concerns addressed: ${concernLine}.`,
     `Visual style: modern premium finance aesthetic with intelligent AI overlay, trustworthy, human-centered, bright natural lighting, realistic Thai professional scene, clear focal point, space for Thai headline text.`,
     `Include subtle cues related to ${keyword}, family protection, financial planning, insights, funnel map, and calm advisor consultation.`,
+    `For Facebook specifically, use a mobile-first post layout with short lines, dotted separators, section headers, and scan-friendly hierarchy.`,
     `Mirror the same message used in Step 2 strategy, Step 3 content output, and Step 4 video script.`,
     `Avoid clutter, avoid tiny text, avoid fear-based imagery, avoid exaggerated claims.`,
     `Aspect ratio should match the selected platform.`,
@@ -441,38 +475,23 @@ function buildPlatformContent(brief) {
   const blogTitle = `${keyword}: วิธีวางแผนคุ้มครองให้เหมาะกับ${shortText(brief.audience, 24)}`;
   const slug = slugifyThai(blogTitle);
   const strategy = buildStrategy(brief);
+  const facebookPost = buildFacebookPost(brief, strategy, hooks, hashtags);
 
   return {
     facebook: [
       block("Hook Options", hooks.slice(0, 4).map((hook, index) => `${index + 1}. ${hook}`).join("\n")),
+      block("Caption", facebookPost),
+      block("Creative Note", "ภาพควรดูสะอาด น่าเชื่อถือ มีที่ปรึกษาคุยกับครอบครัวหรือคนทำงาน พร้อม headline สั้นที่เน้นความมั่นคงและการวางแผน"),
       block(
-        "Caption",
+        "Cross-Channel Map",
         [
-          hooks[0],
-          "",
-          `AI วิเคราะห์แล้วว่ากลุ่มเป้าหมายมีปัญหาหลักคือ: ${shortText(brief.painPoint, 96)}`,
-          `ความต้องการหลักคือ: ${preset.need}`,
-          "",
-          "ข้อโต้แย้ง / ความกังวลที่ต้องตอบ:",
-          ...(strategy.concernMap || []).map((item) => `- ${item}`),
-          "",
-          "ใช้ประเด็นเดียวกันนี้ต่อใน YouTube เพื่อขยายเหตุผล และตัดลง TikTok / LINE VOOM ให้เหลือแค่ hook สั้น ๆ",
-          "",
-          "ก่อนเลือกแผน ลองเช็ก 3 เรื่องนี้ก่อน:",
-          "1. ใครคือคนที่เราต้องดูแล",
-          "2. ความเสี่ยงหรือภาระที่ต้องรับมือคืออะไร",
-          "3. งบประมาณที่จ่ายต่อเนื่องได้จริงอยู่ระดับไหน",
-          "",
-          `${brief.brandName} ช่วยวิเคราะห์ภาพรวมและแนะนำแนวทางคุ้มครองให้สอดคล้องกับ funnel "${preset.funnel}"`,
-          `CTA: ${preset.cta}`,
-          "",
-          "AI เติมสิ่งที่ผู้ใช้ไม่ได้กรอกให้ครบโดยอิงจากบริบทจริง:",
-          ...(strategy.autoFillPlan || []).map((item) => `- ${item}`),
-          "",
-          hashtags,
+          `Facebook: ใช้เป็นโพสต์หลักแบบเล่าเรื่องและแบ่งโซนอ่านง่าย`,
+          `YouTube: ขยายเหตุผลจากโพสต์นี้ให้ลึกขึ้น`,
+          `TikTok / LINE VOOM: ตัดเหลือ hook และ 3 จุดหลัก`,
+          `Blog SEO: เก็บรายละเอียดเชิงลึก + FAQ`,
+          `Email: สรุปเป็น follow-up หลังจากคนเริ่มสนใจ`,
         ].join("\n")
       ),
-      block("Creative Note", "ภาพควรดูสะอาด น่าเชื่อถือ มีที่ปรึกษาคุยกับครอบครัวหรือคนทำงาน พร้อม headline สั้นที่เน้นความมั่นคงและการวางแผน"),
     ],
     youtube: [
       block(
@@ -495,7 +514,25 @@ function buildPlatformContent(brief) {
           "คอนเทนต์นี้ถูกคิดจาก Step 2 และเติมความกังวลจริงของลูกค้าไว้แล้ว",
         ].join("\n")
       ),
-      block("Description", [`${brief.painPoint}`, "", `เหมาะสำหรับ ${brief.audience}`, `เริ่มวางแผนกับ ${brief.brandName}: ${preset.cta}`, "", hashtags].join("\n")),
+      block(
+        "Description",
+        [
+          `ถ้าคุณกำลังมองหา${keyword} แบบที่ใช้ได้จริงกับชีวิต ไม่ใช่แค่เลือกจากเบี้ยหรือคำโฆษณา วิดีโอนี้จะช่วยวางกรอบคิดให้ชัดขึ้น`,
+          "",
+          `ในคลิปนี้เราจะดูว่า`,
+          `- ใครคือคนที่ต้องได้รับการดูแล`,
+          `- ภาระจริงที่ต้องรับมือมีอะไรบ้าง`,
+          `- งบประมาณต่อเดือนที่เหมาะกับสถานการณ์ของคุณคือระดับไหน`,
+          "",
+          `เหมาะสำหรับ ${brief.audience}`,
+          `แนวคิดนี้อิงจาก Step 2 ที่วิเคราะห์ปัญหา ความต้องการ ความกังวล และตัวอย่างเคส เพื่อให้ต่อยอดได้ทั้ง Facebook, Blog SEO, Email และ AI Search`,
+          "",
+          `เริ่มวางแผนกับ ${brief.brandName}: ${preset.cta}`,
+          "",
+          `#ประกันชีวิต #ที่ปรึกษาทางการเงิน #วางแผนคุ้มครอง #ชีวิตจริง #การเงิน`,
+          hashtags,
+        ].join("\n")
+      ),
     ],
     tiktok: [
       block(
@@ -727,9 +764,10 @@ function buildVideoContent(brief) {
       "Short Script",
       [
         `0-3s: "${preset.hook}"`,
-        `4-10s: "${keyword} ไม่ใช่เรื่องของการซื้อให้แพงที่สุด แต่คือการเตรียมเงินก้อนให้คนที่เรารัก ในวันที่รายได้ของเราอาจหยุดลง"`,
-        `11-18s: "เริ่มง่าย ๆ ด้วยการดูว่าใครพึ่งพารายได้ของเรา มีหนี้หรือค่าใช้จ่ายจำเป็นเท่าไร แล้วเลือกความคุ้มครองให้พอดีกับงบที่จ่ายไหว"`,
-        `19-25s: "แผนที่เหมาะกับแต่ละคนไม่เหมือนกันครับ ${preset.cta} แล้วเราจะช่วยจัดลำดับให้เห็นภาพก่อนตัดสินใจ"`,
+        `4-10s: "${keyword} ไม่ใช่การซื้อให้แพงที่สุด แต่คือการเตรียมแผนให้คนที่เรารัก ถ้าวันหนึ่งรายได้ของเราหยุดลง"`,
+        `11-18s: "เริ่มจากดูว่าใครต้องพึ่งรายได้เรา มีหนี้หรือค่าใช้จ่ายจำเป็นเท่าไร แล้วค่อยเลือกความคุ้มครองให้พอดีกับงบที่จ่ายไหว"`,
+        `19-25s: "แต่ละคนไม่เหมือนกันครับ ถ้าอยากรู้ว่าแผนของคุณควรเริ่มตรงไหน ${preset.cta} แล้วเราจะช่วยไล่ให้ทีละขั้น"`,
+        `26-30s: "จบด้วยสรุปสั้น ๆ ว่าเราไม่ได้ขายแผนเดียวให้ทุกคน แต่ช่วยหาทางเลือกที่เหมาะกับชีวิตจริง"`,
       ].join("\n")
     ),
     block("Gemini Prompt", geminiPrompt),
