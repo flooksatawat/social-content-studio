@@ -231,6 +231,10 @@ button {
   display: none;
 }
 
+.brief-panel.is-collapsed > .brief-form {
+  display: grid;
+}
+
 .panel.is-collapsed .brief-body {
   display: none;
 }
