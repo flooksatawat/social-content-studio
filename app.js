@@ -387,7 +387,6 @@ function buildHooks(brief) {
 }
 
 function buildFacebookPost(brief, strategy, hooks, hashtags) {
-  const dot = '.';
   const keyword = brief.keywords[0] || 'ประกันชีวิต';
   const concerns = (strategy.concernMap || []).slice(0, 3);
   const cases = (strategy.caseExamples || []).slice(0, 2);
@@ -395,54 +394,51 @@ function buildFacebookPost(brief, strategy, hooks, hashtags) {
   const preset = audiencePresets[brief.audiencePreset] || audiencePresets['young-family'];
   const ctaWord = (preset.cta || 'ประเมินแผน').split(' ')[0] || 'ประเมินแผน';
 
-  const lines = [
+  // กฎจัดหน้าโพสต์ Facebook (mobile-first)
+  // 1 จุด = ขึ้นบรรทัดใหม่ระหว่างประโยค | 2 จุด = แบ่งโซน
+  const lineBreak = '\n.\n';      // จุดเดียวคั่นแต่ละบรรทัดในโซน
+  const zoneBreak = '\n.\n.\n';   // สองจุดคั่นระหว่างโซน
+  const zone = (lines) => lines.filter(Boolean).join(lineBreak);
+
+  const zones = [];
+
+  zones.push(zone([
     `## ${hooks[0] || `อยากดูแล${keyword} แต่ยังไม่รู้จะเริ่มต้นยังไง`} ##`,
-    dot,
-    `หลายคนรู้ว่าควรมี${keyword} แต่พอถึงเวลาจริงก็ไม่รู้จะเริ่มจากตรงไหน`,
+    `หลายคนรู้ว่าควรมี${keyword}`,
+    `แต่พอถึงเวลาจริง ก็ไม่รู้จะเริ่มจากตรงไหน`,
     `ความจริงคือ ไม่ต้องเริ่มจากการเลือกแผน`,
     `แต่เริ่มจากการเข้าใจว่าครอบครัวของเราต้องการอะไร`,
-    dot,
-  ];
+  ]));
 
   if (concerns.length) {
-    lines.push(`# ${concerns[0]} #`);
-    lines.push(dot);
-    concerns.forEach((c, i) => {
-      lines.push(`${i + 1}. ${c}`);
-    });
-    lines.push(dot);
+    zones.push(zone([
+      `# ${concerns[0]} #`,
+      ...concerns.map((c, i) => `${i + 1}. ${c}`),
+    ]));
   }
 
   if (cases.length) {
-    lines.push(`# ตัวอย่างที่หลายคนเจอ #`);
-    lines.push(dot);
-    cases.forEach((c, i) => {
-      lines.push(`${i + 1}. ${c}`);
-    });
-    lines.push(dot);
+    zones.push(zone([
+      `# ตัวอย่างที่หลายคนเจอ #`,
+      ...cases.map((c, i) => `${i + 1}. ${c}`),
+    ]));
   }
 
   if (proofNotes.length) {
-    lines.push(`# หลักคิดสำคัญ #`);
-    lines.push(dot);
-    proofNotes.forEach((p) => {
-      lines.push(`· ${p}`);
-    });
-    lines.push(dot);
+    zones.push(zone([
+      `# หลักคิดสำคัญ #`,
+      ...proofNotes.map((p) => `· ${p}`),
+    ]));
   }
 
-  lines.push(
+  zones.push(zone([
     `# ${keyword}ที่ดี ไม่ใช่แผนที่ใหญ่ที่สุด แต่คือแผนที่เดินต่อได้จริง #`,
-    dot,
     `ถ้าอยากรู้ว่าแผนแบบไหนเหมาะกับชีวิตของคุณ`,
     `ทักมาได้เลยนะครับ ไม่มีค่าใช้จ่าย ไม่มีแรงกดดัน`,
-    dot,
     `พิมพ์ "${ctaWord}" มาได้เลย`,
-    dot,
-    hashtags,
-  );
+  ]));
 
-  return lines.join('\n');
+  return zones.join(zoneBreak) + lineBreak + hashtags;
 }
 
 function buildImagePrompt(brief, strategy = {}, content = {}) {
@@ -1159,6 +1155,10 @@ function renderOutput(result) {
     `).join("");
   }
 
+  const headerCopyButton = channel === "facebook"
+    ? ""
+    : `<button class="copy-button" type="button" data-copy="${encodeURIComponent(fullText)}">คัดลอกช่องทางนี้</button>`;
+
   els.output.innerHTML = `
     <article class="content-card">
       <div class="content-card-header">
@@ -1166,7 +1166,7 @@ function renderOutput(result) {
           <h3>${meta.label} Content Pack</h3>
           <p class="eyebrow">${meta.ratioLabel} · ${escapeHtml(meta.note)}</p>
         </div>
-        <button class="copy-button" type="button" data-copy="${encodeURIComponent(fullText)}">คัดลอกช่องทางนี้</button>
+        ${headerCopyButton}
       </div>
       <div class="content-card-body">
         ${bodyHtml}

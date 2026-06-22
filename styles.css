@@ -386,13 +386,6 @@ textarea:focus {
   transition: border-color 150ms ease, background 150ms ease, color 150ms ease, transform 120ms ease;
 }
 
-.channel-chip i {
-  font-size: 19px;
-  line-height: 1;
-  color: var(--muted);
-  transition: color 150ms ease;
-}
-
 .channel-chip span {
   flex: 1;
 }
@@ -412,10 +405,6 @@ textarea:focus {
   color: var(--bg-ink);
 }
 
-.channel-chip:has(input:checked) i {
-  color: var(--accent-strong);
-}
-
 .channel-chip input {
   appearance: none;
   -webkit-appearance: none;
@@ -425,7 +414,7 @@ textarea:focus {
   margin: 0;
   border: 1.5px solid var(--line);
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.7);
+  background: transparent;
   display: grid;
   place-items: center;
   transition: background 150ms ease, border-color 150ms ease;
@@ -433,7 +422,7 @@ textarea:focus {
 
 .channel-chip input:checked {
   border-color: var(--accent-strong);
-  background: var(--accent-strong);
+  background: var(--accent-soft);
 }
 
 .channel-chip input:checked::after {
@@ -441,7 +430,7 @@ textarea:focus {
   width: 5px;
   height: 10px;
   margin-top: -2px;
-  border: solid #fff;
+  border: solid var(--accent-strong);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
