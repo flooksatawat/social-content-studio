@@ -231,6 +231,18 @@ select {
   letter-spacing: 0;
 }
 
+select option {
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 10px 12px;
+}
+
+select option:checked,
+select option:hover {
+  background: linear-gradient(180deg, rgba(20, 184, 166, 0.22), rgba(56, 189, 248, 0.18));
+  color: #ffffff;
+}
+
 select:hover {
   border-color: rgba(20, 184, 166, 0.48);
 }
