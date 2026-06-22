@@ -727,28 +727,22 @@ function buildVideoContent(brief) {
   const keyword = brief.keywords[0] || "ประกันชีวิต";
   const strategy = buildStrategy(brief);
   const geminiPrompt = [
-    `Create a short VERTICAL video concept (9:16 portrait, full-screen mobile) for a life insurance and financial advisory brand.`,
-    `Aspect ratio must always be 9:16 vertical, optimized for TikTok, Reels, YouTube Shorts and LINE VOOM.`,
-    `Audience: ${brief.audience}.`,
-    `Core pain point: ${brief.painPoint}.`,
-    `Core strategy: ${shortText(strategy.angle, 120)}.`,
-    `Trust angle: ${shortText(strategy.trustAngle, 120)}.`,
-    `Education angle: ${shortText(strategy.educationAngle, 120)}.`,
-    `Concerns to address: ${(strategy.concernMap || []).join(" | ")}.`,
-    `Proof notes: ${(strategy.proofNotes || []).join(" | ")}.`,
-    `Use a warm professional tone, simple Thai language, and a clear CTA: ${preset.cta}.`,
-    `Frame every shot for vertical 9:16: subject centered, safe margins for captions top and bottom, large readable Thai text overlays.`,
-    `Output structure: hook, problem, insight, example, CTA, and vertical scene direction.`,
+    `Generate this video now. Do not write a script, concept, or ask questions — output the rendered video directly.`,
+    `An 8-second cinematic VERTICAL 9:16 video (full-screen mobile, never landscape) for a life insurance and financial advisory brand.`,
+    `Scene: a warm, trustworthy Thai financial advisor in their mid-30s, sitting in a softly lit modern home office, smiling gently and speaking straight to the camera with reassuring eye contact.`,
+    `Camera: slow push-in, eye-level, shallow depth of field. Lighting: soft natural window light. Mood: warm, calm, professional, hopeful.`,
+    `Spoken line in natural warm Thai: "${preset.hook}"`,
+    `Large readable Thai caption centered with safe margins top and bottom: "${shortText(strategy.angle, 44)}"`,
+    `End on a clear call-to-action caption: "${preset.cta}".`,
+    `Subject centered for vertical 9:16, audience ${brief.audience}, tone simple and human.`,
   ].join(" ");
   const flowPrompt = [
-    `Make a Flow-ready VERTICAL video prompt (9:16 portrait, full-screen mobile) from the same brief for ${brief.audience}.`,
-    `Aspect ratio must always be 9:16 vertical — never landscape.`,
-    `The video must mirror Step 2 strategy and Step 3 content.`,
-    `Include: hook, message angle, concern handling, proof points, vertical scene beats, pacing, and CTA.`,
-    `Use this content lead: ${shortText(strategy.proof, 120)}.`,
-    `Use these reference channels: ${(strategy.referenceMap || []).join(" | ")}.`,
-    `Compose all shots for a 9:16 vertical frame with centered subjects and space for Thai captions.`,
-    `Keep it concise enough to paste into Flow and generate a polished vertical social video.`,
+    `Generate this video directly in Flow — render it, do not return a written plan.`,
+    `A VERTICAL 9:16 portrait social video (full-screen mobile, never landscape) for ${brief.audience}, life insurance and financial advisory.`,
+    `Shot 1: warm Thai advisor smiling at camera in a bright modern office, slow push-in, Thai caption "${shortText(strategy.angle, 36)}".`,
+    `Shot 2: relatable b-roll of a Thai family at home (parent and child), soft natural light, gentle handheld motion.`,
+    `Shot 3: advisor gestures warmly to camera with CTA caption "${preset.cta}".`,
+    `Style: warm, calm, professional, cinematic, shallow depth of field. All shots framed for 9:16 vertical with centered subjects and space for Thai captions.`,
   ].join(" ");
   return [
     block(
