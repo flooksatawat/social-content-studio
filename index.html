@@ -113,32 +113,52 @@
             </form>
           </section>
 
-          <section class="panel output-panel output-middle-panel" aria-labelledby="content-title" data-step-panel="step-2">
+        </div>
+
+        <div class="workspace-row workspace-row-bottom">
+          <div class="workspace-column steps-stack">
+          <section class="panel video-panel" aria-labelledby="video-title" data-step-panel="step-5-video">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Step 2</p>
-              <h2 id="content-title">Content Output</h2>
+              <p class="eyebrow">Step 5</p>
+              <h2 id="video-title">Video</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-content" aria-expanded="true" aria-label="ซ่อน/แสดง">
+              <button class="panel-toggle" type="button" data-step-toggle="step-5-video" aria-expanded="true" aria-label="ซ่อน/แสดง">
                 <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
             </div>
           </div>
 
-          <div class="tabs tabs-center" id="channelTabs" role="tablist" aria-label="เลือกช่องทาง"></div>
-
-          <div class="output-stack" id="contentOutput" aria-live="polite">
+          <div class="output-stack" id="videoOutput" aria-live="polite">
             <div class="empty-state">
-              <h3>พร้อมสร้างคอนเทนต์ชุดแรก</h3>
-              <p>กรอก brief ด้านซ้าย แล้วกดสร้าง ระบบจะทำ caption, hooks, script, SEO brief และ image prompt ให้ตามช่องทางที่เลือก</p>
+              <h3>พร้อมสร้างวิดีโอ</h3>
+              <p>กดสร้างคอนเทนต์ก่อน แล้วระบบจะสรุปสคริปต์วิดีโอสั้นให้ต่อได้ทันที</p>
             </div>
           </div>
-        </section>
-        </div>
+          </section>
 
-        <div class="workspace-row workspace-row-bottom">
-          <div class="workspace-column">
+          <section class="panel audio-panel" aria-labelledby="audio-title" data-step-panel="step-4-audio">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Step 4</p>
+              <h2 id="audio-title">Audio Story / Podcast</h2>
+            </div>
+            <div class="panel-actions">
+              <button class="panel-toggle" type="button" data-step-toggle="step-4-audio" aria-expanded="true" aria-label="ซ่อน/แสดง">
+                <i class="ti ti-chevron-up" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="output-stack" id="audioOutput" aria-live="polite">
+            <div class="empty-state">
+              <h3>พร้อมสร้างคลิปเสียง</h3>
+              <p>กดสร้างคอนเทนต์ก่อน แล้วระบบจะเรียบเรียง Hook, เรื่องเล่า Podcast, แนวทางการอ่าน และ Prompt สำหรับสร้างเสียงให้ทันที</p>
+            </div>
+          </div>
+          </section>
+
           <aside class="panel visual-panel" aria-labelledby="visual-title" data-step-panel="step-3">
           <div class="panel-heading">
             <div>
@@ -191,48 +211,29 @@
           </div>
           </aside>
 
-          <section class="panel audio-panel" aria-labelledby="audio-title" data-step-panel="step-4-audio">
+          <section class="panel output-panel output-middle-panel" aria-labelledby="content-title" data-step-panel="step-2">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Step 4</p>
-              <h2 id="audio-title">Audio Story / Podcast</h2>
+              <p class="eyebrow">Step 2</p>
+              <h2 id="content-title">Content Output</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-4-audio" aria-expanded="true" aria-label="ซ่อน/แสดง">
+              <button class="panel-toggle" type="button" data-step-toggle="step-content" aria-expanded="true" aria-label="ซ่อน/แสดง">
                 <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
             </div>
           </div>
 
-          <div class="output-stack" id="audioOutput" aria-live="polite">
-            <div class="empty-state">
-              <h3>พร้อมสร้างคลิปเสียง</h3>
-              <p>กดสร้างคอนเทนต์ก่อน แล้วระบบจะเรียบเรียง Hook, เรื่องเล่า Podcast, แนวทางการอ่าน และ Prompt สำหรับสร้างเสียงให้ทันที</p>
-            </div>
-          </div>
-          </section>
-          </div>
+          <div class="tabs tabs-center" id="channelTabs" role="tablist" aria-label="เลือกช่องทาง"></div>
 
-          <section class="panel video-panel" aria-labelledby="video-title" data-step-panel="step-5-video">
-          <div class="panel-heading">
-            <div>
-              <p class="eyebrow">Step 5</p>
-              <h2 id="video-title">Video</h2>
-            </div>
-            <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-5-video" aria-expanded="true" aria-label="ซ่อน/แสดง">
-                <i class="ti ti-chevron-up" aria-hidden="true"></i>
-              </button>
-            </div>
-          </div>
-
-          <div class="output-stack" id="videoOutput" aria-live="polite">
+          <div class="output-stack" id="contentOutput" aria-live="polite">
             <div class="empty-state">
-              <h3>พร้อมสร้างวิดีโอ</h3>
-              <p>กดสร้างคอนเทนต์ก่อน แล้วระบบจะสรุปสคริปต์วิดีโอสั้นให้ต่อได้ทันที</p>
+              <h3>พร้อมสร้างคอนเทนต์ชุดแรก</h3>
+              <p>กรอก brief ด้านซ้าย แล้วกดสร้าง ระบบจะทำ caption, hooks, script, SEO brief และ image prompt ให้ตามช่องทางที่เลือก</p>
             </div>
           </div>
-          </section>
+        </section>
+          </div>
         </div>
 
         <section class="panel output-panel output-summary-panel is-collapsed" aria-labelledby="output-title">
