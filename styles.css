@@ -366,20 +366,20 @@ textarea:focus {
 }
 
 .channel-fieldset {
-  gap: 10px;
+  gap: 12px;
 }
 
 .channel-chip {
   display: flex;
   align-items: center;
-  gap: 9px;
-  min-height: 50px;
-  padding: 10px 14px;
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
-  background: #fff;
+  gap: 11px;
+  min-height: 52px;
+  padding: 11px 15px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.5);
   color: var(--muted);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
   cursor: pointer;
   user-select: none;
@@ -389,6 +389,8 @@ textarea:focus {
 .channel-chip i {
   font-size: 19px;
   line-height: 1;
+  color: var(--muted);
+  transition: color 150ms ease;
 }
 
 .channel-chip span {
@@ -396,30 +398,34 @@ textarea:focus {
 }
 
 .channel-chip:hover {
-  border-color: rgba(124, 58, 237, 0.35);
-  background: var(--violet-soft);
+  border-color: rgba(20, 184, 166, 0.32);
+  background: rgba(255, 255, 255, 0.85);
 }
 
 .channel-chip:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
 }
 
 .channel-chip:has(input:checked) {
-  border-color: var(--accent-strong);
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(124, 58, 237, 0.1));
+  border-color: rgba(20, 184, 166, 0.38);
+  background: rgba(20, 184, 166, 0.06);
   color: var(--bg-ink);
+}
+
+.channel-chip:has(input:checked) i {
+  color: var(--accent-strong);
 }
 
 .channel-chip input {
   appearance: none;
   -webkit-appearance: none;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   flex: 0 0 auto;
   margin: 0;
-  border: 2px solid var(--line);
-  border-radius: 7px;
-  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.7);
   display: grid;
   place-items: center;
   transition: background 150ms ease, border-color 150ms ease;
@@ -432,16 +438,16 @@ textarea:focus {
 
 .channel-chip input:checked::after {
   content: "";
-  width: 6px;
-  height: 11px;
+  width: 5px;
+  height: 10px;
   margin-top: -2px;
   border: solid #fff;
-  border-width: 0 2.5px 2.5px 0;
+  border-width: 0 2px 2px 0;
   transform: rotate(45deg);
 }
 
 .channel-chip input:focus-visible {
-  outline: 3px solid rgba(124, 58, 237, 0.25);
+  outline: 3px solid rgba(20, 184, 166, 0.22);
   outline-offset: 2px;
 }
 
@@ -450,11 +456,27 @@ textarea:focus {
   pointer-events: none;
 }
 
-.button-row,
 .visual-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.button-row .bridge-button {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.button-row .secondary-button {
+  flex: 0 0 auto;
 }
 
 .primary-button,
@@ -1233,7 +1255,6 @@ button:disabled {
 @media (max-width: 620px) {
   .panel-heading,
   .content-card-header,
-  .button-row,
   .visual-actions {
     align-items: stretch;
     flex-direction: column;
@@ -1250,6 +1271,14 @@ button:disabled {
   .secondary-button,
   .ghost-button {
     width: 100%;
+  }
+
+  .button-row .bridge-button {
+    width: auto;
+  }
+
+  .button-row .secondary-button {
+    width: auto;
   }
 
   .dialog-actions {
@@ -1856,8 +1885,3 @@ textarea:focus-visible {
   }
 }
 
-@media (max-width: 620px) {
-  .bridge-button {
-    width: 100%;
-  }
-}
