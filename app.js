@@ -640,14 +640,6 @@ function buildVideoContent(brief) {
         `19-25s: ปิดด้วย CTA: ${preset.cta}`,
       ].join("\n")
     ),
-    block(
-      "On-screen Text",
-      [
-        `1. ${keyword}`,
-        "2. เข้าใจปัญหาก่อนเลือกแผน",
-        `3. นัดคุยเพื่อประเมินเบื้องต้น | ${shortText(strategy.cta, 52)}`,
-      ].join("\n")
-    ),
   ];
 }
 
