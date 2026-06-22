@@ -365,15 +365,84 @@ textarea:focus {
   color: var(--muted);
 }
 
-.channel-fieldset label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 650;
+.channel-fieldset {
+  gap: 10px;
 }
 
-.channel-fieldset input {
-  width: auto;
+.channel-chip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 50px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease, transform 120ms ease;
+}
+
+.channel-chip i {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.channel-chip span {
+  flex: 1;
+}
+
+.channel-chip:hover {
+  border-color: rgba(124, 58, 237, 0.35);
+  background: var(--violet-soft);
+}
+
+.channel-chip:active {
+  transform: scale(0.97);
+}
+
+.channel-chip:has(input:checked) {
+  border-color: var(--accent-strong);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12), rgba(124, 58, 237, 0.1));
+  color: var(--bg-ink);
+}
+
+.channel-chip input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 2px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.channel-chip input:checked {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+}
+
+.channel-chip input:checked::after {
+  content: "";
+  width: 6px;
+  height: 11px;
+  margin-top: -2px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+
+.channel-chip input:focus-visible {
+  outline: 3px solid rgba(124, 58, 237, 0.25);
+  outline-offset: 2px;
 }
 
 .ghost-static {
@@ -1513,16 +1582,6 @@ body {
   background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(124, 58, 237, 0.1));
 }
 
-.channel-fieldset label {
-  padding: 7px 8px;
-  border-radius: 8px;
-  transition: background 150ms ease, color 150ms ease;
-}
-
-.channel-fieldset label:hover {
-  background: var(--violet-soft);
-  color: #4c1d95;
-}
 
 button:focus-visible,
 input:focus-visible,

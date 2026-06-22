@@ -164,8 +164,6 @@ const els = {
   imageFormat: $("#imageFormat"),
   visualMood: $("#visualMood"),
   toast: $("#toast"),
-  aiStatusButton: $("#aiStatusButton"),
-  aiStatusText: $("#aiStatusText"),
   aiBridgeDialog: $("#aiBridgeDialog"),
   aiBridgeMessage: $("#aiBridgeMessage"),
   externalAiPrompt: $("#externalAiPrompt"),
@@ -176,8 +174,6 @@ const els = {
   customAudienceWho: $("#customAudienceWho"),
   customAudienceProblem: $("#customAudienceProblem"),
   customAudienceNeed: $("#customAudienceNeed"),
-  generateButton: $("#generateContent"),
-  renderButton: $("#renderImage"),
   copyVideoScript: $("#copyVideoScript"),
 };
 
@@ -391,60 +387,62 @@ function buildHooks(brief) {
 }
 
 function buildFacebookPost(brief, strategy, hooks, hashtags) {
-  const keyword = brief.keywords[0] || “ประกันชีวิต”;
+  const dot = '.';
+  const keyword = brief.keywords[0] || 'ประกันชีวิต';
   const concerns = (strategy.concernMap || []).slice(0, 3);
   const cases = (strategy.caseExamples || []).slice(0, 2);
   const proofNotes = (strategy.proofNotes || []).slice(0, 2);
-  const preset = audiencePresets[brief.audiencePreset] || audiencePresets[“young-family”];
+  const preset = audiencePresets[brief.audiencePreset] || audiencePresets['young-family'];
+  const ctaWord = (preset.cta || 'ประเมินแผน').split(' ')[0] || 'ประเมินแผน';
 
   const lines = [
     `## ${hooks[0] || `อยากดูแล${keyword} แต่ยังไม่รู้จะเริ่มต้นยังไง`} ##`,
-    “.”,
+    dot,
     `หลายคนรู้ว่าควรมี${keyword} แต่พอถึงเวลาจริงก็ไม่รู้จะเริ่มจากตรงไหน`,
     `ความจริงคือ ไม่ต้องเริ่มจากการเลือกแผน`,
     `แต่เริ่มจากการเข้าใจว่าครอบครัวของเราต้องการอะไร`,
-    “.”,
+    dot,
   ];
 
   if (concerns.length) {
     lines.push(`# ${concerns[0]} #`);
-    lines.push(“.”);
+    lines.push(dot);
     concerns.forEach((c, i) => {
       lines.push(`${i + 1}. ${c}`);
     });
-    lines.push(“.”);
+    lines.push(dot);
   }
 
   if (cases.length) {
     lines.push(`# ตัวอย่างที่หลายคนเจอ #`);
-    lines.push(“.”);
+    lines.push(dot);
     cases.forEach((c, i) => {
       lines.push(`${i + 1}. ${c}`);
     });
-    lines.push(“.”);
+    lines.push(dot);
   }
 
   if (proofNotes.length) {
     lines.push(`# หลักคิดสำคัญ #`);
-    lines.push(“.”);
+    lines.push(dot);
     proofNotes.forEach((p) => {
       lines.push(`· ${p}`);
     });
-    lines.push(“.”);
+    lines.push(dot);
   }
 
   lines.push(
     `# ${keyword}ที่ดี ไม่ใช่แผนที่ใหญ่ที่สุด แต่คือแผนที่เดินต่อได้จริง #`,
-    “.”,
+    dot,
     `ถ้าอยากรู้ว่าแผนแบบไหนเหมาะกับชีวิตของคุณ`,
     `ทักมาได้เลยนะครับ ไม่มีค่าใช้จ่าย ไม่มีแรงกดดัน`,
-    “.”,
-    `พิมพ์ “${preset.cta?.split(“ “)[0] || “ประเมินแผน”}” มาได้เลย 👋`,
-    “.”,
+    dot,
+    `พิมพ์ "${ctaWord}" มาได้เลย`,
+    dot,
     hashtags,
   );
 
-  return lines.join(“\n”);
+  return lines.join('\n');
 }
 
 function buildImagePrompt(brief, strategy = {}, content = {}) {
@@ -1389,12 +1387,6 @@ function showToast(message) {
   showToast.timeout = window.setTimeout(() => els.toast.classList.remove("show"), 1800);
 }
 
-function setAiStatus(_, text) {
-  if (!els.aiStatusButton || !els.aiStatusText) return;
-  els.aiStatusButton.classList.remove("is-offline", "is-error", "is-loading");
-  els.aiStatusText.textContent = text || "Bridge พร้อมใช้งาน";
-}
-
 function setCustomAudienceMessage(message = "", isError = false) {
   if (!els.customAudienceMessage) return;
   els.customAudienceMessage.textContent = message;
@@ -1573,12 +1565,6 @@ function setButtonLoading(button, loading, loadingText) {
   button.classList.remove("button-loading");
 }
 
-function requireAiConnection() {
-  openAiBridgeDialog();
-  setAiBridgeMessage("ใช้ Bridge เท่านั้น: คัดลอก Prompt ไป ChatGPT / Claude / Gemini แล้ววาง JSON กลับมา");
-  return false;
-}
-
 function renderGenerationResult(result) {
   const normalized = normalizeGeneratedResult(result, result?.brief || getBrief());
   state.latest = normalized;
@@ -1666,7 +1652,6 @@ function showFallbackImage(message) {
 }
 
 async function generateAiImage() {
-  if (!requireAiConnection()) return;
   const prompt = els.prompt.value.trim() || buildImagePrompt(getBrief(), state.latest?.strategy || {}, state.latest?.content || {});
   setAiBridgeMessage("สร้างภาพผ่าน Bridge: คัดลอก prompt ไปใช้ใน AI ภาพภายนอกได้เลย");
   copyText(prompt);
@@ -1675,20 +1660,11 @@ async function generateAiImage() {
 
 async function runGeneration(event) {
   event?.preventDefault();
-  if (!requireAiConnection()) return;
-
   const brief = getBrief();
-  renderSnapshot(buildStrategy(brief));
-  els.output.innerHTML = `
-    <div class="empty-state">
-      <h3>Bridge พร้อมใช้งาน</h3>
-      <p>คัดลอก Master Prompt ไป ChatGPT / Claude / Gemini แล้วนำ JSON กลับมาเพื่อสร้าง Step 2-5</p>
-    </div>
-  `;
   const fallbackResult = generateContent(brief);
   renderGenerationResult(fallbackResult);
   openAiBridgeDialog();
-  showToast("เปิด Bridge ให้แล้ว");
+  showToast("เปิด Bridge แล้ว — คัดลอก Master Prompt ไปสร้างกับ AI ได้เลย");
 }
 
 function downloadCanvas() {
@@ -1838,9 +1814,6 @@ function bindEvents() {
     });
   }
 
-  if (els.aiStatusButton) {
-    els.aiStatusButton.addEventListener("click", openAiBridgeDialog);
-  }
   if (els.customAudienceForm) {
     els.customAudienceForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -1897,7 +1870,6 @@ setupCreatorScene();
 loadHistory();
 renderSnapshot(buildStrategy(getBrief()));
 drawCanvas();
-setAiStatus("", "Bridge พร้อมใช้งาน");
 
 
 
