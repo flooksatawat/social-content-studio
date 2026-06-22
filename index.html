@@ -54,7 +54,10 @@
                   <p class="eyebrow">Step 1</p>
                   <h2 id="brief-title">Campaign Brief</h2>
                 </div>
-                <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-1" aria-expanded="true">ซ่อน</button>
+              <button class="panel-toggle" type="button" data-step-toggle="step-1" aria-expanded="true">
+                <span class="panel-toggle-icon">▾</span>
+                <span class="panel-toggle-text">ซ่อน</span>
+              </button>
               </div>
 
               <div class="brief-body">
@@ -124,7 +127,10 @@
               <h2 id="output-title">Campaign Strategy</h2>
             </div>
             <div class="panel-actions">
-              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-2" aria-expanded="true">ซ่อน</button>
+              <button class="panel-toggle" type="button" data-step-toggle="step-2" aria-expanded="true">
+                <span class="panel-toggle-icon">▾</span>
+                <span class="panel-toggle-text">ซ่อน</span>
+              </button>
               <button class="ghost-button" id="copyAll" type="button">คัดลอกทั้งหมด</button>
             </div>
           </div>
@@ -140,7 +146,10 @@
               <h2 id="content-title">เลือกช่องทางและดูคอนเทนต์</h2>
             </div>
             <div class="panel-actions">
-              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-3" aria-expanded="true">ซ่อน</button>
+              <button class="panel-toggle" type="button" data-step-toggle="step-3" aria-expanded="true">
+                <span class="panel-toggle-icon">▾</span>
+                <span class="panel-toggle-text">ซ่อน</span>
+              </button>
               <span class="ghost-button ghost-static">6 channels</span>
             </div>
           </div>
@@ -163,7 +172,10 @@
               <h2 id="visual-title">Image Prompt</h2>
             </div>
             <div class="panel-actions">
-              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-4" aria-expanded="true">ซ่อน</button>
+              <button class="panel-toggle" type="button" data-step-toggle="step-4" aria-expanded="true">
+                <span class="panel-toggle-icon">▾</span>
+                <span class="panel-toggle-text">ซ่อน</span>
+              </button>
               <button class="ghost-button" id="copyPromptTop" type="button">คัดลอก prompt</button>
             </div>
           </div>
@@ -208,7 +220,10 @@
               <h2 id="video-title">Video</h2>
             </div>
             <div class="panel-actions">
-              <button class="ghost-button panel-toggle" type="button" data-step-toggle="step-5" aria-expanded="true">ซ่อน</button>
+              <button class="panel-toggle" type="button" data-step-toggle="step-5" aria-expanded="true">
+                <span class="panel-toggle-icon">▾</span>
+                <span class="panel-toggle-text">ซ่อน</span>
+              </button>
               <button class="ghost-button" id="copyVideoScript" type="button">คัดลอกสคริปต์</button>
             </div>
           </div>
@@ -267,31 +282,6 @@
         </section>
       </main>
     </div>
-
-    <dialog class="ai-dialog" id="aiDialog">
-      <form class="ai-dialog-form" id="aiConnectForm" method="dialog">
-        <div class="ai-dialog-heading">
-          <div>
-            <p class="eyebrow">Secure local connection</p>
-            <h2>เชื่อม Gemini API</h2>
-          </div>
-          <button class="dialog-close" id="closeAiDialog" type="button" aria-label="ปิด">x</button>
-        </div>
-        <p class="dialog-copy">
-          API key จะถูกส่งไปยัง backend ในเครื่องและเก็บในไฟล์ local เท่านั้น ไม่ส่งขึ้น GitHub
-          การสร้างคอนเทนต์และภาพขึ้นอยู่กับ quota และ billing ของ Gemini API
-        </p>
-        <label>
-          Gemini API key
-          <input id="apiKeyInput" type="password" autocomplete="off" placeholder="AIza..." required />
-        </label>
-        <p class="dialog-message" id="aiDialogMessage"></p>
-        <div class="dialog-actions">
-          <button class="secondary-button" id="disconnectAi" type="button">ตัดการเชื่อมต่อ</button>
-          <button class="primary-button" id="connectAi" type="submit">เชื่อม Gemini</button>
-        </div>
-      </form>
-    </dialog>
 
     <dialog class="ai-dialog bridge-dialog" id="aiBridgeDialog">
       <div class="ai-dialog-form bridge-dialog-body">

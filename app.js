@@ -134,20 +134,10 @@ const audiencePresets = {
   },
 };
 
-const apiBaseUrl =
-  new URLSearchParams(window.location.search).get("api") ||
-  localStorage.getItem("socialContentStudioApiBase") ||
-  window.__SOCIAL_CONTENT_API_BASE__ ||
-  "";
-
-const apiKeyStorageKey = "socialContentStudioGeminiApiKey";
-
 const state = {
   latest: null,
   activeChannel: "facebook",
   history: [],
-  aiConnected: false,
-  apiAvailable: false,
   generatedImage: "",
   selectedCalendarDay: null,
 };
@@ -176,16 +166,12 @@ const els = {
   toast: $("#toast"),
   aiStatusButton: $("#aiStatusButton"),
   aiStatusText: $("#aiStatusText"),
-  aiDialog: $("#aiDialog"),
   aiBridgeDialog: $("#aiBridgeDialog"),
   aiBridgeMessage: $("#aiBridgeMessage"),
   externalAiPrompt: $("#externalAiPrompt"),
   externalAiResponse: $("#externalAiResponse"),
   customAudienceDialog: $("#customAudienceDialog"),
-  aiConnectForm: $("#aiConnectForm"),
   customAudienceForm: $("#customAudienceForm"),
-  apiKeyInput: $("#apiKeyInput"),
-  aiDialogMessage: $("#aiDialogMessage"),
   customAudienceMessage: $("#customAudienceMessage"),
   customAudienceWho: $("#customAudienceWho"),
   customAudienceProblem: $("#customAudienceProblem"),
@@ -1380,63 +1366,10 @@ function showToast(message) {
   showToast.timeout = window.setTimeout(() => els.toast.classList.remove("show"), 1800);
 }
 
-async function apiRequest(path, options = {}) {
-  const response = await fetch(`${apiBaseUrl}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-  });
-
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const error = new Error(payload.error || `Request failed (${response.status})`);
-    error.status = response.status;
-    throw error;
-  }
-  return payload;
-}
-
-function setApiBaseUrl(url) {
-  const next = String(url || "").trim().replace(/\/+$/, "");
-  if (next) {
-    localStorage.setItem("socialContentStudioApiBase", next);
-  } else {
-    localStorage.removeItem("socialContentStudioApiBase");
-  }
-}
-
-function getStoredApiKey() {
-  try {
-    return localStorage.getItem(apiKeyStorageKey) || "";
-  } catch {
-    return "";
-  }
-}
-
-function setStoredApiKey(apiKey) {
-  try {
-    const next = String(apiKey || "").trim();
-    if (next) {
-      localStorage.setItem(apiKeyStorageKey, next);
-    } else {
-      localStorage.removeItem(apiKeyStorageKey);
-    }
-  } catch {
-    // Ignore storage failures so the app still works in restricted browsers.
-  }
-}
-
-function setAiStatus(mode, text) {
+function setAiStatus(_, text) {
+  if (!els.aiStatusButton || !els.aiStatusText) return;
   els.aiStatusButton.classList.remove("is-offline", "is-error", "is-loading");
-  if (mode) els.aiStatusButton.classList.add(`is-${mode}`);
-  els.aiStatusText.textContent = text;
-}
-
-function setDialogMessage(message = "", isError = false) {
-  els.aiDialogMessage.textContent = message;
-  els.aiDialogMessage.classList.toggle("is-error", isError);
+  els.aiStatusText.textContent = text || "Bridge พร้อมใช้งาน";
 }
 
 function setCustomAudienceMessage(message = "", isError = false) {
@@ -1470,20 +1403,6 @@ function openCustomAudienceDialog() {
 function closeCustomAudienceDialog() {
   els.customAudienceDialog.close();
   setCustomAudienceMessage("");
-}
-
-function openAiDialog(message = "") {
-  setDialogMessage(message);
-  if (!els.apiKeyInput.value) {
-    els.apiKeyInput.value = getStoredApiKey();
-  }
-  if (!els.aiDialog.open) els.aiDialog.showModal();
-  window.setTimeout(() => els.apiKeyInput.focus(), 50);
-}
-
-function closeAiDialog() {
-  els.aiDialog.close();
-  setDialogMessage("");
 }
 
 function setAiBridgeMessage(message = "", isError = false) {
@@ -1631,88 +1550,9 @@ function setButtonLoading(button, loading, loadingText) {
   button.classList.remove("button-loading");
 }
 
-function setImageGenerationEnabled(enabled) {
-  const renderButton = els.renderButton;
-  if (!renderButton) return;
-  renderButton.disabled = false;
-  renderButton.title = enabled
-    ? "สร้างภาพด้วย Gemini"
-    : "สร้างภาพด้วย Gemini";
-  renderButton.textContent = "ให้ Gemini สร้างภาพ";
-  renderButton.classList.remove("is-muted");
-}
-
-async function checkAiStatus() {
-  setAiStatus("loading", "กำลังตรวจสอบ AI");
-  try {
-    const status = await apiRequest("/api/status");
-    state.apiAvailable = true;
-    state.aiConnected = Boolean(status.connected);
-    if (state.aiConnected && !els.apiKeyInput.value) {
-      els.apiKeyInput.value = getStoredApiKey();
-    }
-    setImageGenerationEnabled(Boolean(status.imageEnabled));
-    setAiStatus(state.aiConnected ? "" : "offline", state.aiConnected ? "Gemini พร้อมใช้งาน" : "เชื่อม Gemini");
-  } catch {
-    state.apiAvailable = false;
-    state.aiConnected = false;
-    setImageGenerationEnabled(false);
-    setAiStatus("offline", "เปิดผ่าน Local Gemini");
-  }
-}
-
-async function connectAi(event) {
-  event.preventDefault();
-  const apiKey = els.apiKeyInput.value.trim();
-  if (!apiKey) {
-    setDialogMessage("กรุณากรอก Gemini API key", true);
-    return;
-  }
-
-  setButtonLoading($("#connectAi"), true, "กำลังตรวจสอบ...");
-  setDialogMessage("กำลังตรวจสอบ API key กับ Google Gemini");
-  try {
-    await apiRequest("/api/config", {
-      method: "POST",
-      body: JSON.stringify({ apiKey }),
-    });
-    state.apiAvailable = true;
-    state.aiConnected = true;
-    setStoredApiKey(apiKey);
-    els.apiKeyInput.value = apiKey;
-    setAiStatus("", "Gemini พร้อมใช้งาน");
-    closeAiDialog();
-    showToast("เชื่อม Gemini สำเร็จ");
-  } catch (error) {
-    state.aiConnected = false;
-    setAiStatus("error", "เชื่อม Gemini ไม่สำเร็จ");
-    setDialogMessage(error.message, true);
-  } finally {
-    setButtonLoading($("#connectAi"), false);
-  }
-}
-
-async function disconnectAi() {
-  try {
-    if (state.apiAvailable) await apiRequest("/api/config", { method: "DELETE" });
-  } catch {
-    // The local server may already be stopped.
-  }
-  state.aiConnected = false;
-  els.apiKeyInput.value = "";
-  setStoredApiKey("");
-  setAiStatus("offline", "เชื่อม Gemini");
-  closeAiDialog();
-  showToast("ยกเลิกการเชื่อม AI แล้ว");
-}
-
 function requireAiConnection() {
-  if (state.aiConnected) return true;
-  openAiDialog(
-    state.apiAvailable
-      ? "เชื่อม Gemini API key เพื่อเริ่มสร้างคอนเทนต์และภาพจริง"
-      : "กรุณาเปิดระบบผ่าน http://127.0.0.1:4173 เพื่อใช้ Gemini"
-  );
+  openAiBridgeDialog();
+  setAiBridgeMessage("ใช้ Bridge เท่านั้น: คัดลอก Prompt ไป ChatGPT / Claude / Gemini แล้ววาง JSON กลับมา");
   return false;
 }
 
@@ -1804,37 +1644,10 @@ function showFallbackImage(message) {
 
 async function generateAiImage() {
   if (!requireAiConnection()) return;
-
   const prompt = els.prompt.value.trim() || buildImagePrompt(getBrief(), state.latest?.strategy || {}, state.latest?.content || {});
-  setButtonLoading(els.renderButton, true, "AI กำลังสร้างภาพ...");
-  try {
-    const image = await apiRequest("/api/generate-image", {
-      method: "POST",
-      body: JSON.stringify({
-        prompt,
-        format: els.imageFormat.value,
-        mood: els.visualMood.value,
-      }),
-    });
-    state.generatedImage = image.dataUrl;
-    els.generatedImage.src = image.dataUrl;
-    els.generatedImage.hidden = false;
-    els.canvas.hidden = true;
-    showToast("AI สร้างภาพเสร็จแล้ว");
-  } catch (error) {
-    const quotaLike =
-      error?.status === 429 ||
-      /quota|billing|limit|exceeded|free_tier/i.test(String(error.message || ""));
-    if ([400, 401, 403].includes(error.status) || quotaLike) {
-      showFallbackImage("Gemini ภาพเต็มโควตา ใช้ภาพสำรองในเครื่องแทน");
-      state.aiConnected = false;
-      setAiStatus("error", "API key ใช้งานไม่ได้");
-      return;
-    }
-    showToast(error.message);
-  } finally {
-    setButtonLoading(els.renderButton, false);
-  }
+  setAiBridgeMessage("สร้างภาพผ่าน Bridge: คัดลอก prompt ไปใช้ใน AI ภาพภายนอกได้เลย");
+  copyText(prompt);
+  showFallbackImage("คัดลอก image prompt แล้ว ใช้สร้างภาพผ่าน Bridge");
 }
 
 async function runGeneration(event) {
@@ -1842,46 +1655,17 @@ async function runGeneration(event) {
   if (!requireAiConnection()) return;
 
   const brief = getBrief();
-  setButtonLoading(els.generateButton, true, "AI กำลังคิด...");
   renderSnapshot(buildStrategy(brief));
   els.output.innerHTML = `
     <div class="empty-state">
-      <h3>AI กำลังวิเคราะห์กลุ่มเป้าหมาย</h3>
-      <p>กำลังสร้างกลยุทธ์ hooks คอนเทนต์รายช่องทาง SEO brief และ prompt สำหรับภาพ</p>
+      <h3>Bridge พร้อมใช้งาน</h3>
+      <p>คัดลอก Master Prompt ไป ChatGPT / Claude / Gemini แล้วนำ JSON กลับมาเพื่อสร้าง Step 2-5</p>
     </div>
   `;
-
-  try {
-    const generated = await apiRequest("/api/generate-content", {
-      method: "POST",
-      body: JSON.stringify({ brief }),
-    });
-    const result = normalizeGeneratedResult({
-      ...generated,
-      id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
-      createdAt: new Date().toISOString(),
-      brief,
-    }, brief);
-    renderGenerationResult(result);
-    showToast("AI สร้างชุดคอนเทนต์แล้ว");
-  } catch (error) {
-    const quotaLike =
-      error?.status === 429 ||
-      /quota|billing|limit|exceeded|free_tier/i.test(String(error.message || ""));
-    if ([400, 401, 403].includes(error.status) && !quotaLike) {
-      state.aiConnected = false;
-      setAiStatus("error", "API key ใช้งานไม่ได้");
-    }
-    const fallbackResult = generateContent(brief);
-    renderGenerationResult(fallbackResult);
-    showToast(
-      quotaLike
-        ? "Gemini เต็มโควตาชั่วคราว ระบบสร้างชุดสำรองพร้อม Prompt ให้แล้ว"
-        : "เชื่อม AI ไม่สำเร็จ ระบบสร้างชุดสำรองพร้อมใช้งานให้แล้ว"
-    );
-  } finally {
-    setButtonLoading(els.generateButton, false);
-  }
+  const fallbackResult = generateContent(brief);
+  renderGenerationResult(fallbackResult);
+  openAiBridgeDialog();
+  showToast("เปิด Bridge ให้แล้ว");
 }
 
 function downloadCanvas() {
@@ -1898,7 +1682,10 @@ function setPanelCollapsed(panel, collapsed) {
   const button = panel.querySelector("[data-step-toggle]");
   if (button) {
     button.setAttribute("aria-expanded", String(!collapsed));
-    button.textContent = collapsed ? "แสดง" : "ซ่อน";
+    const text = button.querySelector(".panel-toggle-text");
+    const icon = button.querySelector(".panel-toggle-icon");
+    if (text) text.textContent = collapsed ? "แสดง" : "ซ่อน";
+    if (icon) icon.textContent = collapsed ? "▸" : "▾";
   }
 }
 
@@ -2033,8 +1820,9 @@ function bindEvents() {
     });
   }
 
-  els.aiStatusButton.addEventListener("click", () => openAiDialog());
-  els.aiConnectForm.addEventListener("submit", connectAi);
+  if (els.aiStatusButton) {
+    els.aiStatusButton.addEventListener("click", openAiBridgeDialog);
+  }
   if (els.customAudienceForm) {
     els.customAudienceForm.addEventListener("submit", (event) => {
       event.preventDefault();
@@ -2062,13 +1850,6 @@ function bindEvents() {
       if (event.target === els.customAudienceDialog) closeCustomAudienceDialog();
     });
   }
-  const closeAiDialogButton = $("#closeAiDialog");
-  if (closeAiDialogButton) closeAiDialogButton.addEventListener("click", closeAiDialog);
-  const disconnectAiButton = $("#disconnectAi");
-  if (disconnectAiButton) disconnectAiButton.addEventListener("click", disconnectAi);
-  if (els.aiDialog) els.aiDialog.addEventListener("click", (event) => {
-    if (event.target === els.aiDialog) closeAiDialog();
-  });
 }
 
 function setupCreatorScene() {
@@ -2096,10 +1877,9 @@ function setupCreatorScene() {
 bindEvents();
 setupCreatorScene();
 loadHistory();
-if (els.apiKeyInput) els.apiKeyInput.value = getStoredApiKey();
 renderSnapshot(buildStrategy(getBrief()));
 drawCanvas();
-checkAiStatus();
+setAiStatus("", "Bridge พร้อมใช้งาน");
 
 
 
