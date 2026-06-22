@@ -667,10 +667,25 @@ textarea:focus {
 }
 
 .output-block-head {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
+  min-height: 30px;
+}
+
+.output-block-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.output-block-head h4,
+.output-block-head .output-block-spacer {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .output-block-actions {
@@ -678,6 +693,11 @@ textarea:focus {
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  pointer-events: none;
 }
 
 .block-toggle {
@@ -720,6 +740,12 @@ textarea:focus {
 
 .output-block-spacer {
   flex: 1;
+}
+
+.output-block:hover .output-block-actions,
+.output-block:focus-within .output-block-actions,
+.output-block.is-editing .output-block-actions {
+  pointer-events: auto;
 }
 
 .block-tools {
@@ -1103,8 +1129,34 @@ canvas[hidden] {
   }
 }
 
-.image-prompt-label {
+.image-prompt-block {
+  display: grid;
+  gap: 10px;
   margin-top: 16px;
+}
+
+.image-prompt-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.image-prompt-label {
+  margin-top: 0;
+  display: block;
+}
+
+.image-prompt-tools {
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.image-prompt-block:hover .image-prompt-tools,
+.image-prompt-block:focus-within .image-prompt-tools {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .image-prompt-label textarea {
@@ -1196,6 +1248,12 @@ canvas[hidden] {
 .ai-dialog::backdrop {
   background: rgba(15, 23, 42, 0.38);
   backdrop-filter: blur(8px);
+}
+
+.calendar-preview-dialog {
+  width: min(1120px, calc(100% - 28px));
+  max-height: min(90vh, 900px);
+  overflow: auto;
 }
 
 .ai-dialog-form {

@@ -155,6 +155,8 @@ const els = {
   calendarBody: $("#calendarBody"),
   calendarPreview: $("#calendarPreview"),
   calendarPreviewTitle: $("#calendarPreviewTitle"),
+  calendarPreviewDialog: $("#calendarPreviewDialog"),
+  closeCalendarPreview: $("#closeCalendarPreview"),
   postingWindow: $("#postingWindow"),
   calendarDays: $("#calendarDays"),
   copyCalendar: $("#copyCalendar"),
@@ -1048,6 +1050,22 @@ function renderCalendarPreview(row, baseResult) {
   }
 }
 
+function openCalendarPreview(row, baseResult) {
+  renderCalendarPreview(row, baseResult);
+  if (els.calendarPreviewDialog && !els.calendarPreviewDialog.open) {
+    els.calendarPreviewDialog.showModal();
+  }
+  if (els.calendarPreviewDialog) {
+    els.calendarPreviewDialog.scrollTop = 0;
+  }
+}
+
+function closeCalendarPreviewDialog() {
+  if (els.calendarPreviewDialog?.open) {
+    els.calendarPreviewDialog.close();
+  }
+}
+
 function renderSnapshot(strategy) {
   const fallback = buildStrategy(state.latest?.brief || getBrief());
   const safeStrategy = mergeDefined(fallback, strategy);
@@ -1133,9 +1151,11 @@ function outputBlockHtml(title, text, { withToggle = false } = {}) {
   return `
     <section class="output-block">
       <div class="output-block-head">
-        ${title ? `<h4>${escapeHtml(title)}</h4>` : `<span class="output-block-spacer"></span>`}
-        <div class="output-block-actions">
+        <div class="output-block-title">
           ${withToggle ? `<button class="block-toggle" type="button" data-block-toggle aria-label="ซ่อน/แสดง"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>` : ""}
+          ${title ? `<h4>${escapeHtml(title)}</h4>` : `<span class="output-block-spacer"></span>`}
+        </div>
+        <div class="output-block-actions">
           <span class="block-tools">
             <button class="block-icon-btn" type="button" data-block-copy aria-label="คัดลอก"><i class="ti ti-copy" aria-hidden="true"></i></button>
             <button class="block-icon-btn" type="button" data-block-edit aria-label="แก้ไข"><i class="ti ti-pencil" aria-hidden="true"></i></button>
@@ -1740,8 +1760,6 @@ function bindEvents() {
   }
   const copyPromptButton = $("#copyPrompt");
   if (copyPromptButton) copyPromptButton.addEventListener("click", () => copyText(els.prompt.value));
-  const copyPromptTopButton = $("#copyPromptTop");
-  if (copyPromptTopButton) copyPromptTopButton.addEventListener("click", () => copyText(els.prompt.value));
   $$("[data-step-toggle]").forEach((button) => {
     button.addEventListener("click", () => {
       const panel = button.closest(".panel");
@@ -1808,8 +1826,7 @@ function bindEvents() {
       els.calendarBody.querySelectorAll("[data-day]").forEach((card) => {
         card.classList.toggle("active", card === button);
       });
-      renderCalendarPreview(selected, state.latest);
-      document.querySelector(".calendar-preview")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      openCalendarPreview(selected, state.latest);
     });
   }
 
@@ -1835,6 +1852,16 @@ function bindEvents() {
       if (state.latest) {
         state.selectedCalendarDay = null;
         renderCalendar(state.latest);
+      }
+    });
+  }
+  if (els.closeCalendarPreview) {
+    els.closeCalendarPreview.addEventListener("click", closeCalendarPreviewDialog);
+  }
+  if (els.calendarPreviewDialog) {
+    els.calendarPreviewDialog.addEventListener("click", (event) => {
+      if (event.target === els.calendarPreviewDialog) {
+        closeCalendarPreviewDialog();
       }
     });
   }

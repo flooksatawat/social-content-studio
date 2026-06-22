@@ -180,11 +180,15 @@
             <img id="generatedImage" class="generated-image" alt="ภาพที่สร้างโดย AI" hidden />
           </div>
 
-          <label class="image-prompt-label">
-            AI Image Prompt
+          <div class="image-prompt-block">
+            <div class="image-prompt-head">
+              <label class="image-prompt-label" for="imagePrompt">AI Image Prompt</label>
+              <span class="block-tools image-prompt-tools">
+                <button class="block-icon-btn" id="copyPrompt" type="button" aria-label="คัดลอก prompt"><i class="ti ti-copy" aria-hidden="true"></i></button>
+              </span>
+            </div>
             <textarea id="imagePrompt" rows="7"></textarea>
-          </label>
-          <button class="copy-button" id="copyPrompt" type="button">คัดลอก prompt</button>
+          </div>
           </aside>
 
           <section class="panel video-panel" aria-labelledby="video-title" data-step-panel="step-4">
@@ -225,13 +229,13 @@
           <div class="snapshot-grid" id="strategySnapshot" aria-live="polite"></div>
         </section>
 
-        <section class="panel calendar-panel" aria-labelledby="calendar-title" data-step-panel="step-5">
+        <section class="panel calendar-panel is-collapsed" aria-labelledby="calendar-title" data-step-panel="step-5">
           <div class="panel-heading">
             <div>
               <h2 id="calendar-title">30-Day Content Calendar</h2>
             </div>
             <div class="panel-actions">
-              <button class="panel-toggle" type="button" data-step-toggle="step-5" aria-expanded="true" aria-label="ซ่อน/แสดง">
+              <button class="panel-toggle" type="button" data-step-toggle="step-5" aria-expanded="false" aria-label="ซ่อน/แสดง">
                 <i class="ti ti-chevron-up" aria-hidden="true"></i>
               </button>
             </div>
@@ -258,15 +262,6 @@
           </div>
 
           <div class="calendar-grid" id="calendarBody"></div>
-          <div class="calendar-preview">
-            <div class="panel-heading calendar-preview-heading">
-              <div>
-                <p class="eyebrow">Daily Preview</p>
-                <h3 id="calendarPreviewTitle">เลือกวันจากตารางเพื่อดู Step 1-4</h3>
-              </div>
-            </div>
-            <div id="calendarPreview"></div>
-          </div>
         </section>
       </main>
     </div>
@@ -314,6 +309,19 @@
 
         <p class="dialog-message" id="aiBridgeMessage"></p>
         <p class="bridge-privacy">ระบบนี้ไม่ส่ง API key และไม่ส่งข้อมูลอัตโนมัติ คุณเป็นผู้คัดลอกและนำคำตอบกลับมาเอง</p>
+      </div>
+    </dialog>
+
+    <dialog class="ai-dialog calendar-preview-dialog" id="calendarPreviewDialog">
+      <div class="ai-dialog-form">
+        <div class="ai-dialog-heading">
+          <div>
+            <p class="eyebrow">Daily Preview</p>
+            <h2 id="calendarPreviewTitle">เลือกวันจากตารางเพื่อดู Step 1-4</h2>
+          </div>
+          <button class="dialog-close" id="closeCalendarPreview" type="button" aria-label="ปิด">x</button>
+        </div>
+        <div id="calendarPreview"></div>
       </div>
     </dialog>
 
