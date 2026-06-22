@@ -625,12 +625,14 @@ textarea:focus {
 .content-card {
   border: 1px solid var(--line);
   border-radius: 20px;
-  overflow: hidden;
+  overflow: visible;
   background: rgba(255, 255, 255, 0.72);
   box-shadow: var(--shadow-soft);
 }
 
 .content-card-header {
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -714,6 +716,65 @@ textarea:focus {
 
 .output-block.is-collapsed .output-text {
   display: none;
+}
+
+.output-block-spacer {
+  flex: 1;
+}
+
+.block-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.05);
+  opacity: 0;
+  transform: translateY(-2px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.output-block:hover .block-tools,
+.output-block:focus-within .block-tools,
+.output-block.is-editing .block-tools {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.block-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.block-icon-btn i {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.block-icon-btn:hover {
+  background: #fff;
+  color: var(--accent-strong);
+  box-shadow: var(--shadow-soft);
+}
+
+.output-block.is-editing .block-icon-btn[data-block-edit] {
+  background: var(--accent-strong);
+  color: #fff;
+}
+
+.output-block.is-editing .output-text {
+  outline: 2px solid var(--accent);
+  background: #fff;
+  cursor: text;
 }
 
 .output-text {

@@ -456,6 +456,7 @@ function buildImagePrompt(brief, strategy = {}, content = {}) {
   const contentLead = firstChannel?.text ? shortText(firstChannel.text, 140) : shortText(brief.painPoint, 140);
   return [
     `Create a clean, premium social media image for a life insurance and financial advisory brand.`,
+    `If a reference photo of a person is attached in this chat, use that exact person in the image — match their face, hairstyle and features exactly; do not invent a different face.`,
     `Subject: AI analyzed content for ${brief.audience}.`,
     `Audience: ${brief.audience}.`,
     `Core strategy: ${shortText(strategy.angle || brief.painPoint, 140)}.`,
@@ -1128,6 +1129,56 @@ function renderTabs(result) {
     .join("");
 }
 
+function outputBlockHtml(title, text, { withToggle = false } = {}) {
+  return `
+    <section class="output-block">
+      <div class="output-block-head">
+        ${title ? `<h4>${escapeHtml(title)}</h4>` : `<span class="output-block-spacer"></span>`}
+        <div class="output-block-actions">
+          ${withToggle ? `<button class="block-toggle" type="button" data-block-toggle aria-label="ซ่อน/แสดง"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>` : ""}
+          <span class="block-tools">
+            <button class="block-icon-btn" type="button" data-block-copy aria-label="คัดลอก"><i class="ti ti-copy" aria-hidden="true"></i></button>
+            <button class="block-icon-btn" type="button" data-block-edit aria-label="แก้ไข"><i class="ti ti-pencil" aria-hidden="true"></i></button>
+          </span>
+        </div>
+      </div>
+      <pre class="output-text">${escapeHtml(text)}</pre>
+    </section>
+  `;
+}
+
+function handleOutputBlockClick(event) {
+  const editButton = event.target.closest("[data-block-edit]");
+  if (editButton) {
+    const pre = editButton.closest(".output-block")?.querySelector(".output-text");
+    if (pre) {
+      const editing = pre.getAttribute("contenteditable") === "true";
+      pre.setAttribute("contenteditable", String(!editing));
+      pre.closest(".output-block").classList.toggle("is-editing", !editing);
+      if (!editing) pre.focus();
+    }
+    return;
+  }
+
+  const blockCopyButton = event.target.closest("[data-block-copy]");
+  if (blockCopyButton) {
+    const pre = blockCopyButton.closest(".output-block")?.querySelector(".output-text");
+    if (pre) copyText(pre.innerText);
+    return;
+  }
+
+  const toggleButton = event.target.closest("[data-block-toggle]");
+  if (toggleButton) {
+    toggleButton.closest(".output-block")?.classList.toggle("is-collapsed");
+    return;
+  }
+
+  const copyData = event.target.closest("[data-copy]");
+  if (copyData) {
+    copyText(decodeURIComponent(copyData.dataset.copy));
+  }
+}
+
 function renderOutput(result) {
   const channel = state.activeChannel;
   const content = result.content[channel];
@@ -1138,30 +1189,13 @@ function renderOutput(result) {
     return;
   }
 
-  const fullText = formatChannelContent(channel, content);
-
   let bodyHtml;
   if (channel === "facebook") {
     const postText = content.map((item) => item.text).join("\n.\n");
-    bodyHtml = `
-      <section class="output-block">
-        <pre class="output-text">${escapeHtml(postText)}</pre>
-        <button class="copy-button" type="button" data-copy="${encodeURIComponent(postText)}">คัดลอกโพสต์</button>
-      </section>
-    `;
+    bodyHtml = outputBlockHtml("โพสต์ Facebook", postText);
   } else {
-    bodyHtml = content.map((item) => `
-      <section class="output-block">
-        <h4>${escapeHtml(item.title)}</h4>
-        <pre class="output-text">${escapeHtml(item.text)}</pre>
-        <button class="copy-button" type="button" data-copy="${encodeURIComponent(item.text)}">คัดลอกส่วนนี้</button>
-      </section>
-    `).join("");
+    bodyHtml = content.map((item) => outputBlockHtml(item.title, item.text)).join("");
   }
-
-  const headerCopyButton = channel === "facebook"
-    ? ""
-    : `<button class="copy-button" type="button" data-copy="${encodeURIComponent(fullText)}">คัดลอกช่องทางนี้</button>`;
 
   els.output.innerHTML = `
     <article class="content-card">
@@ -1170,7 +1204,6 @@ function renderOutput(result) {
           <h3>${meta.label} Content Pack</h3>
           <p class="eyebrow">${meta.ratioLabel} · ${escapeHtml(meta.note)}</p>
         </div>
-        ${headerCopyButton}
       </div>
       <div class="content-card-body">
         ${bodyHtml}
@@ -1601,22 +1634,7 @@ function renderVideoOutput(result) {
         </div>
       </div>
       <div class="content-card-body">
-        ${blocks
-          .map(
-            (item) => `
-              <section class="output-block collapsible-block">
-                <div class="output-block-head">
-                  <h4>${escapeHtml(item.title)}</h4>
-                  <div class="output-block-actions">
-                    <button class="copy-button" type="button" data-copy="${encodeURIComponent(item.text)}">คัดลอก</button>
-                    <button class="block-toggle" type="button" data-block-toggle aria-label="ซ่อน/แสดง"><i class="ti ti-chevron-up" aria-hidden="true"></i></button>
-                  </div>
-                </div>
-                <pre class="output-text">${escapeHtml(item.text)}</pre>
-              </section>
-            `
-          )
-          .join("")}
+        ${blocks.map((item) => outputBlockHtml(item.title, item.text, { withToggle: true })).join("")}
       </div>
     </article>
   `;
@@ -1776,26 +1794,8 @@ function bindEvents() {
     renderOutput(state.latest);
   });
 
-  els.output.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-copy]");
-    if (!button) return;
-    copyText(decodeURIComponent(button.dataset.copy));
-  });
-
-  if (els.videoOutput) {
-    els.videoOutput.addEventListener("click", (event) => {
-      const copyButton = event.target.closest("[data-copy]");
-      if (copyButton) {
-        copyText(decodeURIComponent(copyButton.dataset.copy));
-        return;
-      }
-      const toggleButton = event.target.closest("[data-block-toggle]");
-      if (toggleButton) {
-        const block = toggleButton.closest(".output-block");
-        block?.classList.toggle("is-collapsed");
-      }
-    });
-  }
+  els.output.addEventListener("click", handleOutputBlockClick);
+  if (els.videoOutput) els.videoOutput.addEventListener("click", handleOutputBlockClick);
 
   if (els.calendarBody) {
     els.calendarBody.addEventListener("click", (event) => {
