@@ -541,21 +541,61 @@ function buildCalendarPlan(result) {
 
   for (let day = 1; day <= days; day += 1) {
     const dayChannels = [
+      primaryChannels[(day - 1) % primaryChannels.length],
       primaryChannels[day % primaryChannels.length],
       primaryChannels[(day + 1) % primaryChannels.length],
-      primaryChannels[(day + 2) % primaryChannels.length],
     ];
-    const angle = angles[day % angles.length] || brief.painPoint;
+    const angle = angles[(day - 1) % angles.length] || brief.painPoint;
     rows.push({
       day,
       times,
-      channel: platformMeta[dayChannels[0]]?.label || "Facebook",
       angle,
-      channels: dayChannels,
+      slots: [
+        {
+          time: times[0],
+          channel: dayChannels[0],
+          label: platformMeta[dayChannels[0]]?.label || dayChannels[0],
+          focus: buildCalendarFocus(day, 0, brief, result),
+        },
+        {
+          time: times[1],
+          channel: dayChannels[1],
+          label: platformMeta[dayChannels[1]]?.label || dayChannels[1],
+          focus: buildCalendarFocus(day, 1, brief, result),
+        },
+        {
+          time: times[2],
+          channel: dayChannels[2],
+          label: platformMeta[dayChannels[2]]?.label || dayChannels[2],
+          focus: buildCalendarFocus(day, 2, brief, result),
+        },
+      ],
     });
   }
 
   return rows;
+}
+
+function buildCalendarFocus(day, slotIndex, brief, result) {
+  const hooks = result?.hooks || buildHooks(brief);
+  const channelCycle = [
+    "Awareness",
+    "Education",
+    "Conversion",
+    "Trust",
+    "Lead capture",
+    "Follow-up",
+  ];
+  const focusCycle = [
+    "เปิดความสนใจด้วย pain point",
+    "อธิบายเหตุผลและทางเลือก",
+    "ปิดท้ายด้วย CTA",
+    "เล่าเรื่องจริงและตัวอย่าง",
+    "ตอบคำถามที่พบบ่อย",
+    "ชวนทักเพื่อประเมินแผน",
+  ];
+  const hook = hooks[(day + slotIndex) % hooks.length] || brief.painPoint;
+  return `${channelCycle[(day + slotIndex) % channelCycle.length]} · ${focusCycle[(day + slotIndex) % focusCycle.length]} · ${shortText(hook, 52)}`;
 }
 
 function renderCalendar(result) {
@@ -568,21 +608,38 @@ function renderCalendar(result) {
   els.calendarSummary.innerHTML = `
     <article class="calendar-summary-card">
       <strong>AI schedule</strong>
-      <p>แผน 30 วันสำหรับ ${escapeHtml(brief.audience)} โฟกัสช่องทาง ${escapeHtml(channelList.join(", "))}</p>
+      <p>ปฏิทิน 30 วันสำหรับ ${escapeHtml(brief.audience)} โฟกัสช่องทาง ${escapeHtml(channelList.join(", "))}</p>
       <p>เวลาหลัก: ${escapeHtml(times.join(" / "))}</p>
+      <p>จัดเป็น 3 ช่วงต่อวัน พร้อมเลือกคอนเทนต์ตามช่วงเวลาและช่องทางที่เหมาะสม</p>
     </article>
   `;
 
   els.calendarBody.innerHTML = rows
     .map((row) => `
-      <tr>
-        <td>Day ${row.day}</td>
-        <td>${escapeHtml(times[0] || "")}</td>
-        <td>${escapeHtml(times[1] || "")}</td>
-        <td>${escapeHtml(times[2] || "")}</td>
-        <td>${escapeHtml(row.channel)}</td>
-        <td>${escapeHtml(shortText(row.angle, 72))}</td>
-      </tr>
+      <article class="calendar-day-card">
+        <div class="calendar-day-head">
+          <div>
+            <strong>Day ${row.day}</strong>
+            <span>${escapeHtml(shortText(row.angle, 56))}</span>
+          </div>
+          <span class="calendar-day-pill">${escapeHtml(channelList[(row.day - 1) % channelList.length] || "Channel")}</span>
+        </div>
+        <div class="calendar-slot-list">
+          ${row.slots
+            .map(
+              (slot) => `
+                <div class="calendar-slot">
+                  <div class="calendar-slot-time">${escapeHtml(slot.time || "")}</div>
+                  <div class="calendar-slot-meta">
+                    <span>${escapeHtml(slot.label)}</span>
+                    <span>${escapeHtml(shortText(slot.focus, 70))}</span>
+                  </div>
+                </div>
+              `
+            )
+            .join("")}
+        </div>
+      </article>
     `)
     .join("");
 }
