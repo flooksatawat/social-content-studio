@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./styles.css?v=three-bg-1" />
+    <link rel="stylesheet" href="./styles.css?v=light-steps-1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
   </head>
   <body>
@@ -416,43 +416,38 @@
       const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
       camera.position.z = 60;
 
-      // particles
+      // particles — theme-aware palettes (light uses darker, saturated tones so dots read on #eef1ff)
+      const DARK_COLORS  = [[0.39, 0.40, 0.95], [0.55, 0.36, 0.96], [0.08, 0.72, 0.65], [0.96, 0.62, 0.04]];
+      const LIGHT_COLORS = [[0.31, 0.27, 0.90], [0.43, 0.16, 0.85], [0.05, 0.58, 0.53], [0.01, 0.52, 0.78]];
       const geo = new THREE.BufferGeometry();
       const N = 1200;
       const pos = new Float32Array(N * 3);
       const col = new Float32Array(N * 3);
-      const colors = [[0.39, 0.40, 0.95], [0.55, 0.36, 0.96], [0.08, 0.72, 0.65], [0.96, 0.62, 0.04]];
+      const swatch = new Uint8Array(N); // which palette slot each particle uses
       for (let i = 0; i < N; i++) {
         pos[i * 3]     = (Math.random() - 0.5) * 160;
         pos[i * 3 + 1] = (Math.random() - 0.5) * 120;
         pos[i * 3 + 2] = (Math.random() - 0.5) * 80;
-        const c = colors[Math.floor(Math.random() * colors.length)];
-        col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+        swatch[i] = Math.floor(Math.random() * DARK_COLORS.length);
       }
       geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-      geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+      const colAttr = new THREE.BufferAttribute(col, 3);
+      geo.setAttribute("color", colAttr);
       const mat = new THREE.PointsMaterial({ size: 0.7, vertexColors: true, transparent: true, opacity: 0.55 });
       const points = new THREE.Points(geo, mat);
       scene.add(points);
 
-      // floating tori
-      const torusMat = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true, transparent: true, opacity: 0.06 });
-      for (let i = 0; i < 5; i++) {
-        const t = new THREE.Mesh(new THREE.TorusGeometry(8 + i * 4, 0.4, 8, 40), torusMat.clone());
-        t.position.set((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 20);
-        t.userData.rx = Math.random() * 0.003; t.userData.ry = Math.random() * 0.004;
-        scene.add(t);
+      function applyTheme(light) {
+        const pal = light ? LIGHT_COLORS : DARK_COLORS;
+        for (let i = 0; i < N; i++) {
+          const c = pal[swatch[i]];
+          col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+        }
+        colAttr.needsUpdate = true;
+        mat.opacity = light ? 0.72 : 0.55;
       }
-
-      // floating icosahedra
-      const icoColors = [0x6366f1, 0x8b5cf6, 0x14b8a6, 0xf59e0b];
-      for (let i = 0; i < 8; i++) {
-        const m = new THREE.MeshBasicMaterial({ color: icoColors[i % 4], wireframe: true, transparent: true, opacity: 0.05 });
-        const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(3 + Math.random() * 4, 0), m);
-        mesh.position.set((Math.random() - 0.5) * 120, (Math.random() - 0.5) * 80, (Math.random() - 0.5) * 40);
-        mesh.userData.rx = Math.random() * 0.006; mesh.userData.ry = Math.random() * 0.004;
-        scene.add(mesh);
-      }
+      applyTheme(document.body.classList.contains("light-mode"));
+      window.__bgApplyTheme = applyTheme;
 
       let mx = 0, my = 0;
       document.addEventListener("mousemove", e => {
@@ -489,6 +484,7 @@
         btn.textContent = light ? "☀️" : "🌙";
         document.documentElement.style.background = light ? "#eef1ff" : "#080c18";
         localStorage.setItem("scs-theme", light ? "light" : "dark");
+        if (window.__bgApplyTheme) window.__bgApplyTheme(light);
       });
     })();
     </script>
