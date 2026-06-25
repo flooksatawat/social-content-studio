@@ -8,10 +8,24 @@
       name="description"
       content="เครื่องมือสร้างคอนเทนต์สำหรับประกันชีวิตและที่ปรึกษาทางการเงินมืออาชีพ พร้อม SEO brief สำหรับ Facebook, YouTube, TikTok, LINE VOOM และ Blog"
     />
-    <link rel="stylesheet" href="./styles.css?v=channel-icons-2" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css?v=three-bg-1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
   </head>
   <body>
+    <canvas id="bg-canvas" aria-hidden="true"></canvas>
+    <button id="theme-toggle" aria-label="สลับธีม" title="Light / Dark">🌙</button>
+    <script>
+      (function(){
+        var saved = localStorage.getItem('scs-theme');
+        var light = saved === 'light';
+        if(light) document.body.classList.add('light-mode');
+        document.documentElement.style.background = light ? '#eef1ff' : '#080c18';
+        document.getElementById('theme-toggle').textContent = light ? '☀️' : '🌙';
+      })();
+    </script>
     <div class="app-shell">
       <header class="topbar creator-hero">
         <div class="brand-lockup">
@@ -387,5 +401,96 @@
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="./app.js?v=audio-step-8"></script>
+    <!-- THREE.JS 3D BACKGROUND (matches follow-dashboard) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+    (function () {
+      const canvas = document.getElementById("bg-canvas");
+      if (!canvas || !window.THREE) return;
+
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 200);
+      camera.position.z = 60;
+
+      // particles
+      const geo = new THREE.BufferGeometry();
+      const N = 1200;
+      const pos = new Float32Array(N * 3);
+      const col = new Float32Array(N * 3);
+      const colors = [[0.39, 0.40, 0.95], [0.55, 0.36, 0.96], [0.08, 0.72, 0.65], [0.96, 0.62, 0.04]];
+      for (let i = 0; i < N; i++) {
+        pos[i * 3]     = (Math.random() - 0.5) * 160;
+        pos[i * 3 + 1] = (Math.random() - 0.5) * 120;
+        pos[i * 3 + 2] = (Math.random() - 0.5) * 80;
+        const c = colors[Math.floor(Math.random() * colors.length)];
+        col[i * 3] = c[0]; col[i * 3 + 1] = c[1]; col[i * 3 + 2] = c[2];
+      }
+      geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
+      const mat = new THREE.PointsMaterial({ size: 0.7, vertexColors: true, transparent: true, opacity: 0.55 });
+      const points = new THREE.Points(geo, mat);
+      scene.add(points);
+
+      // floating tori
+      const torusMat = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true, transparent: true, opacity: 0.06 });
+      for (let i = 0; i < 5; i++) {
+        const t = new THREE.Mesh(new THREE.TorusGeometry(8 + i * 4, 0.4, 8, 40), torusMat.clone());
+        t.position.set((Math.random() - 0.5) * 60, (Math.random() - 0.5) * 40, (Math.random() - 0.5) * 20);
+        t.userData.rx = Math.random() * 0.003; t.userData.ry = Math.random() * 0.004;
+        scene.add(t);
+      }
+
+      // floating icosahedra
+      const icoColors = [0x6366f1, 0x8b5cf6, 0x14b8a6, 0xf59e0b];
+      for (let i = 0; i < 8; i++) {
+        const m = new THREE.MeshBasicMaterial({ color: icoColors[i % 4], wireframe: true, transparent: true, opacity: 0.05 });
+        const mesh = new THREE.Mesh(new THREE.IcosahedronGeometry(3 + Math.random() * 4, 0), m);
+        mesh.position.set((Math.random() - 0.5) * 120, (Math.random() - 0.5) * 80, (Math.random() - 0.5) * 40);
+        mesh.userData.rx = Math.random() * 0.006; mesh.userData.ry = Math.random() * 0.004;
+        scene.add(mesh);
+      }
+
+      let mx = 0, my = 0;
+      document.addEventListener("mousemove", e => {
+        mx = (e.clientX / window.innerWidth - 0.5) * 0.4;
+        my = (e.clientY / window.innerHeight - 0.5) * 0.3;
+      });
+
+      window.addEventListener("resize", () => {
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+      });
+
+      function animate() {
+        requestAnimationFrame(animate);
+        points.rotation.y += 0.0008; points.rotation.x += 0.0003;
+        scene.children.forEach(c => {
+          if (c.userData.rx) { c.rotation.x += c.userData.rx; c.rotation.y += c.userData.ry; }
+        });
+        camera.position.x += (mx * 8 - camera.position.x) * 0.03;
+        camera.position.y += (-my * 6 - camera.position.y) * 0.03;
+        camera.lookAt(scene.position);
+        renderer.render(scene, camera);
+      }
+      animate();
+    })();
+
+    // theme toggle logic
+    (function () {
+      const btn = document.getElementById("theme-toggle");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        const light = document.body.classList.toggle("light-mode");
+        btn.textContent = light ? "☀️" : "🌙";
+        document.documentElement.style.background = light ? "#eef1ff" : "#080c18";
+        localStorage.setItem("scs-theme", light ? "light" : "dark");
+      });
+    })();
+    </script>
   </body>
 </html>
